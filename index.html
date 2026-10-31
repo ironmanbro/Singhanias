@@ -1,411 +1,480 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Singhania's – Authentic Home-made Rajasthani Snacks</title>
-<meta name="description" content="Mom's special recipe Swali (Mathri) and Chakli, freshly home-cooked in Saffola oil or desi ghee. Zero preservatives.">
-
-<!-- Fonts -->
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Lato:wght@400;700&family=Caveat:wght@500;700&display=swap" rel="stylesheet">
-
-<!-- Tailwind + Lucide -->
-<script src="https://cdn.tailwindcss.com"></script>
-<script>
-  /* Built-in icon set (no external CDN needed). Replaces <i data-lucide="name"> with inline SVG. */
-  const ICONS = {
-    'arrow-down':'<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
-    'heart':'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
-    'flame':'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
-    'leaf':'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
-    'mail-open':'<path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/><path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/>',
-    'shopping-bag':'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
-    'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
-    'message-circle':'<path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/>',
-    'plus':'<path d="M5 12h14"/><path d="M12 5v14"/>',
-    'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>'
-  };
-  window.lucide = { createIcons() {
-    document.querySelectorAll('i[data-lucide]').forEach(el => {
-      el.outerHTML = `<svg class="${el.className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[el.dataset.lucide] || ''}</svg>`;
-    });
-  } };
-  /* Shown if any photo fails to load (warm gradient + diya) */
-  const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='600'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#E5A93C'/><stop offset='1' stop-color='#C85A32'/></linearGradient></defs><rect width='900' height='600' fill='url(#g)'/><text x='450' y='340' font-size='120' text-anchor='middle'>🪔</text></svg>");
-</script>
-
-<script>
-  // ---- Brand colours: change here and the whole site updates ----
-  tailwind.config = {
-    theme: { extend: {
-      colors: { saffron:'#C85A32', gold:'#E5A93C', cream:'#FAF6F0', charcoal:'#2D2522', sand:'#F1E7D8' },
-      fontFamily: { serif:['"Playfair Display"','serif'], sans:['Lato','sans-serif'], hand:['Caveat','cursive'] }
-    } }
-  }
-</script>
-
-<style>
-  body{background:#FAF6F0;color:#2D2522;font-family:Lato,sans-serif}
-  /* subtle paper texture (SVG noise) */
-  .paper{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .35 0 0 0 0 .2 0 0 0 .07 0'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
-  /* Rajasthani-style diamond border pattern */
-  .jaali{background-image:repeating-linear-gradient(45deg,#E5A93C 0 8px,transparent 8px 16px),repeating-linear-gradient(-45deg,#C85A32 0 8px,transparent 8px 16px);height:10px;opacity:.85}
-  .hero-bg{background:radial-gradient(circle at 20% 20%,rgba(229,169,60,.35),transparent 45%),radial-gradient(circle at 85% 80%,rgba(255,255,255,.12),transparent 40%),linear-gradient(135deg,#9E3F1E,#C85A32 55%,#D9803F)}
-  /* scalloped (kangura) edge along the bottom of the hero */
-  .scallop{height:22px;background:radial-gradient(circle at 14px 0,#FAF6F0 13px,transparent 14px) 0 0/28px 22px repeat-x}
-  /* ornamental divider */
-  .orn{display:flex;align-items:center;justify-content:center;gap:12px;color:#E5A93C}
-  .orn::before,.orn::after{content:"";height:2px;width:70px;background:linear-gradient(90deg,transparent,#E5A93C)}
-  .orn::after{transform:scaleX(-1)}
-  /* faint mandala-style dot pattern for hero */
-  .dots{background-image:radial-gradient(rgba(255,255,255,.18) 1.5px,transparent 1.6px);background-size:26px 26px}
-  .pill{transition:all .2s}
-  .pill.active{background:#C85A32;color:#fff;border-color:#C85A32}
-  .reveal{opacity:0;transform:translateY(24px);transition:all .7s ease}
-  .reveal.show{opacity:1;transform:none}
-  .letter{background:#FFFDF8;box-shadow:0 10px 30px rgba(45,37,34,.12);transform:rotate(-.6deg);
-    background-image:repeating-linear-gradient(transparent 0 31px,rgba(200,90,50,.10) 31px 32px)}
-  @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.3)}100%{transform:scale(1)}}
-  .pop{animation:pop .35s}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Singhania's — Authentic Mom's Rajasthani Snacks</title>
+    <meta name="description" content="Mom's special recipe Swali (Mathri) and Chakli, freshly home-cooked in Saffola oil or desi ghee. Zero preservatives.">
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            bg: '#FAF6F0', card: '#F4ECE1', terracotta: '#9E3B1C',
+                            saffron: '#C85A32', gold: '#D99B26', dark: '#2D2522', muted: '#7C6E68'
+                        }
+                    },
+                    fontFamily: { serif: ['"Playfair Display"', 'serif'], sans: ['"Plus Jakarta Sans"', 'sans-serif'] }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-color: #FAF6F0; color: #2D2522; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        .paper-border { border: 1.5px dashed #D99B26; }
+        /* Selected variant pill */
+        .vbtn.sel { background:#9E3B1C; color:#fff; border-color:#9E3B1C; }
+        /* Rajasthani motifs: diamond border strip, scalloped edge, ornamental divider, dotted pattern */
+        .jaali { height:10px; opacity:.9;
+            background-image:repeating-linear-gradient(45deg,#D99B26 0 8px,transparent 8px 16px),repeating-linear-gradient(-45deg,#C85A32 0 8px,transparent 8px 16px); }
+        .scallop { height:20px; background:radial-gradient(circle at 14px 0,#FAF6F0 13px,transparent 14px) 0 0/28px 20px repeat-x; }
+        .orn { display:flex; align-items:center; justify-content:center; gap:12px; color:#D99B26; }
+        .orn::before,.orn::after { content:""; height:2px; width:70px; background:linear-gradient(90deg,transparent,#D99B26); }
+        .orn::after { transform:scaleX(-1); }
+        .dots { background-image:radial-gradient(rgba(158,59,28,.10) 1.5px,transparent 1.6px); background-size:26px 26px; }
+        /* Fade-in on scroll (with fail-safe in JS) */
+        .reveal { opacity:0; transform:translateY(20px); transition:all .7s ease; }
+        .reveal.show { opacity:1; transform:none; }
+        @keyframes pop { 50% { transform:scale(1.25); } }
+        .pop { animation:pop .35s; }
+    </style>
 </head>
+<body class="antialiased selection:bg-brand-saffron selection:text-white">
 
-<body class="paper">
-
-<!-- ============ NAVBAR ============ -->
-<header id="nav" class="fixed top-0 inset-x-0 z-40 transition-all duration-300">
-  <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
-    <a href="#top" class="font-serif text-2xl font-bold text-white" id="logo">Singhania's</a>
-    <nav class="hidden sm:flex gap-8 text-sm font-bold text-white" id="links">
-      <a href="#story" class="hover:text-gold">Our Story</a>
-      <a href="#shop" class="hover:text-gold">Shop</a>
-      <a href="#promise" class="hover:text-gold">Promise</a>
-    </nav>
-    <span class="w-10"></span><!-- spacer; cart button is floating -->
-  </div>
-</header>
-
-<!-- ============ HERO ============ -->
-<section id="top" class="hero-bg dots relative text-white pt-32 pb-28 px-4 text-center overflow-hidden">
-  <div class="jaali absolute top-0 inset-x-0"></div>
-  <div class="max-w-3xl mx-auto relative">
-    <!-- EDIT BADGE TEXT -->
-    <span class="inline-block bg-white/15 border border-gold/70 text-gold text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full mb-5 backdrop-blur">✦ Made Fresh in Small Batches • Shipped from Rajasthan ✦</span>
-    <p class="font-hand text-2xl text-gold mb-2">॥ Ghar ka swaad, Maa ke haath se ॥</p>
-    <h1 class="font-serif text-5xl sm:text-7xl font-bold mb-5">Singhania's</h1>
-    <!-- EDIT TAGLINE -->
-    <p class="text-sm sm:text-lg tracking-wide mb-8 opacity-95">Authentic Mom's Recipe • Handcrafted Rajasthani Flavors • Pure &amp; Fresh</p>
-    <a href="#shop" class="inline-flex items-center gap-2 bg-gold text-charcoal font-bold px-8 py-3.5 rounded-full shadow-lg hover:scale-105 transition">
-      Explore Snacks <i data-lucide="arrow-down" class="w-4 h-4"></i>
-    </a>
-  </div>
-  <div class="scallop absolute bottom-0 inset-x-0"></div>
-</section>
-
-<!-- ============ HIGHLIGHTS ============ -->
-<section id="promise" class="max-w-6xl mx-auto px-4 -mt-0 py-14 grid gap-5 sm:grid-cols-3">
-  <div class="reveal bg-white/80 rounded-2xl p-6 text-center border border-sand shadow-sm">
-    <i data-lucide="heart" class="w-8 h-8 mx-auto text-saffron mb-3"></i>
-    <h3 class="font-serif text-lg font-semibold">Mom's Special Recipe</h3>
-    <p class="text-sm mt-1 text-charcoal/70">Handed down, never changed.</p>
-  </div>
-  <div class="reveal bg-white/80 rounded-2xl p-6 text-center border border-sand shadow-sm">
-    <i data-lucide="flame" class="w-8 h-8 mx-auto text-saffron mb-3"></i>
-    <h3 class="font-serif text-lg font-semibold">Freshly Home-Cooked</h3>
-    <p class="text-sm mt-1 text-charcoal/70">In Saffola Oil / Desi Ghee.</p>
-  </div>
-  <div class="reveal bg-white/80 rounded-2xl p-6 text-center border border-sand shadow-sm">
-    <i data-lucide="leaf" class="w-8 h-8 mx-auto text-saffron mb-3"></i>
-    <h3 class="font-serif text-lg font-semibold">Zero Preservatives</h3>
-    <p class="text-sm mt-1 text-charcoal/70">Just pure ingredients. Nothing else.</p>
-  </div>
-</section>
-
-<!-- ============ STORY / GHAR KI CHITTHI ============ -->
-<section id="story" class="px-4 py-16 bg-sand/60">
-  <div class="max-w-2xl mx-auto reveal">
-    <div class="letter rounded-sm p-7 sm:p-12 relative">
-      <i data-lucide="mail-open" class="absolute -top-5 right-6 w-10 h-10 text-saffron bg-cream rounded-full p-2 shadow"></i>
-      <p class="font-hand text-2xl text-saffron mb-4">Mere pyare bachchon,</p>
-      <!-- EDIT THE LETTER TEXT BELOW -->
-      <div class="font-hand text-[1.45rem] leading-8 space-y-4 text-charcoal/90">
-        <p>Jab tum chhote the, rasoi se aati ghee ki khushboo hi tumhe subah uthaa deti thi. Aaj bhi main wahi swali, wahi chakli, usi tarah banati hoon – apne haathon se.</p>
-        <p>Na koi machine ki jaldi, na koi preservative. Bas taza atta, chuni hui masale, shuddh ghee ya Saffola tel, aur dher saara pyaar.</p>
-        <p>Ab yeh swaad main tumhare ghar tak bhej rahi hoon. Chai ke saath khana, aur humein yaad karna.</p>
-      </div>
-      <p class="font-hand text-2xl mt-6 text-right text-saffron">Dher saara pyaar,<br>Tumhari Maa 🪔</p>
+    <!-- Top Announcement Banner -->
+    <div class="bg-brand-dark text-brand-bg text-xs md:text-sm py-2 px-4 text-center font-medium tracking-wide">
+        <span>॥ Ghar ka swaad, Maa ke haath se ॥ &nbsp;•&nbsp; Freshly Cooked in Small Batches</span>
     </div>
-  </div>
-</section>
 
-<!-- ============ GALLERY (replace image URLs with your own photos) ============ -->
-<section class="max-w-6xl mx-auto px-4 pt-16">
-  <div class="text-center mb-8">
-    <div class="orn text-lg">❖ ✦ ❖</div>
-    <h2 class="font-serif text-3xl font-bold mt-2">From Our Kitchen to Your Tea-Time</h2>
-  </div>
-  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
-      <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Crispy Indian snacks"
-           src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=80">
-      <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-charcoal/80 to-transparent text-white text-sm font-bold p-3">Crispy &amp; golden</figcaption>
-    </figure>
-    <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
-      <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Chai and snacks tea-time spread"
-           src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=700&q=80">
-      <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-charcoal/80 to-transparent text-white text-sm font-bold p-3">Chai ke saath</figcaption>
-    </figure>
-    <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
-      <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Traditional brass dabba"
-           src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=700&q=80">
-      <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-charcoal/80 to-transparent text-white text-sm font-bold p-3">Packed in a dabba, with love</figcaption>
-    </figure>
-  </div>
-</section>
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-[#FAF6F0]/90 backdrop-blur-md border-b border-[#E5D7C3]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <a href="#top" class="flex items-center space-x-3 group">
+                <div class="w-10 h-10 rounded-full bg-brand-terracotta text-brand-bg flex items-center justify-center font-serif font-bold text-xl shadow-sm">S</div>
+                <div>
+                    <span class="font-serif font-bold text-xl md:text-2xl tracking-tight block text-brand-dark">Singhania's</span>
+                    <span class="text-[10px] uppercase tracking-widest text-brand-saffron font-semibold block">Rajasthani Rasoi</span>
+                </div>
+            </a>
 
-<!-- ============ SHOP ============ -->
-<section id="shop" class="max-w-6xl mx-auto px-4 py-16">
-  <div class="text-center mb-12">
-    <p class="font-hand text-2xl text-saffron">Aaj kya khaoge?</p>
-    <h2 class="font-serif text-4xl font-bold">Our Snacks</h2>
-    <div class="orn mt-2">✦</div>
-  </div>
-  <div id="grid" class="grid gap-8 md:grid-cols-2"></div>
-</section>
+            <nav class="hidden md:flex items-center space-x-8 text-sm font-medium text-brand-dark">
+                <a href="#story" class="hover:text-brand-saffron transition">Maa's Letter</a>
+                <a href="#dabba" class="hover:text-brand-saffron transition">The Dabba (Shop)</a>
+                <a href="#promise" class="hover:text-brand-saffron transition">Our Promise</a>
+            </nav>
 
-<!-- ============ FOOTER ============ -->
-<footer class="bg-charcoal text-cream/80 text-center px-4 py-10">
-  <p class="font-serif text-2xl text-gold mb-1">Singhania's</p>
-  <p class="text-sm">Made with love in Rajasthani kitchens • Zero Preservatives</p>
-  <p class="text-xs mt-4 opacity-60">© <span id="yr"></span> Singhania's. All rights reserved.</p>
-</footer>
+            <!-- Cart Trigger Button -->
+            <button id="cart-btn" onclick="toggleCart()" aria-label="Open cart" class="relative bg-brand-terracotta text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:bg-brand-saffron transition flex items-center space-x-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
+                <span>Jhola</span>
+                <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-brand-gold text-brand-dark font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center border-2 border-brand-bg hidden">0</span>
+            </button>
+        </div>
+    </header>
 
-<!-- ============ FLOATING CART BUTTON ============ -->
-<button id="cartBtn" aria-label="Open cart" class="fixed bottom-5 right-5 z-40 bg-saffron text-white w-14 h-14 rounded-full shadow-xl flex items-center justify-center hover:scale-110 transition">
-  <i data-lucide="shopping-bag" class="w-6 h-6"></i>
-  <span id="badge" class="absolute -top-1 -right-1 bg-gold text-charcoal text-xs font-bold min-w-[22px] h-[22px] px-1 rounded-full flex items-center justify-center hidden">0</span>
-</button>
+    <main id="top">
+        <!-- Hero Section -->
+        <section class="dots relative overflow-hidden pt-16 md:pt-24 pb-24 px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-7 space-y-6">
+                    <!-- EDIT BADGE TEXT -->
+                    <div class="inline-flex items-center bg-brand-card px-3 py-1.5 rounded-full border border-brand-gold/50 text-xs font-semibold text-brand-terracotta uppercase tracking-wider">
+                        ✦ Made Fresh in Small Batches • Shipped from Rajasthan ✦
+                    </div>
+                    <h1 class="font-serif text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight tracking-tight text-brand-dark">
+                        A letter from home <span class="italic text-brand-terracotta">you can eat.</span>
+                    </h1>
+                    <p class="text-sm font-semibold tracking-wide text-brand-saffron">Authentic Mom's Recipe • Handcrafted Rajasthani Flavors • Pure &amp; Fresh</p>
+                    <p class="text-lg text-brand-muted max-w-xl font-normal leading-relaxed">
+                        Crispy, sun-kissed Rajasthani Mathri and Chakli crafted with Mom's special recipe, fresh Saffola oil, or pure desi ghee. Zero preservatives, maximum nostalgia.
+                    </p>
+                    <div class="flex flex-wrap gap-4 pt-2">
+                        <a href="#dabba" class="bg-brand-terracotta text-white px-8 py-3.5 rounded-full font-medium shadow-md hover:bg-brand-saffron transition flex items-center space-x-2">
+                            <span>Explore Snacks</span><span>→</span>
+                        </a>
+                        <a href="#story" class="border border-brand-dark/20 text-brand-dark px-8 py-3.5 rounded-full font-medium hover:bg-brand-card transition">Read Maa's Letter</a>
+                    </div>
+                    <ul class="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs font-semibold text-brand-muted border-t border-brand-dark/10">
+                        <li class="flex items-center space-x-2"><span>☀</span><span>Mom's Special Recipe</span></li>
+                        <li class="flex items-center space-x-2"><span>🪔</span><span>Saffola Oil / Desi Ghee</span></li>
+                        <li class="flex items-center space-x-2"><span>✿</span><span>Zero Preservatives</span></li>
+                    </ul>
+                </div>
 
-<!-- ============ CART DRAWER ============ -->
-<div id="overlay" class="fixed inset-0 bg-charcoal/50 z-50 hidden"></div>
-<aside id="drawer" class="fixed top-0 right-0 h-full w-full sm:w-[420px] bg-cream z-50 translate-x-full transition-transform duration-300 flex flex-col shadow-2xl">
-  <div class="flex items-center justify-between p-4 border-b border-sand">
-    <h3 class="font-serif text-xl font-bold">Your Dabba</h3>
-    <button id="closeCart" aria-label="Close cart" class="p-2"><i data-lucide="x" class="w-5 h-5"></i></button>
-  </div>
+                <div class="lg:col-span-5 relative">
+                    <div class="relative rounded-2xl overflow-hidden shadow-2xl border-4 border-white bg-brand-card aspect-square">
+                        <img src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80" alt="Crispy Indian Snacks" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                        <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent flex items-end p-6">
+                            <p class="text-white font-serif italic text-sm">"Jab tum chhote the, rasoi se aati khushboo..."</p>
+                        </div>
+                        <div class="jaali absolute bottom-0 inset-x-0"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="scallop absolute bottom-0 inset-x-0"></div>
+        </section>
 
-  <div class="flex-1 overflow-y-auto p-4">
-    <div id="items" class="space-y-3"></div>
-    <p id="empty" class="text-center text-charcoal/60 py-12">Your dabba is empty. Add some snacks! 🪔</p>
+        <!-- Maa's Letter Section -->
+        <section id="story" class="py-20 bg-brand-card border-y border-[#E5D7C3] px-4 sm:px-6 lg:px-8">
+            <div class="reveal max-w-4xl mx-auto bg-brand-bg rounded-2xl p-8 sm:p-12 shadow-sm paper-border relative">
+                <div class="absolute -top-4 right-8 bg-brand-terracotta text-white text-xs px-4 py-1 rounded-full uppercase tracking-wider font-semibold">✉ Ek Chitthi, Maa ki taraf se</div>
+                <!-- EDIT THE LETTER TEXT -->
+                <div class="space-y-6 text-brand-dark font-serif text-lg leading-relaxed">
+                    <p class="font-bold text-xl text-brand-terracotta">Mere pyare bachchon,</p>
+                    <p>Jab tum chhote the, rasoi se aati ghee ki khushboo hi tumhe subah uthaa deti thi. Aaj bhi main wahi swali, wahi chakli, usi tarah banati hoon – apne haathon se.</p>
+                    <p>Na koi machine ki jaldi, na koi preservative. Bas taza atta, chune hue masale, shuddh ghee ya Saffola tel, aur dher saara pyaar.</p>
+                    <p>Ab yeh swaad main tumhare ghar tak bhej rahi hoon. Chai ke saath khana, aur humein yaad karna.</p>
+                    <div class="pt-4 flex items-center justify-between border-t border-brand-dark/10">
+                        <span class="font-sans text-xs uppercase tracking-widest text-brand-muted">From the kitchen of</span>
+                        <span class="font-serif italic font-bold text-brand-terracotta text-xl">Tumhari Maa 🪔</span>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-    <form id="form" class="mt-6 space-y-3" novalidate>
-      <h4 class="font-serif font-semibold">Delivery Details</h4>
-      <div><input id="fName" placeholder="Full Name *" class="w-full rounded-lg border border-sand bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-saffron"><small class="err text-red-600"></small></div>
-      <div><input id="fPhone" type="tel" inputmode="numeric" placeholder="Phone Number (10 digits) *" class="w-full rounded-lg border border-sand bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-saffron"><small class="err text-red-600"></small></div>
-      <div><textarea id="fAddr" rows="2" placeholder="Full Address *" class="w-full rounded-lg border border-sand bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-saffron"></textarea><small class="err text-red-600"></small></div>
-      <div><input id="fPin" inputmode="numeric" maxlength="6" placeholder="Pincode (6 digits) *" class="w-full rounded-lg border border-sand bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-saffron"><small class="err text-red-600"></small></div>
-    </form>
-  </div>
+        <!-- Photo strip: replace image URLs with your own photos -->
+        <section class="py-16 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <div class="orn text-lg">❖ ✦ ❖</div>
+                <h2 class="font-serif text-3xl font-bold mt-2">From Our Kitchen to Your Tea-Time</h2>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
+                    <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Crispy Indian snacks" src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=80">
+                    <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-brand-dark/80 to-transparent text-white text-sm font-bold p-3">Crispy &amp; golden</figcaption>
+                </figure>
+                <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
+                    <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Chai and snacks tea-time spread" src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=700&q=80">
+                    <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-brand-dark/80 to-transparent text-white text-sm font-bold p-3">Chai ke saath</figcaption>
+                </figure>
+                <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
+                    <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Traditional brass dabba" src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=700&q=80">
+                    <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-brand-dark/80 to-transparent text-white text-sm font-bold p-3">Packed in a dabba, with love</figcaption>
+                </figure>
+            </div>
+        </section>
 
-  <div id="foot" class="p-4 border-t border-sand bg-white">
-    <div class="flex justify-between font-bold text-lg mb-3"><span>Total</span><span id="total">₹0</span></div>
-    <button id="orderBtn" class="w-full bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition">
-      <i data-lucide="message-circle" class="w-5 h-5"></i> Order via WhatsApp
-    </button>
-    <p class="text-xs text-center text-charcoal/60 mt-2">You'll confirm payment &amp; availability on WhatsApp.</p>
-  </div>
-</aside>
+        <!-- Product Catalog / The Dabba Section -->
+        <section id="dabba" class="pb-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-2xl mx-auto mb-14 space-y-3">
+                <div class="orn">✦</div>
+                <p class="text-xs uppercase tracking-widest text-brand-saffron font-bold">✺ The Dabba · Mom's Special Menu</p>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-dark">Choose your cravings</h2>
+                <p class="text-brand-muted text-sm">Freshly prepared, packed in clean food-grade pouches, and sealed with love.</p>
+            </div>
 
-<!-- Toast -->
-<div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 z-[60] bg-charcoal text-white text-sm px-5 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity"></div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
 
-<script>
-/* =====================================================================
-   EDIT ME: settings & product catalogue
-   ===================================================================== */
-const WHATSAPP_NUMBER = '919876543210';   // country code + number, no "+" or spaces
+                <!-- Product 1: Swali (Mathri) -->
+                <div class="reveal bg-brand-card rounded-2xl p-6 sm:p-8 border border-brand-gold/30 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="aspect-video rounded-xl overflow-hidden mb-6 relative">
+                            <img src="https://images.unsplash.com/photo-1599487484170-7c99c647e813?auto=format&fit=crop&w=600&q=80" alt="Swali Mathri" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                            <span class="absolute top-3 left-3 bg-brand-terracotta text-white text-xs px-3 py-1 rounded-full font-semibold">Bestseller</span>
+                            <div class="jaali absolute bottom-0 inset-x-0"></div>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Swali (Mathri)</h3>
+                        <p class="text-xs text-brand-saffron font-semibold mt-1">स्वाली / मठरी</p>
+                        <p class="text-brand-muted text-sm mt-3 leading-relaxed">Authentic, crispy Rajasthani Mathri crafted with mom's special recipe.</p>
 
-const SIZES = ['250gms', '500gms', '1kg'];
+                        <div class="mt-6 space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Cooking Style:</label>
+                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                                <button type="button" data-p="swali" data-c="type" data-v="Fresh Saffola Oil" class="vbtn sel px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">Fresh Saffola Oil</button>
+                                <button type="button" data-p="swali" data-c="type" data-v="Pure Desi Ghee" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">Pure Desi Ghee</button>
+                                <button type="button" data-p="swali" data-c="type" data-v="Air-Fried" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">Air-Fried (Healthy)</button>
+                            </div>
+                        </div>
 
-const PRODUCTS = [
-  {
-    id: 'swali',
-    name: 'Swali (Mathri)',
-    desc: 'Authentic, crispy Rajasthani Mathri crafted with mom\'s special recipe.',
-    image: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=900&q=80', // replace with your photo
-    badge: "Mom's Special Recipe",
-    // prices[type][size] in ₹
-    types: {
-      'Made in Fresh Saffola Oil': { '250gms': 120, '500gms': 220, '1kg': 400 },
-      'Made in Pure Desi Ghee':    { '250gms': 150, '500gms': 280, '1kg': 520 },
-      'Air-Fried (Healthy Choice)':{ '250gms': 120, '500gms': 220, '1kg': 400 }
-    }
-  },
-  {
-    id: 'chakli',
-    name: 'Chakli',
-    desc: 'Crunchy, spiced rice-flour spiral snacks made fresh at home.',
-    image: 'https://images.unsplash.com/photo-1630409351217-bc4fa6422075?auto=format&fit=crop&w=900&q=80', // replace with your photo
-    badge: 'Freshly Made',
-    types: null,                                   // no type options
-    prices: { '250gms': 120, '500gms': 220, '1kg': 400 }
-  }
-];
+                        <div class="mt-4 space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Pack Size:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" data-p="swali" data-c="size" data-v="250gms" class="vbtn sel px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">250gms</button>
+                                <button type="button" data-p="swali" data-c="size" data-v="500gms" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">500gms</button>
+                                <button type="button" data-p="swali" data-c="size" data-v="1kg" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">1kg</button>
+                            </div>
+                        </div>
+                    </div>
 
-/* =====================================================================
-   App logic
-   ===================================================================== */
-const $ = id => document.getElementById(id);
-const rupee = n => '₹' + n.toLocaleString('en-IN');
-const sel = {};      // current selection per product: {type, size}
-let cart = [];       // [{key, id, name, type, size, price, qty}]
+                    <div class="mt-8 pt-6 border-t border-brand-dark/10 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-brand-muted block">Price</span>
+                            <span id="swali-price" class="font-serif text-2xl font-bold text-brand-dark">₹120</span>
+                        </div>
+                        <button type="button" data-add="swali" class="bg-brand-terracotta text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-brand-saffron transition shadow-sm">Add to Jhola 🪔</button>
+                    </div>
+                </div>
 
-try { cart = JSON.parse(localStorage.getItem('singhanias_cart')) || []; } catch(e) {}
-const save = () => { try { localStorage.setItem('singhanias_cart', JSON.stringify(cart)); } catch(e) {} };
+                <!-- Product 2: Chakli -->
+                <div class="reveal bg-brand-card rounded-2xl p-6 sm:p-8 border border-brand-gold/30 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div class="aspect-video rounded-xl overflow-hidden mb-6 relative">
+                            <img src="https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=600&q=80" alt="Chakli" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                            <span class="absolute top-3 left-3 bg-brand-gold text-brand-dark text-xs px-3 py-1 rounded-full font-semibold">Mom's Special</span>
+                            <div class="jaali absolute bottom-0 inset-x-0"></div>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Chakli</h3>
+                        <p class="text-xs text-brand-saffron font-semibold mt-1">चकली</p>
+                        <p class="text-brand-muted text-sm mt-3 leading-relaxed">Crunchy, spiced rice-flour spiral snacks made fresh at home.</p>
 
-const priceOf = p => (p.types ? p.types[sel[p.id].type] : p.prices)[sel[p.id].size];
+                        <div class="mt-6 space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-brand-dark block">Pack Size:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" data-p="chakli" data-c="size" data-v="250gms" class="vbtn sel px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">250gms</button>
+                                <button type="button" data-p="chakli" data-c="size" data-v="500gms" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">500gms</button>
+                                <button type="button" data-p="chakli" data-c="size" data-v="1kg" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">1kg</button>
+                            </div>
+                        </div>
+                    </div>
 
-/* ---------- Render product cards ---------- */
-function renderProducts() {
-  $('grid').innerHTML = PRODUCTS.map(p => {
-    sel[p.id] = { type: p.types ? Object.keys(p.types)[0] : null, size: SIZES[0] };
-    return `
-    <article class="reveal bg-white rounded-3xl overflow-hidden border border-sand shadow-md hover:shadow-xl transition flex flex-col">
-      <div class="relative h-60 sm:h-72 overflow-hidden">
-        <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover hover:scale-105 transition duration-700">
-        <div class="jaali absolute bottom-0 inset-x-0"></div>
-        <span class="absolute top-4 left-4 bg-gold text-charcoal text-xs font-bold px-3 py-1 rounded-full">${p.badge}</span>
-      </div>
-      <div class="p-6 flex flex-col flex-1">
-        <h3 class="font-serif text-2xl font-bold">${p.name}</h3>
-        <p class="text-charcoal/70 mt-1 mb-4">${p.desc}</p>
+                    <div class="mt-8 pt-6 border-t border-brand-dark/10 flex items-center justify-between">
+                        <div>
+                            <span class="text-xs text-brand-muted block">Price</span>
+                            <span id="chakli-price" class="font-serif text-2xl font-bold text-brand-dark">₹120</span>
+                        </div>
+                        <button type="button" data-add="chakli" class="bg-brand-terracotta text-white px-6 py-3 rounded-full text-sm font-semibold hover:bg-brand-saffron transition shadow-sm">Add to Jhola 🪔</button>
+                    </div>
+                </div>
+            </div>
+        </section>
 
-        ${p.types ? `
-        <p class="text-xs font-bold uppercase tracking-wider text-saffron mb-2">Type</p>
-        <div class="flex flex-wrap gap-2 mb-4" data-group="type" data-pid="${p.id}">
-          ${Object.keys(p.types).map((t,i)=>`<button class="pill border border-sand rounded-full px-3 py-1.5 text-sm ${i?'':'active'}" data-val="${t}">${t}</button>`).join('')}
-        </div>` : ''}
+        <!-- Our Promise Section -->
+        <section id="promise" class="py-20 bg-brand-card border-t border-[#E5D7C3] px-4 sm:px-6 lg:px-8">
+            <div class="max-w-7xl mx-auto text-center space-y-12">
+                <div class="max-w-2xl mx-auto space-y-3">
+                    <p class="text-xs uppercase tracking-widest text-brand-saffron font-bold">✺ The Singhania Standard</p>
+                    <h2 class="font-serif text-3xl font-bold text-brand-dark">Why your dabba tastes like home</h2>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
+                    <div class="reveal bg-brand-bg p-8 rounded-2xl border border-brand-gold/20 shadow-sm space-y-3">
+                        <div class="text-2xl">🌿</div>
+                        <h3 class="font-serif font-bold text-lg text-brand-dark">Zero Preservatives</h3>
+                        <p class="text-sm text-brand-muted leading-relaxed">No hidden chemicals. Only premium Saffola oil, pure ghee, fresh flour, and hand-picked spices.</p>
+                    </div>
+                    <div class="reveal bg-brand-bg p-8 rounded-2xl border border-brand-gold/20 shadow-sm space-y-3">
+                        <div class="text-2xl">⏳</div>
+                        <h3 class="font-serif font-bold text-lg text-brand-dark">Small Batches Only</h3>
+                        <p class="text-sm text-brand-muted leading-relaxed">We never store inventory in warehouses. Every batch is kneaded, rolled, and fried fresh.</p>
+                    </div>
+                    <div class="reveal bg-brand-bg p-8 rounded-2xl border border-brand-gold/20 shadow-sm space-y-3">
+                        <div class="text-2xl">💌</div>
+                        <h3 class="font-serif font-bold text-lg text-brand-dark">Mom's Special Recipe</h3>
+                        <p class="text-sm text-brand-muted leading-relaxed">Handed down through the family and never changed, with a little note from Mom in every box.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
 
-        <p class="text-xs font-bold uppercase tracking-wider text-saffron mb-2">Pack Size</p>
-        <div class="flex gap-2 mb-5" data-group="size" data-pid="${p.id}">
-          ${SIZES.map((s,i)=>`<button class="pill border border-sand rounded-full px-4 py-1.5 text-sm ${i?'':'active'}" data-val="${s}">${s}</button>`).join('')}
+    <!-- Footer -->
+    <footer class="bg-brand-dark text-brand-bg py-16 px-4 sm:px-6 lg:px-8">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-10">
+            <div class="space-y-4">
+                <h3 class="font-serif text-xl font-bold">Singhania's</h3>
+                <p class="text-xs text-gray-400 leading-relaxed">Authentic homemade Rajasthani snacks prepared with mom's special recipe and zero preservatives.</p>
+            </div>
+            <div>
+                <h4 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-4">Quick Links</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a href="#story" class="hover:text-white transition">Maa's Letter</a></li>
+                    <li><a href="#dabba" class="hover:text-white transition">Our Snacks</a></li>
+                    <li><a href="#promise" class="hover:text-white transition">The Promise</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-4">Say Namaste</h4>
+                <ul class="space-y-2 text-sm text-gray-300">
+                    <li><a id="footer-wa" href="#" target="_blank" rel="noopener" class="hover:text-white transition">WhatsApp Us</a></li>
+                    <li><span class="text-gray-400">Malad East, Mumbai</span></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-xs uppercase tracking-widest text-brand-gold font-bold mb-4">From Kitchen</h4>
+                <p class="text-xs text-gray-400">Made with love in Mumbai &amp; Rajasthan — 400097</p>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
+            <p>© 2026 Singhania's Rasoi. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Toast -->
+    <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-6 z-[60] bg-brand-dark text-white text-sm px-5 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity"></div>
+
+    <!-- Cart Drawer (Jhola) -->
+    <div id="cart-overlay" onclick="toggleCart()" class="fixed inset-0 bg-brand-dark/50 backdrop-blur-sm z-50 hidden"></div>
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-[450px] bg-brand-bg shadow-2xl z-50 transform translate-x-full transition-transform duration-300 flex flex-col">
+
+        <div class="p-6 border-b border-brand-dark/10 flex items-center justify-between bg-brand-card">
+            <div>
+                <h3 class="font-serif text-xl font-bold text-brand-dark">Your Jhola (झोला)</h3>
+                <p class="text-xs text-brand-muted">Fresh snacks ready for dispatch</p>
+            </div>
+            <button onclick="toggleCart()" aria-label="Close cart" class="w-9 h-9 rounded-full bg-brand-bg border border-brand-dark/10 flex items-center justify-center font-bold hover:bg-brand-terracotta hover:text-white transition">✕</button>
         </div>
 
-        <div class="mt-auto flex items-center justify-between gap-3">
-          <span id="price-${p.id}" class="font-serif text-3xl font-bold text-saffron">${rupee(priceOf(p))}</span>
-          <button class="add bg-saffron hover:bg-[#a94a27] text-white font-bold px-5 py-3 rounded-full flex items-center gap-2 transition" data-pid="${p.id}">
-            <i data-lucide="plus" class="w-4 h-4"></i><span>Add to Cart</span>
-          </button>
+        <!-- Scrollable: items + delivery form -->
+        <div class="flex-1 overflow-y-auto p-6 space-y-6">
+            <div id="cart-items-container" class="space-y-4"></div>
+
+            <div class="space-y-3">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-brand-dark">Delivery Details:</h4>
+                <div><input type="text" id="cust-name" placeholder="Your Full Name *" class="w-full px-4 py-2.5 rounded-xl border border-brand-dark/20 bg-white text-sm focus:outline-none focus:border-brand-saffron"><small class="err text-red-600 text-xs"></small></div>
+                <div><input type="tel" id="cust-phone" inputmode="numeric" placeholder="Phone Number (10 digits) *" class="w-full px-4 py-2.5 rounded-xl border border-brand-dark/20 bg-white text-sm focus:outline-none focus:border-brand-saffron"><small class="err text-red-600 text-xs"></small></div>
+                <div><textarea id="cust-address" rows="2" placeholder="Full Address *" class="w-full px-4 py-2.5 rounded-xl border border-brand-dark/20 bg-white text-sm focus:outline-none focus:border-brand-saffron resize-none"></textarea><small class="err text-red-600 text-xs"></small></div>
+                <div><input type="text" id="cust-pin" inputmode="numeric" maxlength="6" placeholder="Pincode (6 digits) *" class="w-full px-4 py-2.5 rounded-xl border border-brand-dark/20 bg-white text-sm focus:outline-none focus:border-brand-saffron"><small class="err text-red-600 text-xs"></small></div>
+            </div>
         </div>
-      </div>
-    </article>`;
-  }).join('');
-  lucide.createIcons();
-  observeReveal();
-}
 
-/* ---------- Option pills & Add to cart (event delegation) ---------- */
-$('grid').addEventListener('click', e => {
-  const pill = e.target.closest('.pill');
-  if (pill) {
-    const g = pill.parentElement, p = PRODUCTS.find(x => x.id === g.dataset.pid);
-    g.querySelectorAll('.pill').forEach(b => b.classList.remove('active'));
-    pill.classList.add('active');
-    sel[p.id][g.dataset.group] = pill.dataset.val;
-    $('price-' + p.id).textContent = rupee(priceOf(p));      // live price update
-    return;
-  }
-  const add = e.target.closest('.add');
-  if (add) {
-    const p = PRODUCTS.find(x => x.id === add.dataset.pid), s = sel[p.id];
-    addToCart(p, s.type, s.size, priceOf(p));
-    // success feedback on the button
-    const label = add.querySelector('span'), old = label.textContent;
-    add.classList.add('!bg-green-700'); label.textContent = 'Added ✓';
-    setTimeout(() => { add.classList.remove('!bg-green-700'); label.textContent = old; }, 1200);
-  }
-});
+        <div class="p-6 bg-brand-card border-t border-brand-dark/10 space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="font-serif font-bold text-lg text-brand-dark">Total Amount</span>
+                <span id="cart-total-price" class="font-serif font-bold text-2xl text-brand-terracotta">₹0</span>
+            </div>
+            <button onclick="checkoutWhatsApp()" class="w-full bg-[#25D366] text-white py-3.5 rounded-full font-semibold shadow-md hover:bg-[#22bf5b] transition text-sm">Order via WhatsApp 💬</button>
+            <p class="text-[11px] text-center text-brand-muted">You'll confirm payment &amp; availability directly with us on WhatsApp.</p>
+        </div>
+    </aside>
 
-/* ---------- Cart ---------- */
-function addToCart(p, type, size, price) {
-  const key = [p.id, type, size].join('|');
-  const ex = cart.find(i => i.key === key);
-  ex ? ex.qty++ : cart.push({ key, id: p.id, name: p.name, type, size, price, qty: 1 });
-  save(); renderCart();
-  $('cartBtn').classList.remove('pop'); void $('cartBtn').offsetWidth; $('cartBtn').classList.add('pop');
-  toast(`${p.name} added to cart`);
-}
+    <script>
+        /* ===================== EDIT ME ===================== */
+        const WHATSAPP_NUMBER = '919876543210';   // country code + number, no "+" or spaces
 
-const itemLabel = i => `${i.name}${i.type ? ' - ' + i.type.replace('Made in ','') : ''} (${i.size})`;
+        // Prices in ₹. swali[type][size], chakli[size]
+        const PRICES = {
+            swali: {
+                'Fresh Saffola Oil': { '250gms': 120, '500gms': 220, '1kg': 400 },
+                'Pure Desi Ghee':    { '250gms': 150, '500gms': 280, '1kg': 520 },
+                'Air-Fried':         { '250gms': 120, '500gms': 220, '1kg': 400 }
+            },
+            chakli: { '250gms': 120, '500gms': 220, '1kg': 400 }
+        };
+        const NAMES = { swali: 'Swali (Mathri)', chakli: 'Chakli' };
+        /* ==================================================== */
 
-function renderCart() {
-  const count = cart.reduce((a, i) => a + i.qty, 0);
-  const total = cart.reduce((a, i) => a + i.qty * i.price, 0);
-  $('badge').textContent = count;
-  $('badge').classList.toggle('hidden', !count);
-  $('empty').classList.toggle('hidden', !!count);
-  $('total').textContent = rupee(total);
-  $('items').innerHTML = cart.map((i, idx) => `
-    <div class="bg-white border border-sand rounded-xl p-3 flex gap-3 items-center">
-      <div class="flex-1 min-w-0">
-        <p class="font-bold text-sm leading-tight">${itemLabel(i)}</p>
-        <p class="text-saffron font-bold mt-1">${rupee(i.price * i.qty)} <span class="text-xs text-charcoal/50 font-normal">(${rupee(i.price)} each)</span></p>
-      </div>
-      <div class="flex items-center gap-2">
-        <button data-act="dec" data-i="${idx}" class="w-7 h-7 rounded-full border border-sand flex items-center justify-center" aria-label="Decrease">−</button>
-        <span class="w-5 text-center font-bold">${i.qty}</span>
-        <button data-act="inc" data-i="${idx}" class="w-7 h-7 rounded-full border border-sand flex items-center justify-center" aria-label="Increase">+</button>
-      </div>
-      <button data-act="rm" data-i="${idx}" class="text-charcoal/40 hover:text-red-600" aria-label="Remove"><i data-lucide="trash-2" class="w-4 h-4 pointer-events-none"></i></button>
-    </div>`).join('');
-  lucide.createIcons();
-}
+        // Shown if any photo fails to load
+        const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='600'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#D99B26'/><stop offset='1' stop-color='#C85A32'/></linearGradient></defs><rect width='900' height='600' fill='url(#g)'/><text x='450' y='340' font-size='120' text-anchor='middle'>🪔</text></svg>");
 
-$('items').addEventListener('click', e => {
-  const b = e.target.closest('button'); if (!b) return;
-  const i = +b.dataset.i;
-  if (b.dataset.act === 'inc') cart[i].qty++;
-  if (b.dataset.act === 'dec' && --cart[i].qty < 1) cart.splice(i, 1);
-  if (b.dataset.act === 'rm') cart.splice(i, 1);
-  save(); renderCart();
-});
+        const $ = id => document.getElementById(id);
+        const rupee = n => '₹' + n.toLocaleString('en-IN');
+        const sel = { swali: { type: 'Fresh Saffola Oil', size: '250gms' }, chakli: { size: '250gms' } };
+        let cart = [];
+        try { cart = JSON.parse(localStorage.getItem('singhanias_cart')) || []; } catch (e) {}
+        const save = () => { try { localStorage.setItem('singhanias_cart', JSON.stringify(cart)); } catch (e) {} };
 
-/* ---------- Drawer open/close ---------- */
-const openCart = () => { $('overlay').classList.remove('hidden'); requestAnimationFrame(() => $('drawer').classList.remove('translate-x-full')); document.body.style.overflow = 'hidden'; };
-const closeCart = () => { $('drawer').classList.add('translate-x-full'); $('overlay').classList.add('hidden'); document.body.style.overflow = ''; };
-$('cartBtn').onclick = openCart; $('closeCart').onclick = closeCart; $('overlay').onclick = closeCart;
-document.addEventListener('keydown', e => e.key === 'Escape' && closeCart());
+        const priceOf = p => p === 'swali' ? PRICES.swali[sel.swali.type][sel.swali.size] : PRICES.chakli[sel.chakli.size];
+        const variantOf = p => p === 'swali' ? `${sel.swali.type} (${sel.swali.size})` : `(${sel.chakli.size})`;
 
-/* ---------- WhatsApp checkout ---------- */
-$('orderBtn').onclick = () => {
-  const name = $('fName').value.trim(), phone = $('fPhone').value.replace(/[\s-]/g, '').replace(/^(\+91|91)(?=\d{10}$)/, ''),
-        addr = $('fAddr').value.trim(), pin = $('fPin').value.trim();
-  const errs = {
-    fName:  name.length < 2 ? 'Please enter your name' : '',
-    fPhone: /^[6-9]\d{9}$/.test(phone) ? '' : 'Enter a valid 10-digit mobile number',
-    fAddr:  addr.length < 8 ? 'Please enter your full address' : '',
-    fPin:   /^\d{6}$/.test(pin) ? '' : 'Enter a valid 6-digit pincode'
-  };
-  let bad = false;
-  Object.entries(errs).forEach(([id, msg]) => {
-    $(id).nextElementSibling.textContent = msg;
-    $(id).classList.toggle('border-red-500', !!msg);
-    if (msg && !bad) { bad = true; $(id).focus(); }
-  });
-  if (!cart.length) return toast('Please add a snack to your cart first');
-  if (bad) return;
+        function updatePrices() {
+            $('swali-price').textContent = rupee(priceOf('swali'));
+            $('chakli-price').textContent = rupee(priceOf('chakli'));
+        }
 
-  const total = cart.reduce((a, i) => a + i.qty * i.price, 0);
-  const lines = cart.map(i => `• ${i.qty}x ${itemLabel(i)} - ${rupee(i.price * i.qty)}`).join('\n');
-  const msg =
+        // Variant pills + Add to cart (event delegation)
+        document.addEventListener('click', e => {
+            const pill = e.target.closest('.vbtn');
+            if (pill) {
+                document.querySelectorAll(`.vbtn[data-p="${pill.dataset.p}"][data-c="${pill.dataset.c}"]`).forEach(b => b.classList.remove('sel'));
+                pill.classList.add('sel');
+                sel[pill.dataset.p][pill.dataset.c] = pill.dataset.v;
+                updatePrices();
+                return;
+            }
+            const add = e.target.closest('[data-add]');
+            if (add) {
+                const p = add.dataset.add, variant = variantOf(p), key = p + '|' + variant;
+                const ex = cart.find(i => i.key === key);
+                ex ? ex.qty++ : cart.push({ key, name: NAMES[p], variant, price: priceOf(p), qty: 1 });
+                save(); updateCartUI();
+                // success feedback
+                const old = add.textContent;
+                add.textContent = 'Added ✓'; add.classList.add('!bg-green-700');
+                setTimeout(() => { add.textContent = old; add.classList.remove('!bg-green-700'); }, 1200);
+                toast(`${NAMES[p]} added to your jhola`);
+                const b = $('cart-btn'); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+            }
+        });
+
+        function updateCartUI() {
+            const count = cart.reduce((s, i) => s + i.qty, 0);
+            const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
+            $('cart-badge').textContent = count;
+            $('cart-badge').classList.toggle('hidden', !count);
+            $('cart-total-price').textContent = rupee(total);
+            $('cart-items-container').innerHTML = cart.length ? cart.map((item, idx) => `
+                <div class="bg-white p-4 rounded-xl border border-brand-dark/10 flex justify-between items-center gap-3">
+                    <div class="space-y-1 min-w-0">
+                        <h5 class="font-bold text-sm text-brand-dark">${item.name}</h5>
+                        <p class="text-xs text-brand-muted">${item.variant}</p>
+                        <p class="text-xs font-bold text-brand-terracotta">${rupee(item.price * item.qty)} <span class="font-normal text-brand-muted">(${rupee(item.price)} each)</span></p>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex items-center border border-brand-dark/20 rounded-lg overflow-hidden bg-white">
+                            <button onclick="changeQty(${idx}, -1)" aria-label="Decrease" class="px-2.5 py-1 text-sm font-bold hover:bg-brand-card">−</button>
+                            <span class="px-3 text-xs font-bold">${item.qty}</span>
+                            <button onclick="changeQty(${idx}, 1)" aria-label="Increase" class="px-2.5 py-1 text-sm font-bold hover:bg-brand-card">+</button>
+                        </div>
+                        <button onclick="removeItem(${idx})" aria-label="Remove" class="text-brand-muted hover:text-red-600 text-lg leading-none">🗑</button>
+                    </div>
+                </div>`).join('') : `
+                <div class="text-center py-10 text-brand-muted space-y-2">
+                    <div class="text-3xl">🪔</div>
+                    <p class="text-sm font-medium">Your jhola is empty. Add some snacks!</p>
+                </div>`;
+        }
+        function changeQty(i, d) { cart[i].qty += d; if (cart[i].qty <= 0) cart.splice(i, 1); save(); updateCartUI(); }
+        function removeItem(i) { cart.splice(i, 1); save(); updateCartUI(); }
+
+        function toggleCart() {
+            $('cart-drawer').classList.toggle('translate-x-full');
+            $('cart-overlay').classList.toggle('hidden');
+        }
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('cart-overlay').classList.contains('hidden')) toggleCart(); });
+
+        function toast(t) {
+            const el = $('toast'); el.textContent = t; el.style.opacity = 1;
+            clearTimeout(toast.t); toast.t = setTimeout(() => el.style.opacity = 0, 1600);
+        }
+
+        function checkoutWhatsApp() {
+            if (!cart.length) return toast('Your jhola is empty. Please add some snacks first.');
+
+            const name = $('cust-name').value.trim();
+            const phone = $('cust-phone').value.replace(/[\s-]/g, '').replace(/^(\+91|91)(?=\d{10}$)/, '');
+            const address = $('cust-address').value.trim();
+            const pin = $('cust-pin').value.trim();
+
+            const errs = {
+                'cust-name': name.length < 2 ? 'Please enter your name' : '',
+                'cust-phone': /^[6-9]\d{9}$/.test(phone) ? '' : 'Enter a valid 10-digit mobile number',
+                'cust-address': address.length < 8 ? 'Please enter your full address' : '',
+                'cust-pin': /^\d{6}$/.test(pin) ? '' : 'Enter a valid 6-digit pincode'
+            };
+            let bad = false;
+            Object.entries(errs).forEach(([id, msg]) => {
+                $(id).nextElementSibling.textContent = msg;
+                $(id).classList.toggle('border-red-500', !!msg);
+                if (msg && !bad) { bad = true; $(id).focus(); }
+            });
+            if (bad) return;
+
+            const total = cart.reduce((s, i) => s + i.qty * i.price, 0);
+            const lines = cart.map(i => `• ${i.qty}x ${i.name}${i.variant.startsWith('(') ? ' ' : ' - '}${i.variant} - ${rupee(i.qty * i.price)}`).join('\n');
+            const message =
 `*New Order from Singhania's Website!* 🪔
 
 *Customer Details:*
 • Name: ${name}
 • Phone: ${phone}
-• Address: ${addr}, ${pin}
+• Address: ${address}, ${pin}
 
 *Order Summary:*
 ${lines}
@@ -414,38 +483,17 @@ ${lines}
 
 Please confirm availability and payment details.`;
 
-  window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, '_blank');
-};
+            window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
+        }
 
-/* ---------- Helpers ---------- */
-function toast(t) {
-  const el = $('toast'); el.textContent = t; el.style.opacity = 1;
-  clearTimeout(toast.t); toast.t = setTimeout(() => el.style.opacity = 0, 1600);
-}
+        // Scroll-reveal with fail-safe so content is never left hidden
+        const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } }), { threshold: .1 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+        setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('show')), 1500);
 
-// scroll-reveal animation
-let io;
-function observeReveal() {
-  io = io || new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } }), { threshold: .12 });
-  document.querySelectorAll('.reveal:not(.show)').forEach(el => io.observe(el));
-}
-
-// navbar turns solid after hero
-addEventListener('scroll', () => {
-  const s = scrollY > 60, n = $('nav');
-  n.classList.toggle('bg-cream/95', s); n.classList.toggle('shadow', s); n.classList.toggle('backdrop-blur', s);
-  $('logo').classList.toggle('!text-saffron', s);
-  $('links').querySelectorAll('a').forEach(a => a.classList.toggle('!text-charcoal', s));
-}, { passive: true });
-
-/* ---------- Init ---------- */
-$('yr').textContent = new Date().getFullYear();
-renderProducts();
-renderCart();
-lucide.createIcons();
-observeReveal();
-// fail-safe: never leave content hidden if the scroll observer doesn't fire
-setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('show')), 1500);
-</script>
+        $('footer-wa').href = `https://wa.me/${WHATSAPP_NUMBER}`;
+        updatePrices();
+        updateCartUI();
+    </script>
 </body>
 </html>
