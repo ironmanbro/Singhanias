@@ -13,7 +13,28 @@
 
 <!-- Tailwind + Lucide -->
 <script src="https://cdn.tailwindcss.com"></script>
-<script src="https://unpkg.com/lucide@0.263.1/dist/umd/lucide.min.js"></script>
+<script>
+  /* Built-in icon set (no external CDN needed). Replaces <i data-lucide="name"> with inline SVG. */
+  const ICONS = {
+    'arrow-down':'<path d="M12 5v14"/><path d="m19 12-7 7-7-7"/>',
+    'heart':'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+    'flame':'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+    'leaf':'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+    'mail-open':'<path d="M21.2 8.4c.5.38.8.97.8 1.6v10a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V10a2 2 0 0 1 .8-1.6l8-6a2 2 0 0 1 2.4 0l8 6Z"/><path d="m22 10-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 10"/>',
+    'shopping-bag':'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+    'x':'<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    'message-circle':'<path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/>',
+    'plus':'<path d="M5 12h14"/><path d="M12 5v14"/>',
+    'trash-2':'<path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/><path d="M10 11v6"/><path d="M14 11v6"/>'
+  };
+  window.lucide = { createIcons() {
+    document.querySelectorAll('i[data-lucide]').forEach(el => {
+      el.outerHTML = `<svg class="${el.className}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[el.dataset.lucide] || ''}</svg>`;
+    });
+  } };
+  /* Shown if any photo fails to load (warm gradient + diya) */
+  const FALLBACK_IMG = 'data:image/svg+xml;utf8,' + encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='900' height='600'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='#E5A93C'/><stop offset='1' stop-color='#C85A32'/></linearGradient></defs><rect width='900' height='600' fill='url(#g)'/><text x='450' y='340' font-size='120' text-anchor='middle'>🪔</text></svg>");
+</script>
 
 <script>
   // ---- Brand colours: change here and the whole site updates ----
@@ -32,6 +53,14 @@
   /* Rajasthani-style diamond border pattern */
   .jaali{background-image:repeating-linear-gradient(45deg,#E5A93C 0 8px,transparent 8px 16px),repeating-linear-gradient(-45deg,#C85A32 0 8px,transparent 8px 16px);height:10px;opacity:.85}
   .hero-bg{background:radial-gradient(circle at 20% 20%,rgba(229,169,60,.35),transparent 45%),radial-gradient(circle at 85% 80%,rgba(255,255,255,.12),transparent 40%),linear-gradient(135deg,#9E3F1E,#C85A32 55%,#D9803F)}
+  /* scalloped (kangura) edge along the bottom of the hero */
+  .scallop{height:22px;background:radial-gradient(circle at 14px 0,#FAF6F0 13px,transparent 14px) 0 0/28px 22px repeat-x}
+  /* ornamental divider */
+  .orn{display:flex;align-items:center;justify-content:center;gap:12px;color:#E5A93C}
+  .orn::before,.orn::after{content:"";height:2px;width:70px;background:linear-gradient(90deg,transparent,#E5A93C)}
+  .orn::after{transform:scaleX(-1)}
+  /* faint mandala-style dot pattern for hero */
+  .dots{background-image:radial-gradient(rgba(255,255,255,.18) 1.5px,transparent 1.6px);background-size:26px 26px}
   .pill{transition:all .2s}
   .pill.active{background:#C85A32;color:#fff;border-color:#C85A32}
   .reveal{opacity:0;transform:translateY(24px);transition:all .7s ease}
@@ -59,8 +88,11 @@
 </header>
 
 <!-- ============ HERO ============ -->
-<section id="top" class="hero-bg relative text-white pt-32 pb-24 px-4 text-center overflow-hidden">
+<section id="top" class="hero-bg dots relative text-white pt-32 pb-28 px-4 text-center overflow-hidden">
+  <div class="jaali absolute top-0 inset-x-0"></div>
   <div class="max-w-3xl mx-auto relative">
+    <!-- EDIT BADGE TEXT -->
+    <span class="inline-block bg-white/15 border border-gold/70 text-gold text-xs sm:text-sm font-bold px-4 py-1.5 rounded-full mb-5 backdrop-blur">✦ Made Fresh in Small Batches • Shipped from Rajasthan ✦</span>
     <p class="font-hand text-2xl text-gold mb-2">॥ Ghar ka swaad, Maa ke haath se ॥</p>
     <h1 class="font-serif text-5xl sm:text-7xl font-bold mb-5">Singhania's</h1>
     <!-- EDIT TAGLINE -->
@@ -69,7 +101,7 @@
       Explore Snacks <i data-lucide="arrow-down" class="w-4 h-4"></i>
     </a>
   </div>
-  <div class="jaali absolute bottom-0 inset-x-0"></div>
+  <div class="scallop absolute bottom-0 inset-x-0"></div>
 </section>
 
 <!-- ============ HIGHLIGHTS ============ -->
@@ -108,12 +140,37 @@
   </div>
 </section>
 
+<!-- ============ GALLERY (replace image URLs with your own photos) ============ -->
+<section class="max-w-6xl mx-auto px-4 pt-16">
+  <div class="text-center mb-8">
+    <div class="orn text-lg">❖ ✦ ❖</div>
+    <h2 class="font-serif text-3xl font-bold mt-2">From Our Kitchen to Your Tea-Time</h2>
+  </div>
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
+      <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Crispy Indian snacks"
+           src="https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=700&q=80">
+      <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-charcoal/80 to-transparent text-white text-sm font-bold p-3">Crispy &amp; golden</figcaption>
+    </figure>
+    <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
+      <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Chai and snacks tea-time spread"
+           src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=700&q=80">
+      <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-charcoal/80 to-transparent text-white text-sm font-bold p-3">Chai ke saath</figcaption>
+    </figure>
+    <figure class="reveal relative rounded-2xl overflow-hidden border-4 border-white shadow-md h-56">
+      <img loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover" alt="Traditional brass dabba"
+           src="https://images.unsplash.com/photo-1585032226651-759b368d7246?auto=format&fit=crop&w=700&q=80">
+      <figcaption class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-charcoal/80 to-transparent text-white text-sm font-bold p-3">Packed in a dabba, with love</figcaption>
+    </figure>
+  </div>
+</section>
+
 <!-- ============ SHOP ============ -->
 <section id="shop" class="max-w-6xl mx-auto px-4 py-16">
   <div class="text-center mb-12">
     <p class="font-hand text-2xl text-saffron">Aaj kya khaoge?</p>
     <h2 class="font-serif text-4xl font-bold">Our Snacks</h2>
-    <div class="w-24 h-1 bg-gold mx-auto mt-3 rounded"></div>
+    <div class="orn mt-2">✦</div>
   </div>
   <div id="grid" class="grid gap-8 md:grid-cols-2"></div>
 </section>
@@ -143,7 +200,7 @@
     <div id="items" class="space-y-3"></div>
     <p id="empty" class="text-center text-charcoal/60 py-12">Your dabba is empty. Add some snacks! 🪔</p>
 
-    <form id="form" class="mt-6 space-y-3 hidden" novalidate>
+    <form id="form" class="mt-6 space-y-3" novalidate>
       <h4 class="font-serif font-semibold">Delivery Details</h4>
       <div><input id="fName" placeholder="Full Name *" class="w-full rounded-lg border border-sand bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-saffron"><small class="err text-red-600"></small></div>
       <div><input id="fPhone" type="tel" inputmode="numeric" placeholder="Phone Number (10 digits) *" class="w-full rounded-lg border border-sand bg-white px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-saffron"><small class="err text-red-600"></small></div>
@@ -152,7 +209,7 @@
     </form>
   </div>
 
-  <div id="foot" class="p-4 border-t border-sand bg-white hidden">
+  <div id="foot" class="p-4 border-t border-sand bg-white">
     <div class="flex justify-between font-bold text-lg mb-3"><span>Total</span><span id="total">₹0</span></div>
     <button id="orderBtn" class="w-full bg-[#25D366] hover:bg-[#1ebe5a] text-white font-bold py-3.5 rounded-full flex items-center justify-center gap-2 transition">
       <i data-lucide="message-circle" class="w-5 h-5"></i> Order via WhatsApp
@@ -217,7 +274,8 @@ function renderProducts() {
     return `
     <article class="reveal bg-white rounded-3xl overflow-hidden border border-sand shadow-md hover:shadow-xl transition flex flex-col">
       <div class="relative h-60 sm:h-72 overflow-hidden">
-        <img src="${p.image}" alt="${p.name}" loading="lazy" class="w-full h-full object-cover hover:scale-105 transition duration-700">
+        <img src="${p.image}" alt="${p.name}" loading="lazy" onerror="this.onerror=null;this.src=FALLBACK_IMG" class="w-full h-full object-cover hover:scale-105 transition duration-700">
+        <div class="jaali absolute bottom-0 inset-x-0"></div>
         <span class="absolute top-4 left-4 bg-gold text-charcoal text-xs font-bold px-3 py-1 rounded-full">${p.badge}</span>
       </div>
       <div class="p-6 flex flex-col flex-1">
@@ -288,8 +346,6 @@ function renderCart() {
   $('badge').textContent = count;
   $('badge').classList.toggle('hidden', !count);
   $('empty').classList.toggle('hidden', !!count);
-  $('form').classList.toggle('hidden', !count);
-  $('foot').classList.toggle('hidden', !count);
   $('total').textContent = rupee(total);
   $('items').innerHTML = cart.map((i, idx) => `
     <div class="bg-white border border-sand rounded-xl p-3 flex gap-3 items-center">
@@ -338,7 +394,8 @@ $('orderBtn').onclick = () => {
     $(id).classList.toggle('border-red-500', !!msg);
     if (msg && !bad) { bad = true; $(id).focus(); }
   });
-  if (bad || !cart.length) return;
+  if (!cart.length) return toast('Please add a snack to your cart first');
+  if (bad) return;
 
   const total = cart.reduce((a, i) => a + i.qty * i.price, 0);
   const lines = cart.map(i => `• ${i.qty}x ${itemLabel(i)} - ${rupee(i.price * i.qty)}`).join('\n');
@@ -387,6 +444,8 @@ renderProducts();
 renderCart();
 lucide.createIcons();
 observeReveal();
+// fail-safe: never leave content hidden if the scroll observer doesn't fire
+setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('show')), 1500);
 </script>
 </body>
 </html>
