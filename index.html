@@ -303,7 +303,7 @@
                 <p class="text-brand-muted text-sm" data-hi="ताज़ा बने, साफ़ फ़ूड-ग्रेड पाउच में पैक, और प्यार से सील किए हुए।">Freshly prepared, packed in clean food-grade pouches, and sealed with love.</p>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
                 <!-- Product 1: Swali (Mathri) -->
                 <div class="reveal bg-brand-card rounded-2xl p-6 sm:p-8 border border-brand-gold/30 shadow-sm flex flex-col justify-between">
@@ -319,7 +319,7 @@
 
                         <div class="mt-4 space-y-2">
                             <label class="text-xs font-bold uppercase tracking-wider text-brand-dark block" data-hi="बनाने का तरीक़ा:">Cooking Style:</label>
-                            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                            <div class="grid grid-cols-1 gap-2 min-[480px]:grid-cols-3 lg:grid-cols-1 xl:grid-cols-3">
                                 <button type="button" data-p="swali" data-c="type" data-v="Fresh Saffola Oil" class="vbtn sel px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">Fresh Saffola Oil</button>
                                 <button type="button" data-p="swali" data-c="type" data-v="Pure Desi Ghee" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">Pure Desi Ghee</button>
                                 <button type="button" data-p="swali" data-c="type" data-v="Air-Fried" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">Air-Fried (Healthy)</button>
@@ -356,24 +356,12 @@
                 <div class="reveal bg-brand-card rounded-2xl p-6 sm:p-8 border border-brand-gold/30 shadow-sm flex flex-col justify-between">
                     <div>
                         <div data-crunch class="arch aspect-video overflow-hidden mb-6 relative">
-                            <!-- Illustration (swap for a real photo anytime: <img src="images/chakli.webp">) -->
-                            <svg class="art w-full h-full" viewBox="0 0 400 225" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Illustration of crunchy chakli">
-                                <defs><linearGradient id="chbg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F6D9A0"/><stop offset="1" stop-color="#E8A25C"/></linearGradient></defs>
-                                <rect width="400" height="225" fill="url(#chbg)"/>
-                                <ellipse cx="200" cy="205" rx="160" ry="12" fill="#2D2522" opacity=".15"/>
-                                <path class="spiral" data-cx="150" data-cy="108" data-k="2.7" data-t="3.4" fill="none" stroke="#7A4510" stroke-width="13" stroke-linecap="round" opacity=".35" transform="translate(3,4)"/>
-                                <path class="spiral" data-cx="150" data-cy="108" data-k="2.7" data-t="3.4" fill="none" stroke="#DD8F34" stroke-width="11" stroke-linecap="round"/>
-                                <path class="spiral" data-cx="150" data-cy="108" data-k="2.7" data-t="3.4" fill="none" stroke="#F7C679" stroke-width="3" stroke-linecap="round" transform="translate(-1,-2)"/>
-                                <path class="spiral" data-cx="285" data-cy="125" data-k="2" data-t="3" fill="none" stroke="#7A4510" stroke-width="11" stroke-linecap="round" opacity=".35" transform="translate(3,4)"/>
-                                <path class="spiral" data-cx="285" data-cy="125" data-k="2" data-t="3" fill="none" stroke="#DD8F34" stroke-width="9" stroke-linecap="round"/>
-                                <path class="spiral" data-cx="285" data-cy="125" data-k="2" data-t="3" fill="none" stroke="#F7C679" stroke-width="2.5" stroke-linecap="round" transform="translate(-1,-2)"/>
-                                <g fill="#FFF6E0"><ellipse cx="120" cy="86" rx="3" ry="1.6"/><ellipse cx="176" cy="120" rx="3" ry="1.6"/><ellipse cx="150" cy="150" rx="3" ry="1.6"/><ellipse cx="270" cy="108" rx="3" ry="1.6"/><ellipse cx="300" cy="140" rx="3" ry="1.6"/><ellipse cx="85" cy="170" rx="3" ry="1.6"/><ellipse cx="350" cy="178" rx="3" ry="1.6"/></g>
-                            </svg>
+                            <img src="images/chakli.webp" alt="Crunchy ribbed Chakli in a box" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                             <span class="absolute bottom-3 left-3 bg-brand-gold text-brand-dark text-xs px-3 py-1 rounded-full font-semibold" data-hi="माँ की ख़ास">Mom's Special</span>
                         </div>
                         <h3 class="font-serif text-2xl font-bold text-brand-dark">Chakli</h3>
                         <p class="text-xs text-brand-saffron font-semibold mt-1">चकली</p>
-                        <p class="text-brand-muted text-sm mt-3 leading-relaxed" data-hi="घर पर ताज़ा बनी, कुरकुरी, मसालेदार चावल के आटे की चकली।">Crunchy, spiced rice-flour spiral snacks made fresh at home.</p>
+                        <p class="text-brand-muted text-sm mt-3 leading-relaxed" data-hi="चावल के आटे की कुरकुरी, तिल-जीरे वाली चकली, घर पर ताज़ा बनी।">Crunchy rice-flour chakli with sesame and jeera, made fresh at home.</p>
                         <button type="button" data-info="chakli" class="mt-2 text-xs font-bold text-brand-indigo underline underline-offset-2 min-h-[36px]" data-hi="सामग्री और जानकारी देखें">Ingredients &amp; details</button>
 
                         <div class="mt-4 space-y-2">
@@ -398,6 +386,44 @@
                                 <button type="button" data-qty="chakli" data-d="1" aria-label="Increase quantity" class="w-10 h-11 text-lg font-bold hover:bg-brand-card">+</button>
                             </div>
                             <button type="button" data-add="chakli" class="bg-brand-terracotta text-white px-5 min-h-[44px] rounded-full text-sm font-semibold hover:bg-brand-saffron transition shadow-sm" data-hi="झोले में डालें 🪔">Add to Jhola 🪔</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product 3: Chivda (roasted poha) -->
+                <div class="reveal bg-brand-card rounded-2xl p-6 sm:p-8 border border-brand-gold/30 shadow-sm flex flex-col justify-between">
+                    <div>
+                        <div data-crunch class="arch aspect-video overflow-hidden mb-6 relative">
+                            <img src="images/chivda.webp" alt="Roasted poha chivda with peanuts and curry leaves" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                            <span class="absolute bottom-3 left-3 bg-brand-indigo text-white text-xs px-3 py-1 rounded-full font-semibold" data-hi="चाय का साथी">Tea-time favourite</span>
+                        </div>
+                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Roasted Poha Chivda</h3>
+                        <p class="text-xs text-brand-saffron font-semibold mt-1">भुना पोहा चिवड़ा</p>
+                        <p class="text-brand-muted text-sm mt-3 leading-relaxed" data-hi="पतले भुने पोहे, मूँगफली और भुने चने का हल्का, कुरकुरा और चटपटा मिक्स।">Light, crunchy roasted thin poha with peanuts and roasted chana, in a sweet-and-spicy mix.</p>
+                        <button type="button" data-info="chivda" class="mt-2 text-xs font-bold text-brand-indigo underline underline-offset-2 min-h-[36px]" data-hi="सामग्री और जानकारी देखें">Ingredients &amp; details</button>
+
+                        <div class="mt-4 space-y-2">
+                            <label class="text-xs font-bold uppercase tracking-wider text-brand-dark block" data-hi="पैक का साइज़:">Pack Size:</label>
+                            <div class="grid grid-cols-3 gap-2">
+                                <button type="button" data-p="chivda" data-c="size" data-v="250gms" class="vbtn sel px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">250gms</button>
+                                <button type="button" data-p="chivda" data-c="size" data-v="500gms" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">500gms</button>
+                                <button type="button" data-p="chivda" data-c="size" data-v="1kg" class="vbtn px-3 py-2 text-xs font-semibold rounded-lg border border-brand-gold/50 bg-brand-bg text-brand-dark hover:border-brand-saffron transition">1kg</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mt-8 pt-6 border-t border-brand-dark/10 flex flex-wrap items-center justify-between gap-3">
+                        <div>
+                            <span class="text-xs text-brand-muted block" data-hi="कीमत">Price</span>
+                            <span id="chivda-price" class="font-serif text-2xl font-bold text-brand-dark">₹120</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <div class="flex items-center border border-brand-dark/20 rounded-full bg-white overflow-hidden">
+                                <button type="button" data-qty="chivda" data-d="-1" aria-label="Decrease quantity" class="w-10 h-11 text-lg font-bold hover:bg-brand-card">−</button>
+                                <span id="chivda-qty" class="w-6 text-center text-sm font-bold">1</span>
+                                <button type="button" data-qty="chivda" data-d="1" aria-label="Increase quantity" class="w-10 h-11 text-lg font-bold hover:bg-brand-card">+</button>
+                            </div>
+                            <button type="button" data-add="chivda" class="bg-brand-terracotta text-white px-5 min-h-[44px] rounded-full text-sm font-semibold hover:bg-brand-saffron transition shadow-sm" data-hi="झोले में डालें 🪔">Add to Jhola 🪔</button>
                         </div>
                     </div>
                 </div>
@@ -597,9 +623,10 @@
                 'Pure Desi Ghee':    { '250gms': 150, '500gms': 280, '1kg': 520 },
                 'Air-Fried':         { '250gms': 120, '500gms': 220, '1kg': 400 }
             },
-            chakli: { '250gms': 120, '500gms': 220, '1kg': 400 }
+            chakli: { '250gms': 120, '500gms': 220, '1kg': 400 },
+            chivda: { '250gms': 120, '500gms': 220, '1kg': 400 }   // PLACEHOLDER prices: set your real ones
         };
-        const NAMES = { swali: 'Swali (Mathri)', chakli: 'Chakli' };
+        const NAMES = { swali: 'Swali (Mathri)', chakli: 'Chakli', chivda: 'Roasted Poha Chivda' };
 
         // Customer chitthiyan. Add real messages here and the section appears. Example:
         //   { name: 'Priya', city: 'Pune', text: 'Bilkul ghar jaisa swaad!' }
@@ -616,10 +643,17 @@
             },
             chakli: {
                 hi: 'चकली',
-                ingredients: 'Rice flour, sesame seeds, ajwain, gentle spices, salt, and oil / desi ghee.',
-                ingredientsHi: 'चावल का आटा, तिल, अजवाइन, हल्के मसाले, नमक और तेल / देसी घी।',
+                ingredients: 'Rice flour, curd, salt, white til (sesame seeds), red chilli powder, jeera and haldi, kneaded soft and fried fresh.',
+                ingredientsHi: 'चावल का आटा, दही, नमक, सफ़ेद तिल, लाल मिर्च पाउडर, जीरा और हल्दी; नरम गूँधकर ताज़ा तला जाता है।',
                 shelf: 'About 3 weeks in an airtight container.', shelfHi: 'हवाबंद डब्बे में लगभग 3 हफ़्ते।',
                 pair: 'Lovely with evening tea or as a crunchy snack.', pairHi: 'शाम की चाय या कुरकुरे नाश्ते के साथ लाजवाब।'
+            },
+            chivda: {
+                hi: 'भुना पोहा चिवड़ा',
+                ingredients: 'Thin roasted poha, peanuts, roasted chana (without skin), salt, sugar and powdered sugar, green chilli, red chilli powder, jeera, rai, haldi and curry patta.',
+                ingredientsHi: 'पतला भुना पोहा, मूँगफली, बिना छिलके का भुना चना, नमक, चीनी और पिसी चीनी, हरी मिर्च, लाल मिर्च पाउडर, जीरा, राई, हल्दी और कढ़ी पत्ता।',
+                shelf: 'About 3 weeks in an airtight container.', shelfHi: 'हवाबंद डब्बे में लगभग 3 हफ़्ते।',
+                pair: 'Best with masala chai, or straight from the box.', pairHi: 'मसाला चाय के साथ, या सीधे डब्बे से।'
             }
         };
 
@@ -655,12 +689,12 @@
         let lang = store.get('lang', 'en');
         const tr = k => T[k][lang === 'hi' ? 1 : 0];
 
-        const sel = { swali: { type: 'Fresh Saffola Oil', size: '250gms' }, chakli: { size: '250gms' } };
-        const qty = { swali: 1, chakli: 1 };
+        const sel = { swali: { type: 'Fresh Saffola Oil', size: '250gms' }, chakli: { size: '250gms' }, chivda: { size: '250gms' } };
+        const qty = { swali: 1, chakli: 1, chivda: 1 };
         let cart = store.get('cart', []);
 
-        const priceOf = p => p === 'swali' ? PRICES.swali[sel.swali.type][sel.swali.size] : PRICES.chakli[sel.chakli.size];
-        const variantOf = p => p === 'swali' ? `${sel.swali.type} (${sel.swali.size})` : `(${sel.chakli.size})`;
+        const priceOf = p => p === 'swali' ? PRICES.swali[sel.swali.type][sel.swali.size] : PRICES[p][sel[p].size];
+        const variantOf = p => p === 'swali' ? `${sel.swali.type} (${sel.swali.size})` : `(${sel[p].size})`;
         const cartTotal = () => cart.reduce((s, i) => s + i.qty * i.price, 0);
         const cartCount = () => cart.reduce((s, i) => s + i.qty, 0);
 
@@ -683,8 +717,7 @@
         $('lang-btn').onclick = () => { lang = lang === 'hi' ? 'en' : 'hi'; store.set('lang', lang); applyLang(); };
 
         function updatePrices() {
-            $('swali-price').textContent = rupee(priceOf('swali'));
-            $('chakli-price').textContent = rupee(priceOf('chakli'));
+            ['swali', 'chakli', 'chivda'].forEach(p => $(p + '-price').textContent = rupee(priceOf(p)));
         }
 
         /* ---------- Clicks: variant pills, quantity, add to cart, details ---------- */
