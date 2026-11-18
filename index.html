@@ -355,9 +355,18 @@
                 <!-- Product 2: Chakli -->
                 <div class="reveal bg-brand-card rounded-2xl p-6 sm:p-8 border border-brand-gold/30 shadow-sm flex flex-col justify-between">
                     <div>
-                        <div data-crunch class="arch aspect-video overflow-hidden mb-6 relative">
-                            <img src="images/chakli.webp" alt="Crunchy ribbed Chakli in a box" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
-                            <span class="absolute bottom-3 left-3 bg-brand-gold text-brand-dark text-xs px-3 py-1 rounded-full font-semibold" data-hi="माँ की ख़ास">Mom's Special</span>
+                        <div class="mb-6">
+                            <div data-crunch class="arch aspect-video overflow-hidden relative">
+                                <img id="chakli-main" src="images/chakli.webp" alt="Crunchy ribbed Chakli" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <span class="absolute bottom-3 left-3 bg-brand-gold text-brand-dark text-xs px-3 py-1 rounded-full font-semibold" data-hi="माँ की ख़ास">Mom's Special</span>
+                                <span id="chakli-ill" class="hidden absolute bottom-3 right-3 bg-brand-dark/70 text-white text-[10px] px-2 py-1 rounded-full" data-hi="सांकेतिक तस्वीर">Illustrative photo</span>
+                            </div>
+                            <!-- Tap a thumbnail to change the photo. data-real="1" = a photo of your actual chakli -->
+                            <div class="flex gap-2 mt-3 justify-center">
+                                <button type="button" data-thumb="images/chakli.webp" data-real="1" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/chakli.webp" alt="" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-bowl.webp" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chakli-bowl.webp" alt="" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-closeup.webp" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chakli-closeup.webp" alt="" class="w-full h-full object-cover"></button>
+                            </div>
                         </div>
                         <h3 class="font-serif text-2xl font-bold text-brand-dark">Chakli</h3>
                         <p class="text-xs text-brand-saffron font-semibold mt-1">चकली</p>
@@ -754,6 +763,14 @@
             }
             const info = e.target.closest('[data-info]');
             if (info) openInfo(info.dataset.info);
+        });
+
+        /* ---------- Chakli photo thumbnails ---------- */
+        document.addEventListener('click', e => {
+            const t = e.target.closest('[data-thumb]'); if (!t) return;
+            $('chakli-main').src = t.dataset.thumb;
+            $('chakli-ill').classList.toggle('hidden', t.dataset.real === '1');
+            t.parentElement.querySelectorAll('[data-thumb]').forEach(b => { b.classList.toggle('border-brand-terracotta', b === t); b.classList.toggle('border-transparent', b !== t); });
         });
 
         /* ---------- Product details modal ---------- */
