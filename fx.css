@@ -1,0 +1,122 @@
+/* Singhania's — surprise layer (animations & illustrations). Loaded after styles.css */
+
+/* Effects canvas (petals, crumbs, sparks, fireworks) */
+#fx { position:fixed; inset:0; width:100%; height:100%; pointer-events:none; z-index:90; }
+
+/* ---------- Diya intro ---------- */
+#intro { position:fixed; inset:0; z-index:80; background:#1d1613; display:flex; flex-direction:column; align-items:center; justify-content:center; color:#F4ECE1; transition:opacity .7s; overflow:hidden; }
+#intro.out { opacity:0; pointer-events:none; }
+.intro-glow { position:absolute; left:50%; top:50%; width:40px; height:40px; margin:-20px 0 0 -20px; border-radius:50%;
+  background:radial-gradient(circle,#FFD27A 0%,rgba(229,169,60,.6) 22%,rgba(200,90,50,.25) 46%,transparent 70%); transform:scale(0); transition:transform 1.8s cubic-bezier(.2,.7,.2,1) .2s; }
+#intro.lit .intro-glow { transform:scale(26); }
+.intro-diya { position:relative; width:120px; height:90px; z-index:1; }
+.intro-diya .flame { transform-origin:50% 100%; transform:scale(0); opacity:0; transition:transform .8s .3s, opacity .8s .3s; animation:flick 1.1s ease-in-out infinite; }
+#intro.lit .flame { transform:scale(1); opacity:1; }
+@keyframes flick { 0%,100% { transform:scale(1) skewX(0); } 50% { transform:scale(1.07,.94) skewX(3deg); } }
+.intro-title { position:relative; z-index:1; margin-top:22px; font:700 44px 'Playfair Display','Yatra One',serif; color:#FFE2A8; opacity:0; transform:translateY(12px); transition:all 1s 1.1s; text-shadow:0 0 24px rgba(229,169,60,.7); }
+.intro-sub { position:relative; z-index:1; margin-top:6px; font-size:14px; letter-spacing:.08em; color:#EAD9BF; opacity:0; transition:opacity 1s 1.6s; }
+#intro.lit .intro-title { opacity:1; transform:none; }
+#intro.lit .intro-sub { opacity:.9; }
+#intro-skip { position:absolute; right:18px; bottom:18px; z-index:2; color:#EAD9BF; border:1px solid rgba(234,217,191,.4); border-radius:999px; padding:8px 16px; font-size:12px; min-height:44px; }
+
+/* ---------- Hero: kites + time-of-day tint ---------- */
+.kite { position:absolute; width:38px; animation:kite 8s ease-in-out infinite; filter:drop-shadow(0 4px 6px rgba(0,0,0,.12)); }
+@keyframes kite { 0%,100% { transform:translate(0,0) rotate(-8deg); } 50% { transform:translate(22px,-26px) rotate(10deg); } }
+.hero-tint { position:absolute; inset:0; pointer-events:none; background:var(--tint,transparent); transition:background 1s; }
+html[data-time=morning] { --tint:linear-gradient(180deg,rgba(255,214,140,.28),transparent 70%); }
+html[data-time=evening] { --tint:linear-gradient(180deg,rgba(200,90,50,.18),transparent 75%); }
+html[data-time=night]   { --tint:linear-gradient(180deg,rgba(47,75,124,.22),transparent 80%); }
+
+/* festival strip */
+#fest { display:none; background:linear-gradient(90deg,#9E3B1C,#C85A32,#D99B26); color:#fff; text-align:center; font-size:13px; font-weight:700; padding:8px 12px; }
+
+/* ---------- Sealed envelope + handwritten letter ---------- */
+.hand { font-family:'Kalam','Caveat','Playfair Display',cursive; }
+.env { position:absolute; inset:0; z-index:5; border-radius:1rem; overflow:hidden; cursor:pointer; background:#EAD9BF;
+  box-shadow:inset 0 0 0 2px #D99B26; display:flex; align-items:center; justify-content:center;
+  transition:opacity .6s .45s, transform .8s .45s; }
+.env .lower { position:absolute; inset:0; background:#E0CAA8; clip-path:polygon(0 100%,50% 48%,100% 100%); }
+.env .flap { position:absolute; top:0; left:0; right:0; height:56%; background:#D8BF98; clip-path:polygon(0 0,100% 0,50% 100%); transform-origin:top; transition:transform .6s; z-index:1; }
+.env .seal { position:relative; z-index:2; width:76px; height:76px; border-radius:50%; color:#F4ECE1; font:700 30px 'Playfair Display',serif;
+  background:radial-gradient(circle at 35% 30%,#D2693E,#7A2A12); display:flex; align-items:center; justify-content:center;
+  box-shadow:0 6px 14px rgba(0,0,0,.3), inset 0 0 0 4px rgba(255,255,255,.15); animation:pulse 1.8s ease-in-out infinite; }
+.env .env-hint { position:absolute; bottom:22px; left:0; right:0; text-align:center; font-weight:600; font-size:14px; color:#7A2A12; z-index:2; padding:0 16px; }
+.env.open .flap { transform:rotateX(180deg); }
+.env.open .seal, .env.open .env-hint { opacity:0; transition:opacity .3s; }
+.env.open { opacity:0; transform:translateY(40px); pointer-events:none; }
+@keyframes pulse { 50% { transform:scale(1.08); } }
+/* each paragraph "writes itself" left to right */
+.ink { clip-path:inset(-4px 100% -4px 0); }
+.written .ink { animation:write 1.2s ease-out forwards; animation-delay:calc(var(--i,0) * .9s + .6s); }
+@keyframes write { to { clip-path:inset(-4px 0 -4px 0); } }
+
+/* speech bubble ("Kurr-kurr!") */
+.bubble { position:fixed; z-index:95; pointer-events:none; font-weight:800; font-size:14px; color:#9E3B1C; background:#fff; padding:4px 12px; border-radius:999px;
+  box-shadow:0 4px 12px rgba(0,0,0,.18); animation:bub 1.1s forwards; white-space:nowrap; }
+@keyframes bub { from { transform:translate(-50%,0) scale(.6); opacity:0; } 20% { opacity:1; transform:translate(-50%,-12px) scale(1); } to { transform:translate(-50%,-64px); opacity:0; } }
+[data-crunch] { cursor:pointer; }
+
+/* ---------- Making section illustrations ---------- */
+.making-line { position:absolute; left:12%; right:12%; top:150px; height:3px; background:rgba(158,59,28,.15); border-radius:2px; }
+.making-line i { display:block; height:100%; width:calc(var(--p,0) * 100%); background:linear-gradient(90deg,#D99B26,#C85A32); border-radius:2px; }
+.step .scene * { animation-play-state:paused; }
+.step.in .scene * { animation-play-state:running; }
+.scene .dough { transform-box:fill-box; transform-origin:center; animation:knead 1.6s ease-in-out infinite; }
+.scene .hand-k { animation:press 1.6s ease-in-out infinite; }
+.scene .puff { animation:puff 1.6s ease-out infinite; opacity:0; }
+@keyframes knead { 0%,100% { transform:scale(1,1); } 50% { transform:scale(1.08,.8); } }
+@keyframes press { 0%,100% { transform:translateY(-8px); } 50% { transform:translateY(8px); } }
+@keyframes puff { 0%,40% { opacity:0; transform:translateY(0); } 55% { opacity:.8; } 100% { opacity:0; transform:translateY(-14px); } }
+.scene .pin { animation:roll 1.8s ease-in-out infinite alternate; }
+@keyframes roll { from { transform:translateX(-22px); } to { transform:translateX(22px); } }
+.scene .cutter { transform-box:fill-box; transform-origin:center; animation:stamp 2.4s ease-in-out infinite; }
+@keyframes stamp { 0%,100% { transform:translateY(-16px); opacity:.4; } 20% { transform:translateY(0); opacity:1; } 35% { transform:translateY(-16px); opacity:.4; } }
+.scene .disc { transform-box:fill-box; transform-origin:center; animation:popin 2.4s ease-out infinite; }
+@keyframes popin { 0%,15% { transform:scale(0); } 30%,100% { transform:scale(1); } }
+.scene .fry { transform-box:fill-box; transform-origin:center; animation:bob 1.4s ease-in-out infinite; }
+@keyframes bob { 0%,100% { transform:translateY(0) rotate(0); } 50% { transform:translateY(-3px) rotate(6deg); } }
+.scene .bub { animation:bubble 1.8s ease-in infinite; opacity:0; }
+@keyframes bubble { 0% { transform:translateY(8px); opacity:0; } 30% { opacity:.9; } 100% { transform:translateY(-18px); opacity:0; } }
+.scene .steam { animation:steam 2.4s ease-out infinite; opacity:0; }
+@keyframes steam { 0% { transform:translateY(6px); opacity:0; } 40% { opacity:.6; } 100% { transform:translateY(-16px); opacity:0; } }
+
+/* ---------- Brass dabba that opens + chai steam ---------- */
+#dabba-art .lid { transform-box:fill-box; transform-origin:left bottom; transition:transform .8s cubic-bezier(.3,1.4,.5,1); }
+#dabba-art.in .lid { transform:translate(-22px,-30px) rotate(-26deg); }
+#dabba-art .snack { transition:transform .7s cubic-bezier(.3,1.6,.5,1), opacity .4s; transform:translateY(34px) scale(.5); opacity:0; transform-box:fill-box; transform-origin:center; }
+#dabba-art.in .snack { transform:translateY(0) scale(1); opacity:1; }
+#dabba-art.in .snack:nth-child(2) { transition-delay:.12s; } #dabba-art.in .snack:nth-child(3) { transition-delay:.24s; }
+#dabba-art.in .snack:nth-child(4) { transition-delay:.36s; } #dabba-art.in .snack:nth-child(5) { transition-delay:.48s; }
+#dabba-art { cursor:pointer; }
+.chai-steam path { stroke-dasharray:6 8; animation:wisp 3s linear infinite; transform:translateX(var(--sx,0px)); transition:transform .4s; }
+.chai-steam path:nth-child(2) { animation-delay:-1s; } .chai-steam path:nth-child(3) { animation-delay:-2s; }
+@keyframes wisp { to { stroke-dashoffset:-56; } }
+
+/* variant glow on product cards */
+[data-glow] { transition:box-shadow .5s; }
+[data-glow=ghee] { box-shadow:0 0 0 2px #E5A93C, 0 0 42px rgba(229,169,60,.5); }
+[data-glow=oil]  { box-shadow:0 0 0 2px #C85A32, 0 0 34px rgba(200,90,50,.35); }
+[data-glow=air]  { box-shadow:0 0 0 2px #5C9B6A, 0 0 34px rgba(92,155,106,.35); }
+
+/* ---------- Dusk footer scene ---------- */
+.dusk { height:230px; background:linear-gradient(180deg,#FAF6F0 0%,#F3C98B 32%,#C85A32 68%,#5a2a2a 92%,#2D2522 100%); position:relative; }
+.dusk .sun { position:absolute; left:50%; bottom:46px; width:90px; height:90px; margin-left:-45px; border-radius:50%; background:radial-gradient(circle,#FFE9B8,#F6B54E 60%,transparent 72%); opacity:.9; }
+.dusk .skyline { position:absolute; left:0; right:0; bottom:-1px; width:100%; height:110px; }
+.dusk .kite { opacity:.9; }
+.dusk .diya { position:absolute; left:50%; bottom:6px; margin-left:-16px; width:32px; z-index:2; }
+.dusk .diya .flame { transform-origin:50% 100%; animation:flick 1.1s ease-in-out infinite; }
+
+/* ---------- Customer chitthiyan ---------- */
+.note { background:#FFFDF8; box-shadow:0 8px 20px rgba(45,37,34,.12); background-image:repeating-linear-gradient(transparent 0 27px,rgba(200,90,50,.10) 27px 28px); }
+.note:nth-child(odd) { transform:rotate(-1.2deg); } .note:nth-child(even) { transform:rotate(1deg); }
+
+/* sound button */
+#snd-btn { min-height:44px; min-width:44px; }
+
+@media (prefers-reduced-motion:reduce) {
+  .kite,.env .seal,.intro-diya .flame,.dusk .diya .flame { animation:none !important; }
+  .ink { clip-path:none; }
+  .scene * { animation:none !important; }
+  #dabba-art .lid { transform:translate(-22px,-30px) rotate(-26deg); }
+  #dabba-art .snack { transform:none; opacity:1; }
+}
