@@ -5,14 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#9E3B1C">
     <title>Singhania's — Authentic Mom's Rajasthani Snacks</title>
-    <meta name="description" content="Mom's special recipe Swali (Mathri) and Chakli, freshly home-cooked in Saffola oil or desi ghee. Zero preservatives.">
+    <meta name="description" content="Home-made Rajasthani Swali (Mathri), Chakli and Poha Chivda from Mom's special recipe, freshly made in small batches. Zero preservatives.">
     <!-- Link preview (WhatsApp / Instagram). EDIT the domain if you change it -->
     <meta property="og:type" content="website">
     <meta property="og:title" content="Singhania's — Authentic Mom's Rajasthani Snacks">
     <meta property="og:description" content="Swali & Chakli made fresh in small batches with Mom's special recipe. Zero preservatives.">
-    <meta property="og:image" content="https://singhanias.ironmanbro.workers.dev/images/swali.jpg">
+    <meta property="og:image" content="https://singhanias.ironmanbro.workers.dev/images/og.jpg">
     <meta name="twitter:card" content="summary_large_image">
 
+    <script type="application/ld+json">{"@context":"https://schema.org","@type":"Organization","name":"Singhania's","url":"https://singhanias.ironmanbro.workers.dev/","description":"Home-made Rajasthani snacks: Swali (Mathri), Chakli and Poha Chivda."}</script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
@@ -58,6 +59,7 @@
     </style>
 </head>
 <body class="antialiased selection:bg-brand-saffron selection:text-white pb-16 md:pb-0">
+    <a href="#dabba" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded">Skip to shop</a>
 
     <!-- Diya intro (shown once per visit; tap to skip) -->
     <div id="intro" role="dialog" aria-label="Welcome to Singhania's">
@@ -103,15 +105,28 @@
 
             <div class="flex items-center gap-2">
                 <!-- Sound toggle (off by default) -->
-                <button id="snd-btn" type="button" aria-label="Toggle sound" class="rounded-full border border-brand-indigo/40 text-lg hover:bg-brand-card transition">🔇</button>
+                <button type="button" aria-label="Toggle sound" class="snd-toggle hidden md:inline-flex items-center justify-center rounded-full border border-brand-indigo/40 text-lg hover:bg-brand-card transition"><span class="snd-ico">🔇</span></button>
                 <!-- Language toggle -->
-                <button id="lang-btn" type="button" aria-label="Switch language" class="min-h-[44px] px-3 rounded-full border border-brand-indigo/40 text-brand-indigo text-sm font-semibold hover:bg-brand-indigo hover:text-white transition">हिंदी</button>
+                <button type="button" aria-label="Switch language" class="lang-toggle hidden md:inline-flex items-center min-h-[44px] px-3 rounded-full border border-brand-indigo/40 text-brand-indigo text-sm font-semibold hover:bg-brand-indigo hover:text-white transition">हिंदी</button>
                 <!-- Cart Trigger Button -->
                 <button id="cart-btn" onclick="toggleCart()" aria-label="Open cart" class="relative bg-brand-terracotta text-white px-5 min-h-[44px] rounded-full text-sm font-semibold shadow-md hover:bg-brand-saffron transition flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
                     <span data-hi="झोला">Jhola</span>
                     <span id="cart-badge" class="absolute -top-1.5 -right-1.5 bg-brand-gold text-brand-dark font-bold text-xs w-5 h-5 rounded-full flex items-center justify-center border-2 border-brand-bg hidden">0</span>
                 </button>
+                <button id="menu-btn" type="button" aria-label="Menu" aria-expanded="false" class="md:hidden min-h-[44px] min-w-[44px] rounded-full border border-brand-indigo/40 text-xl">☰</button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div id="menu-panel" class="hidden md:hidden border-t border-[#E5D7C3] bg-[#FAF6F0] px-4 py-3 text-sm font-semibold text-brand-dark">
+            <a href="#story" class="block py-3" data-hi="माँ की चिट्ठी">Maa's Letter</a>
+            <a href="#making" class="block py-3" data-hi="माँ की रसोई">Maa ki Rasoi</a>
+            <a href="#dabba" class="block py-3" data-hi="डब्बा (दुकान)">The Dabba (Shop)</a>
+            <a href="#promise" class="block py-3" data-hi="हमारा वादा">Our Promise</a>
+            <a href="#faq" class="block py-3" data-hi="सवाल-जवाब">FAQ</a>
+            <div class="flex gap-3 pt-2 pb-1">
+                <button type="button" class="lang-toggle flex-1 min-h-[44px] rounded-full border border-brand-indigo/40 text-brand-indigo">हिंदी</button>
+                <button type="button" class="snd-toggle flex-1 min-h-[44px] rounded-full border border-brand-indigo/40"><span class="snd-ico">🔇</span> <span data-hi="आवाज़">Sound</span></button>
             </div>
         </div>
     </header>
@@ -142,8 +157,8 @@
                     <p class="text-sm font-semibold tracking-wide text-brand-saffron"
                        data-hi="माँ की असली रेसिपी • हाथ से बने राजस्थानी स्वाद • शुद्ध और ताज़ा">Authentic Mom's Recipe • Handcrafted Rajasthani Flavors • Pure &amp; Fresh</p>
                     <p class="text-lg text-brand-muted max-w-xl font-normal leading-relaxed"
-                       data-hi="माँ की ख़ास रेसिपी से बनी कुरकुरी राजस्थानी मठरी और चकली, ताज़े सफ़ोला तेल या शुद्ध देसी घी में। कोई प्रिज़र्वेटिव नहीं, बस ढेर सारी यादें।">
-                        Crispy, sun-kissed Rajasthani Mathri and Chakli crafted with Mom's special recipe, fresh Saffola oil, or pure desi ghee. Zero preservatives, maximum nostalgia.
+                       data-hi="माँ की ख़ास रेसिपी से बनी कुरकुरी राजस्थानी मठरी, चकली और पोहा चिवड़ा, ताज़े सफ़ोला तेल या शुद्ध देसी घी में। कोई प्रिज़र्वेटिव नहीं, बस ढेर सारी यादें।">
+                        Crispy Rajasthani Swali (Mathri), Chakli and Poha Chivda made from Mom's special recipe in fresh Saffola oil or pure desi ghee. Zero preservatives, maximum nostalgia.
                     </p>
                     <div class="flex flex-wrap gap-4 pt-2">
                         <a href="#dabba" class="bg-brand-terracotta text-white px-8 min-h-[48px] py-3 rounded-full font-medium shadow-md hover:bg-brand-saffron transition flex items-center space-x-2">
@@ -199,10 +214,10 @@
                         <span class="flex items-center gap-3">
                             <!-- Voice note: appears only if you add audio/maa.mp3 -->
                             <button id="voice" type="button" class="hidden bg-brand-terracotta text-white text-xs font-bold px-3 min-h-[36px] rounded-full" data-hi="▶ माँ को सुनिए">▶ Hear Maa</button>
-                            <audio id="maa-audio" preload="none" src="audio/maa.mp3"></audio>
+                            <audio id="maa-audio" preload="none"></audio>
                             <span class="ink font-bold text-brand-terracotta text-2xl" style="--i:4" data-hi="तुम्हारी माँ 🪔">Tumhari Maa 🪔</span>
                             <!-- Handwritten signature: appears only if you add images/signature.png -->
-                            <img src="images/signature.png" alt="Maa's signature" class="hidden h-12" onload="this.classList.remove('hidden');this.previousElementSibling.classList.add('hidden')" onerror="this.remove()">
+                            <img id="sig" alt="Maa's signature" class="hidden h-12">
                         </span>
                     </div>
                 </div>
@@ -301,6 +316,7 @@
                 <p class="text-xs uppercase tracking-widest text-brand-saffron font-bold" data-hi="✺ डब्बा · माँ का ख़ास मेन्यू">✺ The Dabba · Mom's Special Menu</p>
                 <h2 class="font-serif text-3xl sm:text-4xl font-bold text-brand-dark" data-hi="अपनी पसंद चुनिए">Choose your cravings</h2>
                 <p class="text-brand-muted text-sm" data-hi="ताज़ा बने, साफ़ फ़ूड-ग्रेड पाउच में पैक, और प्यार से सील किए हुए।">Freshly prepared, packed in clean food-grade pouches, and sealed with love.</p>
+                <p id="batch-note" class="hidden inline-block bg-brand-indigo/10 text-brand-indigo text-xs font-bold px-4 py-1.5 rounded-full"></p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -310,19 +326,20 @@
                     <div>
                         <div class="mb-6">
                             <div data-crunch class="arch aspect-video overflow-hidden relative">
-                                <img id="swali-main" src="images/swali-bowl.webp" alt="Swali (Mathri) in a bowl" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <img id="swali-main" loading="lazy" decoding="async" src="images/swali-bowl.webp" alt="Swali (Mathri) in a bowl" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                                 <span class="absolute bottom-3 left-3 bg-brand-terracotta text-white text-xs px-3 py-1 rounded-full font-semibold" data-hi="सबसे ज़्यादा पसंद">Bestseller</span>
                                 <span id="swali-ill" class="absolute bottom-3 right-3 bg-brand-dark/70 text-white text-[10px] px-2 py-1 rounded-full" data-hi="सांकेतिक तस्वीर">Illustrative photo</span>
                             </div>
                             <div class="flex gap-2 mt-3 justify-center">
-                                <button type="button" data-thumb="images/swali-bowl.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/swali-bowl.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/swali-closeup.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/swali-closeup.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/swali-scatter.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/swali-scatter.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/swali.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/swali.webp" alt="" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-bowl.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/swali-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-closeup.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-scatter.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali.webp" data-target="swali-main" data-ill="swali-ill" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
                             </div>
                         </div>
-                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Swali (Mathri)</h3>
+                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Swali (Mathri)<svg class="inline-block w-4 h-4 ml-1 align-middle" viewBox="0 0 16 16" role="img" aria-label="Vegetarian"><title>Vegetarian</title><rect x="1" y="1" width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="#2E7D32"/></svg></h3>
                         <p class="text-xs text-brand-saffron font-semibold mt-1">स्वाली / मठरी</p>
+                        <p class="text-[11px] font-semibold text-brand-terracotta mt-1" data-hi="इसमें है: गेहूँ (ग्लूटेन)। घी वाले में दूध।">Contains: wheat (gluten). Ghee version contains milk.</p>
                         <p class="text-brand-muted text-sm mt-3 leading-relaxed" data-hi="माँ की ख़ास रेसिपी से बनी असली, कुरकुरी राजस्थानी मठरी।">Authentic, crispy Rajasthani Mathri crafted with mom's special recipe.</p>
                         <button type="button" data-info="swali" class="mt-2 text-xs font-bold text-brand-indigo underline underline-offset-2 min-h-[36px]" data-hi="सामग्री और जानकारी देखें">Ingredients &amp; details</button>
 
@@ -366,20 +383,21 @@
                     <div>
                         <div class="mb-6">
                             <div data-crunch class="arch aspect-video overflow-hidden relative">
-                                <img id="chakli-main" src="images/chakli-bowl.webp" alt="Crunchy ribbed Chakli" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <img id="chakli-main" loading="lazy" decoding="async" src="images/chakli-bowl.webp" alt="Crunchy ribbed Chakli" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                                 <span class="absolute bottom-3 left-3 bg-brand-gold text-brand-dark text-xs px-3 py-1 rounded-full font-semibold" data-hi="माँ की ख़ास">Mom's Special</span>
                                 <span id="chakli-ill" class="absolute bottom-3 right-3 bg-brand-dark/70 text-white text-[10px] px-2 py-1 rounded-full" data-hi="सांकेतिक तस्वीर">Illustrative photo</span>
                             </div>
                             <!-- Tap a thumbnail to change the photo. data-real="1" = a photo of your actual chakli -->
                             <div class="flex gap-2 mt-3 justify-center">
-                                <button type="button" data-thumb="images/chakli-bowl.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/chakli-bowl.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chakli-closeup.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chakli-closeup.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chakli-scatter.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chakli-scatter.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chakli-pile.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chakli-pile.webp" alt="" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-bowl.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/chakli-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-closeup.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-scatter.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-pile.webp" data-target="chakli-main" data-ill="chakli-ill" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-pile.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
                             </div>
                         </div>
-                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Chakli</h3>
+                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Chakli<svg class="inline-block w-4 h-4 ml-1 align-middle" viewBox="0 0 16 16" role="img" aria-label="Vegetarian"><title>Vegetarian</title><rect x="1" y="1" width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="#2E7D32"/></svg></h3>
                         <p class="text-xs text-brand-saffron font-semibold mt-1">चकली</p>
+                        <p class="text-[11px] font-semibold text-brand-terracotta mt-1" data-hi="इसमें है: तिल, दूध (दही)।">Contains: sesame, milk (curd).</p>
                         <p class="text-brand-muted text-sm mt-3 leading-relaxed" data-hi="चावल के आटे की कुरकुरी, तिल-जीरे वाली चकली, घर पर ताज़ा बनी।">Crunchy rice-flour chakli with sesame and jeera, made fresh at home.</p>
                         <button type="button" data-info="chakli" class="mt-2 text-xs font-bold text-brand-indigo underline underline-offset-2 min-h-[36px]" data-hi="सामग्री और जानकारी देखें">Ingredients &amp; details</button>
 
@@ -414,19 +432,20 @@
                     <div>
                         <div class="mb-6">
                             <div data-crunch class="arch aspect-video overflow-hidden relative">
-                                <img id="chivda-main" src="images/chivda-bowl.webp" alt="Roasted poha chivda with peanuts and curry leaves" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <img id="chivda-main" loading="lazy" decoding="async" src="images/chivda-bowl.webp" alt="Roasted poha chivda with peanuts and curry leaves" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                                 <span class="absolute bottom-3 left-3 bg-brand-indigo text-white text-xs px-3 py-1 rounded-full font-semibold" data-hi="चाय का साथी">Tea-time favourite</span>
                                 <span id="chivda-ill" class="absolute bottom-3 right-3 bg-brand-dark/70 text-white text-[10px] px-2 py-1 rounded-full" data-hi="सांकेतिक तस्वीर">Illustrative photo</span>
                             </div>
                             <div class="flex gap-2 mt-3 justify-center">
-                                <button type="button" data-thumb="images/chivda-bowl.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/chivda-bowl.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chivda-closeup.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chivda-closeup.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chivda-scatter.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chivda-scatter.webp" alt="" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chivda-pile.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/chivda-pile.webp" alt="" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-bowl.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/chivda-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-closeup.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-scatter.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-pile.webp" data-target="chivda-main" data-ill="chivda-ill" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-pile.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
                             </div>
                         </div>
-                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Roasted Poha Chivda</h3>
+                        <h3 class="font-serif text-2xl font-bold text-brand-dark">Roasted Poha Chivda<svg class="inline-block w-4 h-4 ml-1 align-middle" viewBox="0 0 16 16" role="img" aria-label="Vegetarian"><title>Vegetarian</title><rect x="1" y="1" width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="#2E7D32"/></svg></h3>
                         <p class="text-xs text-brand-saffron font-semibold mt-1">भुना पोहा चिवड़ा</p>
+                        <p class="text-[11px] font-semibold text-brand-terracotta mt-1" data-hi="इसमें है: मूँगफली, चना।">Contains: peanuts, chickpea (chana).</p>
                         <p class="text-brand-muted text-sm mt-3 leading-relaxed" data-hi="पतले भुने पोहे, मूँगफली और भुने चने का हल्का, कुरकुरा और चटपटा मिक्स।">Light, crunchy roasted thin poha with peanuts and roasted chana, in a sweet-and-spicy mix.</p>
                         <button type="button" data-info="chivda" class="mt-2 text-xs font-bold text-brand-indigo underline underline-offset-2 min-h-[36px]" data-hi="सामग्री और जानकारी देखें">Ingredients &amp; details</button>
 
@@ -484,6 +503,16 @@
                         <p class="text-sm text-brand-muted leading-relaxed" data-hi="परिवार से चली आई, कभी बदली नहीं, और हर डब्बे में माँ का एक छोटा-सा नोट।">Handed down through the family and never changed, with a little note from Mom in every box.</p>
                     </div>
                 </div>
+            </div>
+        </section>
+
+        <!-- Gifting & bulk orders -->
+        <section id="gifting" class="py-16 px-4 sm:px-6 lg:px-8 bg-brand-indigo text-white text-center">
+            <div class="max-w-2xl mx-auto space-y-4 reveal">
+                <div class="text-3xl">🎁</div>
+                <h2 class="font-serif text-3xl font-bold" data-hi="गिफ़्टिंग और बड़े ऑर्डर">Gifting &amp; bulk orders</h2>
+                <p class="text-white/85" data-hi="त्योहार के हैम्पर, शादी, या ऑफ़िस गिफ़्टिंग? हमें WhatsApp पर बताइए, हम आपके हिसाब से डब्बा सजा देंगे।">Planning festival hampers, a wedding or office gifting? Tell us on WhatsApp and we'll pack a dabba for you.</p>
+                <a id="gift-wa" href="#" target="_blank" rel="noopener" class="inline-flex items-center gap-2 bg-[#25D366] text-white font-bold px-8 min-h-[48px] rounded-full" data-hi="WhatsApp पर बात करें 💬">Talk to us on WhatsApp 💬</a>
             </div>
         </section>
 
@@ -554,6 +583,8 @@
                 <ul class="space-y-2 text-sm text-gray-300">
                     <li><a id="footer-wa" href="#" target="_blank" rel="noopener" class="hover:text-white transition">WhatsApp Us</a></li>
                     <li><span class="text-gray-400">Malad East, Mumbai</span></li>
+                    <li id="insta-li" class="hidden"><a id="insta" href="#" target="_blank" rel="noopener" class="hover:text-white transition">Instagram</a></li>
+                    <li><a id="share-wa" href="#" target="_blank" rel="noopener" class="hover:text-white transition" data-hi="दोस्त को भेजें 💌">Share with a friend 💌</a></li>
                 </ul>
             </div>
             <div>
@@ -562,6 +593,8 @@
             </div>
         </div>
         <div class="max-w-7xl mx-auto mt-12 pt-8 border-t border-gray-800 text-center text-xs text-gray-500">
+            <p id="fssai" class="hidden mb-1"></p>
+            <p id="policy-links" class="hidden mb-1"></p>
             <p>© 2026 Singhania's Rasoi. All rights reserved.</p>
         </div>
     </footer>
@@ -589,6 +622,19 @@
             <button type="button" id="info-close" aria-label="Close" class="absolute top-3 right-3 w-9 h-9 rounded-full border border-brand-dark/10 font-bold hover:bg-brand-terracotta hover:text-white transition">✕</button>
             <div class="jaali rounded mb-4"></div>
             <div id="info-body" class="space-y-3 text-sm"></div>
+        </div>
+    </div>
+
+    <!-- UPI payment prompt (shows only if UPI_ID is set) -->
+    <div id="pay-modal" class="hidden fixed inset-0 z-[55] items-center justify-center p-4 bg-brand-dark/60 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="pay-title">
+        <div class="bg-brand-bg rounded-2xl max-w-sm w-full p-6 relative text-center space-y-3">
+            <button type="button" id="pay-close" aria-label="Close" class="absolute top-3 right-3 w-9 h-9 rounded-full border border-brand-dark/10 font-bold hover:bg-brand-terracotta hover:text-white transition">✕</button>
+            <div class="jaali rounded mb-2"></div>
+            <h3 id="pay-title" class="font-serif text-xl font-bold" data-hi="धन्यवाद सा! 🙏">Dhanyavaad sa! 🙏</h3>
+            <p id="pay-sub" class="text-sm text-brand-muted"></p>
+            <a id="pay-link" href="#" class="block bg-brand-terracotta text-white font-bold rounded-full min-h-[48px] leading-[48px]" data-hi="UPI से भुगतान करें">Pay via UPI</a>
+            <button type="button" id="pay-copy" class="w-full border border-brand-indigo text-brand-indigo min-h-[44px] rounded-full text-sm font-semibold" data-hi="UPI ID कॉपी करें">Copy UPI ID</button>
+            <button type="button" id="pay-later" class="text-xs text-brand-muted underline min-h-[36px]" data-hi="WhatsApp पर भुगतान करूँगा">I'll pay on WhatsApp</button>
         </div>
     </div>
 
@@ -643,6 +689,23 @@
         /* ===================== EDIT ME ===================== */
         const WHATSAPP_NUMBER = '919320685055';   // country code + number, no "+" or spaces
         const FREE_DELIVERY_ABOVE = 500;          // ₹ amount for the free-delivery progress bar
+
+        /* Optional extras: leave '' / false to keep them hidden. Fill in to switch them on. */
+        const UPI_ID = '';                // e.g. 'singhanias@upi' -> shows a "Pay via UPI" button after ordering
+        const FSSAI_NUMBER = '';          // your 14-digit FSSAI licence/registration no. -> shown in the footer
+        const INSTAGRAM_URL = '';         // e.g. 'https://instagram.com/yourhandle'
+        const NEXT_BATCH_TEXT = '';       // e.g. 'Next batch fried on Friday · order by Thursday'
+        const NEXT_BATCH_TEXT_HI = '';    // Hindi version of the line above
+        const CF_ANALYTICS_TOKEN = '';    // Cloudflare Web Analytics token (dashboard -> Web Analytics)
+        const HAS_VOICE = false;          // true after you add audio/maa.mp3
+        const HAS_SIGNATURE = false;      // true after you add images/signature.png
+        const POLICIES = [];              // e.g. [{ title: 'Shipping & refunds', text: 'Your policy text here' }]
+        const EXPERIMENTS_ON = true;      // A/B tests: headline + default pack. Orders carry a tiny "Ref" code
+        const ALLERGENS = {
+            swali:  ['Contains wheat (gluten). The ghee version also contains milk.', 'इसमें गेहूँ (ग्लूटेन) है। घी वाले संस्करण में दूध भी है।'],
+            chakli: ['Contains sesame and milk (curd).', 'इसमें तिल और दूध (दही) है।'],
+            chivda: ['Contains peanuts and chickpea (chana).', 'इसमें मूँगफली और चना है।']
+        };
 
         // Prices in ₹. swali[type][size], chakli[size]
         const PRICES = {
@@ -737,12 +800,12 @@
                 if (el.dataset.enPh === undefined) el.dataset.enPh = el.placeholder;
                 el.placeholder = lang === 'hi' ? el.dataset.hiPh : el.dataset.enPh;
             });
-            $('lang-btn').textContent = lang === 'hi' ? 'English' : 'हिंदी';
+            document.querySelectorAll('.lang-toggle').forEach(b => b.textContent = lang === 'hi' ? 'English' : 'हिंदी');
             $('chat-fab').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(tr('chatMsg'))}`;
             window.FX && FX.onLang();
             updateCartUI();
         }
-        $('lang-btn').onclick = () => { lang = lang === 'hi' ? 'en' : 'hi'; store.set('lang', lang); applyLang(); };
+        document.querySelectorAll('.lang-toggle').forEach(b => b.onclick = () => { lang = lang === 'hi' ? 'en' : 'hi'; store.set('lang', lang); applyLang(); });
 
         function updatePrices() {
             ['swali', 'chakli', 'chivda'].forEach(p => $(p + '-price').textContent = rupee(priceOf(p)));
@@ -799,10 +862,30 @@
                 <h3 class="font-serif text-2xl font-bold text-brand-dark">${NAMES[p]} <span class="text-sm text-brand-saffron">${d.hi}</span></h3>
                 <p><span class="font-bold text-brand-dark">${tr('ing')}:</span> ${h ? d.ingredientsHi : d.ingredients}</p>
                 <p><span class="font-bold text-brand-dark">${tr('shelf')}:</span> ${h ? d.shelfHi : d.shelf}</p>
-                <p><span class="font-bold text-brand-dark">${tr('pair')}:</span> ${h ? d.pairHi : d.pair}</p>`;
-            $('info-modal').classList.remove('hidden'); $('info-modal').classList.add('flex');
+                <p><span class="font-bold text-brand-dark">${tr('pair')}:</span> ${h ? d.pairHi : d.pair}</p>
+                <p><span class="font-bold text-brand-dark">${tr('allerg')}:</span> ${ALLERGENS[p][h ? 1 : 0]}</p>
+                <p class="text-xs text-brand-muted">${tr('allergNote')}</p>`;
+            showModal($('info-modal'), '#info-close');
         }
-        function closeInfo() { $('info-modal').classList.add('hidden'); $('info-modal').classList.remove('flex'); }
+        function closeInfo() { hideModal($('info-modal')); }
+
+        /* ---------- Focus handling for pop-ups ---------- */
+        let lastFocus = null;
+        function showModal(el, focusSel) {
+            lastFocus = document.activeElement; el.classList.remove('hidden'); el.classList.add('flex');
+            setTimeout(() => { const f = el.querySelector(focusSel); f && f.focus(); }, 50);
+        }
+        function hideModal(el) { el.classList.add('hidden'); el.classList.remove('flex'); if (lastFocus && lastFocus.focus) lastFocus.focus(); lastFocus = null; }
+        document.addEventListener('keydown', e => {      // keep Tab inside the open pop-up / drawer
+            if (e.key !== 'Tab') return;
+            const el = [$('pay-modal'), $('info-modal')].find(x => !x.classList.contains('hidden')) || ($('cart-overlay').classList.contains('hidden') ? null : $('cart-drawer'));
+            if (!el) return;
+            const f = [...el.querySelectorAll('button:not([disabled]),a[href],input,textarea,select')].filter(x => x.offsetParent !== null);
+            if (!f.length) return;
+            const first = f[0], last = f[f.length - 1];
+            if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+            else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+        });
         $('info-close').onclick = closeInfo;
         $('info-modal').addEventListener('click', e => { if (e.target === $('info-modal')) closeInfo(); });
 
@@ -852,14 +935,34 @@
         $('reorder-btn').onclick = () => { cart = store.get('last', []); store.set('cart', cart); updateCartUI(); };
 
         function toggleCart() {
+            const opening = $('cart-drawer').classList.contains('translate-x-full');
             $('cart-drawer').classList.toggle('translate-x-full');
             $('cart-overlay').classList.toggle('hidden');
+            if (opening) { lastFocus = document.activeElement; setTimeout(() => $('cart-drawer').querySelector('button').focus(), 350); }
+            else if (lastFocus && lastFocus.focus) { lastFocus.focus(); lastFocus = null; }
         }
         document.addEventListener('keydown', e => {
             if (e.key !== 'Escape') return;
-            if (!$('info-modal').classList.contains('hidden')) closeInfo();
+            if (!$('pay-modal').classList.contains('hidden')) hideModal($('pay-modal'));
+            else if (!$('info-modal').classList.contains('hidden')) closeInfo();
             else if (!$('cart-overlay').classList.contains('hidden')) toggleCart();
+            else setMenu(false);
         });
+
+        /* ---------- Mobile menu ---------- */
+        function setMenu(open) { $('menu-panel').classList.toggle('hidden', !open); $('menu-btn').setAttribute('aria-expanded', open); $('menu-btn').textContent = open ? '✕' : '☰'; }
+        $('menu-btn').onclick = () => setMenu($('menu-panel').classList.contains('hidden'));
+        $('menu-panel').addEventListener('click', e => { if (e.target.closest('a')) setMenu(false); });
+
+        /* ---------- UPI payment prompt ---------- */
+        function showPay(orderNo, total) {
+            if (!UPI_ID) return;
+            $('pay-sub').textContent = `${tr('orderNo')} ${orderNo} · ${rupee(total)}`;
+            $('pay-link').href = `upi://pay?pa=${encodeURIComponent(UPI_ID)}&pn=${encodeURIComponent("Singhania's")}&am=${total}&cu=INR&tn=${encodeURIComponent(orderNo)}`;
+            setTimeout(() => showModal($('pay-modal'), '#pay-close'), 1200);
+        }
+        $('pay-close').onclick = $('pay-later').onclick = () => hideModal($('pay-modal'));
+        $('pay-copy').onclick = () => { try { navigator.clipboard.writeText(UPI_ID); } catch (e) {} toast(tr('copied')); };
 
         function toast(t) {
             const el = $('toast'); el.textContent = t; el.style.opacity = 1;
@@ -899,8 +1002,13 @@
             if (date) extra += `\n• Preferred Delivery Date: ${new Date(date + 'T00:00:00').toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}`;
             if (gift) extra += `\n• Gift Message: ${gift}`;
 
+            const d0 = new Date(), mmdd = String(d0.getMonth() + 1).padStart(2, '0') + String(d0.getDate()).padStart(2, '0');
+            const orderNo = `SG-${mmdd}-${Math.random().toString(36).slice(2, 5).toUpperCase()}`;
+            const ref = EXPERIMENTS_ON ? `\n\n_Ref: ${orderNo} · v${exp.h}${exp.p}_` : `\n\n_Ref: ${orderNo}_`;
+
             const message =
 `*New Order from Singhania's Website!* 🪔
+*Order No:* ${orderNo}
 
 *Customer Details:*
 • Name: ${name}
@@ -912,11 +1020,12 @@ ${lines}
 
 *Total Amount:* ${rupee(cartTotal())}
 
-Please confirm availability and payment details.`;
+Please confirm availability and payment details.${ref}`;
 
             window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`, '_blank');
             toast(tr('thanks'));
             window.FX && FX.onOrder();
+            showPay(orderNo, cartTotal());
         }
 
         /* ---------- Init ---------- */
@@ -932,6 +1041,37 @@ Please confirm availability and payment details.`;
         setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('show')), 1500);
 
         $('footer-wa').href = `https://wa.me/${WHATSAPP_NUMBER}`;
+        $('gift-wa').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Namaste! I'd like to enquire about gifting / a bulk order from Singhania's.")}`;
+        $('share-wa').href = `https://wa.me/?text=${encodeURIComponent("Try Singhania's home-made Rajasthani snacks 🪔 " + location.href.split('#')[0])}`;
+        if (FSSAI_NUMBER) { $('fssai').textContent = 'FSSAI Lic. No. ' + FSSAI_NUMBER; $('fssai').classList.remove('hidden'); }
+        if (INSTAGRAM_URL) { $('insta').href = INSTAGRAM_URL; $('insta-li').classList.remove('hidden'); }
+        if (POLICIES.length) {
+            $('policy-links').innerHTML = POLICIES.map((q, i) => `<button type="button" data-policy="${i}" class="underline mx-2">${q.title}</button>`).join('');
+            $('policy-links').classList.remove('hidden');
+            $('policy-links').addEventListener('click', e => { const b = e.target.closest('[data-policy]'); if (!b) return; const q = POLICIES[b.dataset.policy]; $('info-body').innerHTML = `<h3 class="font-serif text-2xl font-bold text-brand-dark">${q.title}</h3><p>${q.text}</p>`; showModal($('info-modal'), '#info-close'); });
+        }
+        if (NEXT_BATCH_TEXT) { const nb = $('batch-note'); nb.textContent = NEXT_BATCH_TEXT; if (NEXT_BATCH_TEXT_HI) { nb.dataset.hi = NEXT_BATCH_TEXT_HI; } nb.classList.remove('hidden'); }
+        if (CF_ANALYTICS_TOKEN) { const a = document.createElement('script'); a.defer = true; a.src = 'https://static.cloudflareinsights.com/beacon.min.js'; a.dataset.cfBeacon = JSON.stringify({ token: CF_ANALYTICS_TOKEN }); document.head.appendChild(a); }
+
+        /* ---------- A/B experiments (visitor gets a random version, remembered). Test with ?v=BB etc. ---------- */
+        const exp = (() => {
+            if (!EXPERIMENTS_ON) return { h: 'A', p: 'A' };
+            let v = store.get('exp', null); const q = new URLSearchParams(location.search).get('v');
+            if (q && /^[ab]{2}$/i.test(q)) v = q.toUpperCase().split('');
+            if (!Array.isArray(v) || v.length !== 2) v = [Math.random() < .5 ? 'A' : 'B', Math.random() < .5 ? 'A' : 'B'];
+            store.set('exp', v); return { h: v[0], p: v[1] };
+        })();
+        if (exp.h === 'B') {   // experiment 1: headline
+            const h1 = document.querySelector('h1');
+            h1.innerHTML = 'Maa ke haath ki mathri, <span class="italic text-brand-terracotta">ab aapke ghar.</span>';
+            h1.dataset.hi = 'माँ के हाथ की मठरी, <span class="italic text-brand-terracotta">अब आपके घर।</span>';
+        }
+        if (exp.p === 'B') {   // experiment 2: 500gms pre-selected
+            ['swali', 'chakli', 'chivda'].forEach(pr => {
+                sel[pr].size = '500gms';
+                document.querySelectorAll(`.vbtn[data-p="${pr}"][data-c="size"]`).forEach(b => b.classList.toggle('sel', b.dataset.v === '500gms'));
+            });
+        }
         updatePrices();
         applyLang();      // also renders the cart
     </script>

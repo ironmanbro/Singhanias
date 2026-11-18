@@ -13,7 +13,11 @@
     gNoon:    ['🌤 Dopahar ki halki bhookh? Maa ki mathri haazir hai.', '🌤 दोपहर की हल्की भूख? माँ की मठरी हाज़िर है।'],
     gEvening: ['🫖 Shaam ki chai ka time ho gaya sa!', '🫖 शाम की चाय का टाइम हो गया सा!'],
     gNight:   ['🌙 Raat ki chupke-chupke bhookh? Ek mathri banti hai.', '🌙 रात की चुपके-चुपके भूख? एक मठरी तो बनती है।'],
-    unlockedFx: ['🎉 Free delivery unlocked!', '🎉 मुफ़्त डिलीवरी मिल गई!']
+    unlockedFx: ['🎉 Free delivery unlocked!', '🎉 मुफ़्त डिलीवरी मिल गई!'],
+    allerg:   ['Allergen info', 'एलर्जी की जानकारी'],
+    allergNote: ['Have an allergy? Please message us on WhatsApp before ordering.', 'एलर्जी है? ऑर्डर से पहले कृपया WhatsApp पर हमें बताइए।'],
+    orderNo:  ['Order', 'ऑर्डर'],
+    copied:   ['UPI ID copied', 'UPI ID कॉपी हो गई']
   });
 
   /* ================= Particle engine (single canvas) ================= */
@@ -143,9 +147,9 @@
     master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(0, ac.currentTime + .6);
     setTimeout(() => { oscs.forEach(o => o.stop()); lfo.stop(); }, 700);
   }
-  const sndBtn = $('snd-btn');
-  const sndIcon = () => { sndBtn.textContent = soundOn ? '🔊' : '🔇'; sndBtn.setAttribute('aria-pressed', soundOn); };
-  sndBtn.onclick = () => { soundOn = !soundOn; store.set('sound', soundOn); sndIcon(); if (soundOn) { actx(); SFX.pop(); startDrone(); } else stopDrone(); };
+  const sndBtns = [...document.querySelectorAll('.snd-toggle')];
+  const sndIcon = () => sndBtns.forEach(b => { b.querySelector('.snd-ico').textContent = soundOn ? '🔊' : '🔇'; b.setAttribute('aria-pressed', soundOn); });
+  sndBtns.forEach(b => b.onclick = () => { soundOn = !soundOn; store.set('sound', soundOn); sndIcon(); if (soundOn) { actx(); SFX.pop(); startDrone(); } else stopDrone(); });
   sndIcon();
   addEventListener('pointerdown', () => { if (soundOn && !droneNodes) startDrone(); }, { once: true });
 
@@ -187,7 +191,8 @@
   if (reduced) { env.classList.add('open', 'hidden'); story.classList.add('written'); }
 
   // Optional: Maa's voice note + handwritten signature (files appear only if you add them)
-  fetch('audio/maa.mp3', { method: 'HEAD' }).then(r => { if (r.ok) $('voice').classList.remove('hidden'); }).catch(() => {});
+  if (HAS_VOICE) { $('maa-audio').src = 'audio/maa.mp3'; $('voice').classList.remove('hidden'); }
+  if (HAS_SIGNATURE) { const sg = $('sig'); sg.onload = () => { sg.classList.remove('hidden'); sg.previousElementSibling.classList.add('hidden'); }; sg.src = 'images/signature.png'; }
   $('voice').onclick = () => { const a = $('maa-audio'); a.paused ? a.play() : a.pause(); };
 
   /* ================= Crunch on tap, fly to jhola ================= */

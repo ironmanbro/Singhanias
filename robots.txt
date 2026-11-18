@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://singhanias.ironmanbro.workers.dev/sitemap.xml

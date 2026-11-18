@@ -7,7 +7,7 @@ module.exports = {
       colors: {
         brand: {
           bg: '#FAF6F0', card: '#F4ECE1', terracotta: '#9E3B1C', saffron: '#C85A32',
-          gold: '#D99B26', dark: '#2D2522', muted: '#7C6E68', indigo: '#2F4B7C'
+          gold: '#D99B26', dark: '#2D2522', muted: '#6B5E58', indigo: '#2F4B7C'
         }
       },
       fontFamily: {
