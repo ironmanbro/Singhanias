@@ -1,0 +1,14 @@
+node_modules
+worker
+tests
+data
+package.json
+package-lock.json
+wrangler.jsonc
+.assetsignore
+.gitignore
+.dev.vars
+.wrangler
+input.css
+tailwind.config.js
+README.md

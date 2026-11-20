@@ -1,0 +1,4 @@
+node_modules/
+.wrangler/
+worker/seed.generated.sql
+.dev.vars

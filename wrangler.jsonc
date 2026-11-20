@@ -1,0 +1,18 @@
+{
+  // Singhania's: static site (Workers Assets) + API (Worker) + D1 database.
+  "name": "singhanias",
+  "main": "worker/src/index.js",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": ".",
+    "run_worker_first": ["/api/*"],
+    "html_handling": "auto-trailing-slash",
+    "not_found_handling": "none"
+  },
+  "d1_databases": [
+    // Create with: npx wrangler d1 create singhanias-db   then paste the real database_id below.
+    { "binding": "DB", "database_name": "singhanias-db", "database_id": "REPLACE_WITH_REAL_D1_ID" }
+  ],
+  "vars": { "WHATSAPP_NUMBER": "919320685055" }
+  // Secret (never commit):  npx wrangler secret put ADMIN_TOKEN
+}
