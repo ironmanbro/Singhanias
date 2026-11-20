@@ -812,6 +812,24 @@
         const cartCount = () => cart.reduce((s, i) => s + (i.type === 'dabba' ? i.packs : i.qty), 0);
         const saveCart = () => store.set('cart', cart);
 
+        /* ---------- Language (English / Hindi) ---------- */
+        function applyLang() {
+            document.documentElement.lang = lang === 'hi' ? 'hi' : 'en';
+            document.querySelectorAll('[data-hi]').forEach(el => {
+                if (el.dataset.en === undefined) el.dataset.en = el.innerHTML;
+                el.innerHTML = lang === 'hi' ? el.dataset.hi : el.dataset.en;
+            });
+            document.querySelectorAll('[data-hi-ph]').forEach(el => {
+                if (el.dataset.enPh === undefined) el.dataset.enPh = el.placeholder;
+                el.placeholder = lang === 'hi' ? el.dataset.hiPh : el.dataset.enPh;
+            });
+            document.querySelectorAll('.lang-toggle').forEach(b => b.textContent = lang === 'hi' ? 'English' : 'हिंदी');
+            $('chat-fab').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(tr('chatMsg'))}`;
+            window.FX && FX.onLang();
+            updateCartUI();
+        }
+        document.querySelectorAll('.lang-toggle').forEach(b => b.onclick = () => { lang = lang === 'hi' ? 'en' : 'hi'; store.set('lang', lang); applyLang(); });
+
         function updatePrices() {
             ['swali', 'chakli', 'chivda'].forEach(p => $(p + '-price').textContent = money(priceOf(p)));
         }
