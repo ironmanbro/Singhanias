@@ -1,0 +1,10 @@
+/* Build Your Own Dabba: small extras on top of the shared Tailwind build (styles.css). Restrained on purpose. */
+body { background:#F5EBDD; color:#3C3029; font-family:'Plus Jakarta Sans','Noto Sans Devanagari',sans-serif; }
+.font-serif { font-family:'Playfair Display','Yatra One',serif; }
+#summary { transition:transform .25s ease; }
+#summary.open { transform:translateY(0); }
+.seg[aria-checked="true"] { background:#641E2B; color:#fff; border-color:#641E2B; }
+.qty-btn:disabled { opacity:.35; cursor:not-allowed; }
+.skeleton { background:linear-gradient(90deg,#EADCC6,#F5EBDD,#EADCC6); background-size:200% 100%; animation:sk 1.4s infinite; }
+@keyframes sk { to { background-position:-200% 0; } }
+@media (prefers-reduced-motion:reduce) { #summary, .skeleton { transition:none; animation:none; } }

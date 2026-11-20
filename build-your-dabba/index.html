@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#641E2B">
+    <title>Build Your Own Dabba · Singhania's</title>
+    <meta name="description" content="Choose 3 to 6 packs of Signature Swali, Chakli and Chiwda and create a Dabba made just for you.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="/build-your-dabba/dabba.css">
+</head>
+<body class="antialiased pb-24 lg:pb-0">
+    <a href="#choose" class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[100] focus:bg-white focus:px-4 focus:py-2 focus:rounded">Skip to products</a>
+
+    <header class="sticky top-0 z-30 bg-brand-bg/95 backdrop-blur border-b border-brand-gold/40">
+        <div class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+            <a href="/" class="flex items-center gap-2">
+                <span class="w-9 h-9 rounded-full bg-brand-terracotta text-brand-bg flex items-center justify-center font-serif font-bold text-lg">S</span>
+                <span class="font-serif font-bold text-xl text-brand-dark">Singhania's</span>
+            </a>
+            <nav class="hidden md:flex items-center gap-8 text-sm font-medium text-brand-dark" aria-label="Main">
+                <a href="/" class="hover:text-brand-saffron" data-hi="होम">Home</a>
+                <a href="/#dabba" class="hover:text-brand-saffron" data-hi="दुकान">Shop</a>
+                <a href="/build-your-dabba/" class="font-bold text-brand-terracotta" aria-current="page" data-hi="अपना डब्बा बनाइए">Build Your Dabba</a>
+            </nav>
+            <div class="flex items-center gap-2">
+                <button id="lang-btn" type="button" aria-label="Switch language" class="min-h-[44px] px-3 rounded-full border border-brand-gold text-brand-terracotta text-sm font-semibold">हिंदी</button>
+                <a href="/?cart=1" id="cart-link" class="relative min-h-[44px] px-4 rounded-full bg-brand-terracotta text-white text-sm font-semibold inline-flex items-center gap-2" aria-label="Open your jhola">
+                    <span data-hi="झोला">Jhola</span>
+                    <span id="cart-badge" class="hidden bg-brand-gold text-brand-dark text-xs font-bold min-w-[20px] h-5 px-1 rounded-full inline-flex items-center justify-center">0</span>
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <section class="max-w-6xl mx-auto px-4 pt-10 pb-6 text-center">
+            <p class="text-xs uppercase tracking-widest text-brand-saffron font-bold" data-hi="नया">New</p>
+            <h1 class="font-serif text-3xl sm:text-5xl font-bold text-brand-dark mt-2" data-hi="आपका डब्बा। आपकी पसंद।">Your Dabba. Your Favourites.</h1>
+            <p class="text-brand-muted max-w-xl mx-auto mt-3" data-hi="अपनी पसंद का स्वाद चुनिए। सिंघानिया के अपने पसंदीदा स्नैक्स चुनकर बनाइए अपना डब्बा।">Bring together the flavours you love. Choose your favourite Singhania's snacks and create a Dabba made just for you.</p>
+        </section>
+
+        <div id="edit-banner" class="hidden max-w-6xl mx-auto px-4">
+            <div class="rounded-lg border border-brand-gold bg-white px-4 py-3 text-sm flex flex-wrap items-center justify-between gap-2">
+                <span data-hi="आप अपने झोले का एक डब्बा बदल रहे हैं।">You are editing a Dabba from your jhola.</span>
+                <a href="/?cart=1" class="font-bold underline text-brand-terracotta" data-hi="रद्द करें">Cancel</a>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 pb-16 grid lg:grid-cols-[minmax(0,1fr)_380px] gap-8 items-start">
+            <!-- Left: choices -->
+            <section id="choose" aria-labelledby="choose-h" class="min-w-0">
+                <h2 id="choose-h" class="font-serif text-2xl font-bold text-brand-dark" data-hi="अपनी पसंद चुनिए">Choose Your Favourites</h2>
+
+                <div class="mt-4">
+                    <p id="fmt-label" class="text-xs font-bold uppercase tracking-wider text-brand-dark" data-hi="पैक का साइज़">Pack size</p>
+                    <div id="formats" role="radiogroup" aria-labelledby="fmt-label" class="mt-2 grid grid-cols-3 gap-2"></div>
+                    <p class="text-xs text-brand-muted mt-2" data-hi="एक डब्बे के सभी पैक एक ही साइज़ के होते हैं।">All packs in one Dabba use the same size.</p>
+                </div>
+
+                <div id="cards" class="mt-6 space-y-4" aria-live="polite"></div>
+            </section>
+
+            <!-- Right: summary (sticky on desktop, bottom sheet on phones) -->
+            <div id="sheet-overlay" class="hidden fixed inset-0 bg-brand-dark/50 z-30 lg:hidden"></div>
+            <aside id="summary" aria-labelledby="sum-h" class="fixed inset-x-0 bottom-0 z-40 max-h-[85vh] overflow-y-auto translate-y-full lg:translate-y-0 lg:sticky lg:top-24 lg:z-auto lg:max-h-none lg:overflow-visible bg-white border border-brand-gold/60 rounded-t-2xl lg:rounded-xl p-5 shadow-xl lg:shadow-sm">
+                <div class="flex items-center justify-between">
+                    <h2 id="sum-h" class="font-serif text-2xl font-bold text-brand-dark" data-hi="आपका डब्बा">Your Dabba</h2>
+                    <button id="sheet-close" type="button" class="lg:hidden min-h-[44px] min-w-[44px] text-xl" aria-label="Close summary">✕</button>
+                </div>
+                <p id="sum-count" class="text-sm text-brand-muted mt-1"></p>
+                <ul id="sum-items" class="mt-4 divide-y divide-brand-gold/30"></ul>
+                <dl class="mt-4 space-y-1 text-sm">
+                    <div class="flex justify-between"><dt class="text-brand-muted" data-hi="कुल वज़न">Total net weight</dt><dd id="sum-weight" class="font-semibold">0g</dd></div>
+                    <div class="flex justify-between text-base"><dt class="font-bold" data-hi="उप-योग">Subtotal</dt><dd id="sum-total" class="font-serif text-xl font-bold text-brand-terracotta">₹0</dd></div>
+                </dl>
+                <p id="sum-msg" class="text-sm text-brand-terracotta font-semibold mt-3 min-h-[1.25rem]" role="status"></p>
+                <button id="add-btn" type="button" disabled class="mt-3 w-full min-h-[52px] rounded-full bg-brand-terracotta text-white font-bold disabled:opacity-45 disabled:cursor-not-allowed" data-hi="मेरा डब्बा जोड़ें">Add My Dabba</button>
+                <p class="text-[11px] text-brand-muted text-center mt-2" data-hi="डिलीवरी शुल्क और टैक्स (यदि हों) WhatsApp पर बताए जाएँगे।">Delivery charges and taxes, if any, are confirmed on WhatsApp.</p>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Sticky bottom summary bar (phones) -->
+    <div id="sbar" class="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-brand-terracotta text-white px-4 min-h-[64px] flex items-center justify-between gap-3 shadow-[0_-4px_16px_rgba(0,0,0,.2)]">
+        <div class="min-w-0">
+            <p id="sbar-packs" class="text-xs text-white/80"></p>
+            <p id="sbar-total" class="font-serif text-xl font-bold leading-tight">₹0</p>
+        </div>
+        <button id="sbar-open" type="button" aria-controls="summary" aria-expanded="false" class="min-h-[44px] px-5 rounded-full bg-brand-gold text-brand-dark font-bold text-sm" data-hi="डब्बा देखें ▲">View Dabba ▲</button>
+    </div>
+
+    <!-- Added confirmation -->
+    <div id="added" class="hidden fixed inset-0 z-50 items-center justify-center p-4 bg-brand-dark/60" role="dialog" aria-modal="true" aria-labelledby="added-h">
+        <div class="bg-brand-bg rounded-xl max-w-sm w-full p-6 text-center space-y-3 border border-brand-gold">
+            <h2 id="added-h" class="font-serif text-2xl font-bold text-brand-dark" data-hi="आपका डब्बा झोले में है">Your Dabba is in your jhola</h2>
+            <p id="added-sub" class="text-sm text-brand-muted"></p>
+            <a id="added-go" href="/?cart=1" class="block min-h-[48px] leading-[48px] rounded-full bg-brand-terracotta text-white font-bold" data-hi="चेकआउट पर जाएँ">Go to checkout</a>
+            <button id="added-again" type="button" class="w-full min-h-[48px] rounded-full border border-brand-terracotta text-brand-terracotta font-bold" data-hi="एक और डब्बा बनाएँ">Build another Dabba</button>
+        </div>
+    </div>
+
+    <div id="toast" class="fixed left-1/2 -translate-x-1/2 bottom-24 lg:bottom-6 z-[60] bg-brand-dark text-white text-sm px-5 py-2.5 rounded-full shadow-lg opacity-0 pointer-events-none transition-opacity text-center" role="status"></div>
+
+    <script src="/build-your-dabba/dabba.js" defer></script>
+</body>
+</html>

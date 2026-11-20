@@ -1,13 +1,13 @@
 /* Tailwind build config. To rebuild styles.css after editing index.html:
    npx tailwindcss@3.4.17 -c tailwind.config.js -i input.css -o styles.css --minify */
 module.exports = {
-  content: ['./index.html', './fx.js'],
+  content: ['./index.html', './fx.js', './build-your-dabba/*.{html,js}', './admin/*.{html,js}'],
   theme: {
     extend: {
       colors: {
         brand: {
-          bg: '#FAF6F0', card: '#F4ECE1', terracotta: '#9E3B1C', saffron: '#C85A32',
-          gold: '#D99B26', dark: '#2D2522', muted: '#6B5E58', indigo: '#2F4B7C'
+          bg: '#F5EBDD', card: '#EADCC6', terracotta: '#641E2B', saffron: '#8C3A4B',
+          gold: '#B99A58', dark: '#3C3029', muted: '#6B5A50', indigo: '#3C3029'
         }
       },
       fontFamily: {

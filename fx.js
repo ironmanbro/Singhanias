@@ -4,7 +4,7 @@
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rnd = (a, b) => a + Math.random() * (b - a);
   const pick = a => a[Math.floor(Math.random() * a.length)];
-  const PAL = ['#C85A32', '#D99B26', '#E5A93C', '#9E3B1C', '#2F4B7C', '#F4ECE1'];
+  const PAL = ['#8C3A4B', '#B99A58', '#C9AE74', '#641E2B', '#3C3029', '#EADCC6'];
 
   Object.assign(T, {
     crunch:   ['Kurr-kurr! 😋', 'कुर्र-कुर्र! 😋'],
@@ -67,24 +67,24 @@
   const FX = {
     reduced,
     petals(x, y, n = 22) {
-      for (let i = 0; i < n; i++) add({ x, y, vx: rnd(-3, 3), vy: rnd(-6, -1), g: .14, drag: .985, life: rnd(60, 100), size: rnd(4, 8), color: pick(['#E5A93C', '#F29D38', '#C85A32']), type: 'petal', vr: rnd(-.2, .2), sway: .6 });
+      for (let i = 0; i < n; i++) add({ x, y, vx: rnd(-3, 3), vy: rnd(-6, -1), g: .14, drag: .985, life: rnd(60, 100), size: rnd(4, 8), color: pick(['#C9AE74', '#D9B878', '#8C3A4B']), type: 'petal', vr: rnd(-.2, .2), sway: .6 });
     },
     rain(n = 60) {
-      for (let i = 0; i < n; i++) setTimeout(() => add({ x: rnd(0, W), y: -10, vx: rnd(-.5, .5), vy: rnd(1, 2.5), g: .01, drag: 1, life: 240, size: rnd(4, 8), color: pick(['#E5A93C', '#F29D38', '#C85A32']), type: 'petal', vr: rnd(-.1, .1), sway: 1.2 }), i * 25);
+      for (let i = 0; i < n; i++) setTimeout(() => add({ x: rnd(0, W), y: -10, vx: rnd(-.5, .5), vy: rnd(1, 2.5), g: .01, drag: 1, life: 240, size: rnd(4, 8), color: pick(['#C9AE74', '#D9B878', '#8C3A4B']), type: 'petal', vr: rnd(-.1, .1), sway: 1.2 }), i * 25);
     },
     crumbs(x, y) {
       for (let i = 0; i < 16; i++) add({ x, y, vx: rnd(-3.5, 3.5), vy: rnd(-6, -1), g: .32, life: 55, size: rnd(3, 6), color: pick(['#D9913A', '#E8B05C', '#B8741E']), type: 'crumb', vr: rnd(-.3, .3) });
     },
     sparks(x, y, n = 30) {
-      for (let i = 0; i < n; i++) { const a = rnd(0, 6.28), s = rnd(1, 4); add({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, g: .08, drag: .96, life: rnd(25, 45), size: rnd(1.2, 2.4), color: pick(['#FFD27A', '#E5A93C', '#F29D38']), type: 'spark' }); }
+      for (let i = 0; i < n; i++) { const a = rnd(0, 6.28), s = rnd(1, 4); add({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, g: .08, drag: .96, life: rnd(25, 45), size: rnd(1.2, 2.4), color: pick(['#FFD27A', '#C9AE74', '#D9B878']), type: 'spark' }); }
     },
     trail(x, y) {
-      for (let i = 0; i < 2; i++) add({ x, y, vx: rnd(-1, 1), vy: rnd(-1, 1), g: .05, drag: .96, life: 28, size: rnd(1.2, 2.2), color: pick(['#FFD27A', '#F29D38']), type: 'spark' });
+      for (let i = 0; i < 2; i++) add({ x, y, vx: rnd(-1, 1), vy: rnd(-1, 1), g: .05, drag: .96, life: 28, size: rnd(1.2, 2.2), color: pick(['#FFD27A', '#D9B878']), type: 'spark' });
     },
     fireworks(count = 8) {
       if (reduced) return;
       for (let i = 0; i < count; i++) setTimeout(() => {
-        const tx = rnd(.15, .85) * W, col = pick(['#FFB43A', '#FF7A45', '#7FB2FF', '#E5A93C', '#FF5C8A']);
+        const tx = rnd(.15, .85) * W, col = pick(['#FFB43A', '#FF7A45', '#7FB2FF', '#C9AE74', '#FF5C8A']);
         add({ x: tx, y: H, vx: rnd(-.4, .4), vy: -rnd(9, 12), g: .18, drag: 1, life: 50, size: 2.2, color: '#FFD27A', type: 'spark',
           end: p => {
             play('boom');
@@ -299,5 +299,5 @@
   }
 
   window.FX = FX;
-  FX.onLang(); FX.onCart(cartTotal());
+  FX.onLang(); FX.onCart(cartTotal() / 100);
 })();
