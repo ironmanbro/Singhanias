@@ -1,5 +1,6 @@
-{
- "_comment": "Single source of truth for catalogue SEED data. Prices are integer paise. Prices/weights are DUMMY placeholders. Production values live in the D1 database and are edited in /admin.",
+// Seed data for first start. Edit prices/stock afterwards in /admin/ (the database is then the source of truth).
+export default {
+ "_comment": "Single source of truth for the catalogue SEED. Prices are integer paise and are DUMMY placeholders. initial_stock is a STARTING value only: set real stock in /admin/. After first start, the database (edited in /admin/) is the source of truth.",
  "settings": {
   "dabba_enabled": true,
   "min_packs": 3,
@@ -332,7 +333,7 @@
    ]
   }
  ],
- "test_stock": {
+ "initial_stock": {
   "SWALI-T": 25,
   "SWALI-R": 25,
   "SWALI-F": 25,
@@ -358,4 +359,4 @@
   "CHIWDA-500": 25,
   "CHIWDA-1KG": 25
  }
-}
+};

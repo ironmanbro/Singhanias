@@ -1,9 +1,9 @@
 import { Miniflare } from 'miniflare';
 import { readFileSync } from 'node:fs';
-import { seedStatements } from '../worker/seed.mjs';
+import { SCHEMA, seedStatements } from '../worker/src/bootstrap.js';
 
 export const ADMIN = 'test-admin-token';
-const schema = readFileSync(new URL('../worker/schema.sql', import.meta.url), 'utf8').split(/;\s*\n/).map(s => s.trim()).filter(Boolean);
+const schema = SCHEMA;
 
 export async function start() {
   const mf = new Miniflare({
@@ -15,7 +15,7 @@ export async function start() {
   for (const s of schema) await db.prepare(s).run();
   const reset = async ({ testStock = true } = {}) => {
     await db.batch(['stock_movements', 'order_items', 'order_dabbas', 'orders', 'stock', 'variants', 'products', 'formats', 'settings'].map(t => db.prepare(`DELETE FROM ${t}`)));
-    await db.batch(seedStatements({ testStock }).map(s => db.prepare(s)));
+    await db.batch(seedStatements(undefined, { stock: testStock }).map(s => db.prepare(s)));
   };
   const call = async (path, { method = 'GET', body, token } = {}) => {
     const res = await mf.dispatchFetch('http://localhost' + path, { method, headers: { 'content-type': 'application/json', ...(token ? { authorization: 'Bearer ' + token } : {}) }, body: body ? JSON.stringify(body) : undefined });

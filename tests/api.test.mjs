@@ -218,10 +218,10 @@ test('stock cannot be set below what is reserved; every change is logged', async
   const m = await env.db.prepare(`SELECT delta FROM stock_movements WHERE sku = 'SWALI-R' AND reason = 'adjust'`).first(); assert.equal(m.delta, 10);
 });
 test('seeding is non-destructive: re-running keeps production prices and stock', async () => {
-  const { seedStatements } = await import('../worker/seed.mjs');
+  const { seedStatements } = await import('../worker/src/bootstrap.js');
   await env.admin('/api/admin/variants/SWALI-R', { method: 'PUT', body: { price_paise: 14500 } });
   await env.admin('/api/admin/stock/SWALI-R', { method: 'POST', body: { qty: 7 } });
-  await env.db.batch(seedStatements({ testStock: true }).map(s => env.db.prepare(s)));
+  await env.db.batch(seedStatements(undefined, { stock: true }).map(s => env.db.prepare(s)));
   const v = await env.db.prepare('SELECT price_paise FROM variants WHERE sku = ?').bind('SWALI-R').first();
   assert.equal(v.price_paise, 14500); assert.equal((await stockOf(env.db, 'SWALI-R')).qty, 7);
 });

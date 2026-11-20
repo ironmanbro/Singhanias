@@ -10,8 +10,9 @@
     "not_found_handling": "none"
   },
   "d1_databases": [
-    // Create with: npx wrangler d1 create singhanias-db   then paste the real database_id below.
-    { "binding": "DB", "database_name": "singhanias-db", "database_id": "REPLACE_WITH_REAL_D1_ID" }
+    // No database_id on purpose: Cloudflare creates this database on the first deploy.
+    // The Worker creates its own tables and loads the starting catalogue on first request.
+    { "binding": "DB", "database_name": "singhanias-db" }
   ],
   "vars": { "WHATSAPP_NUMBER": "919320685055" }
   // Secret (never commit):  npx wrangler secret put ADMIN_TOKEN

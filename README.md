@@ -22,20 +22,17 @@ Money is stored as integer paise. Prices in the browser are only for display; th
 ## Run locally
 ```bash
 npm install
-npm run db:migrate:local      # create tables in the local D1
-npm run db:seed:local         # seed catalogue + TEST stock (never use --test-stock in production)
-npm run dev                   # http://localhost:8787   (admin token for local dev is in .dev.vars)
+npm run dev                   # http://localhost:8787 (creates a local database automatically; admin token for dev is in .dev.vars)
 npm test                      # API + inventory tests (Miniflare, real D1)
 npm run test:ui               # browser tests (needs `npm run dev` running)
 npm run build:css             # rebuild styles.css after changing Tailwind classes
 ```
 
-## Deploying (not done yet, needs your approval)
-1. `npx wrangler d1 create singhanias-db` and paste the `database_id` into `wrangler.jsonc`.
-2. `npx wrangler d1 execute singhanias-db --remote --file=worker/schema.sql`
-3. `node worker/seed.mjs > worker/seed.generated.sql` (NO `--test-stock`), then `npx wrangler d1 execute singhanias-db --remote --file=worker/seed.generated.sql`. Set real stock in `/admin/`.
-4. `npx wrangler secret put ADMIN_TOKEN` (a long random string).
-5. `npx wrangler deploy`. `.assetsignore` keeps `worker/`, `tests/`, `data/` and config files from being served publicly.
-6. If the site is deployed from the Cloudflare dashboard (Git integration), check its build/deploy command so it runs `npx wrangler deploy` and uses `wrangler.jsonc`.
+## Deploying
+Pushing to `main` deploys through the Cloudflare Git integration.
+- **Database:** `wrangler.jsonc` has no `database_id`, so Cloudflare creates `singhanias-db` on the first deploy. The Worker creates its tables and loads the starting catalogue on the first API request (`worker/src/bootstrap.js`, `worker/src/catalogue.js`).
+- **Starting stock is a placeholder** (25 per pack, Regular Chakli 15, Regular Chiwda 20). Set real stock in `/admin/`.
+- **Admin password:** in the Cloudflare dashboard open Workers & Pages, then `singhanias`, then Settings, then Variables and Secrets, and add a **secret** named `ADMIN_TOKEN` (a long random string). Until it is set, `/admin/` is disabled. Or: `npx wrangler secret put ADMIN_TOKEN`.
+- `.assetsignore` keeps `worker/`, `tests/` and config files from being served publicly.
 
-Prices, weights and stock in `data/catalogue.json` are **dummy placeholders**. Production values live in the database and are edited in `/admin/`.
+Prices, weights and starting stock in `worker/src/catalogue.js` are **dummy placeholders**. After the first start, the database (edited in `/admin/`) is the source of truth.

@@ -1,5 +1,6 @@
 // Singhania's API (Cloudflare Worker + D1). Static pages are served by Workers Assets; only /api/* reaches this code.
 import { priceCart, validateCustomer, genOrderId, buildWhatsAppText } from './core.js';
+import { ensureReady } from './bootstrap.js';
 
 const DEFAULT_SETTINGS = { dabba_enabled: true, min_packs: 3, max_packs: 6, low_stock_threshold: 5, reservation_hours: 12 };
 const HEADERS = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' };
@@ -133,6 +134,7 @@ async function route(req, env) {
   const url = new URL(req.url);
   const path = url.pathname.replace(/\/+$/, '');
   const m = req.method;
+  if (path.startsWith('/api')) await ensureReady(env);   // creates tables / loads the starting catalogue on first start
 
   if (m === 'GET' && path === '/api/catalogue') {
     await expirePending(env);
