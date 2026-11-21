@@ -37,7 +37,16 @@ export const MIGRATIONS = [
   `UPDATE variants SET type = 'Fresh Oil' WHERE type = 'Fresh Saffola Oil'`,
   `UPDATE variants SET label = REPLACE(label, 'Fresh Saffola Oil', 'Fresh Oil') WHERE label LIKE '%Saffola%'`,
   `UPDATE products SET short_desc = 'Crunchy, golden chakli, made fresh at home.', short_desc_hi = 'कुरकुरी, सुनहरी चकली, घर पर ताज़ा बनी।' WHERE id = 'chakli' AND short_desc LIKE '%jeera%'`,
-  `UPDATE products SET short_desc = 'Light, crunchy and tangy roasted poha chiwda, made fresh at home.', short_desc_hi = 'हल्का, कुरकुरा और चटपटा भुना पोहा चिवड़ा, घर पर ताज़ा बना।' WHERE id = 'chivda' AND short_desc LIKE '%curry leaves%'`
+  `UPDATE products SET short_desc = 'Light, crunchy and tangy roasted poha chiwda, made fresh at home.', short_desc_hi = 'हल्का, कुरकुरा और चटपटा भुना पोहा चिवड़ा, घर पर ताज़ा बना।' WHERE id = 'chivda' AND short_desc LIKE '%curry leaves%'`,
+  `UPDATE variants SET price_paise = 6500 WHERE sku = 'SWALI-T' AND price_paise = 8900`,
+  `UPDATE variants SET price_paise = 10800 WHERE sku = 'SWALI-R' AND price_paise = 13900`,
+  `UPDATE variants SET price_paise = 19800 WHERE sku = 'SWALI-F' AND price_paise = 24900`,
+  `UPDATE variants SET price_paise = 4300 WHERE sku = 'CHAKLI-T' AND price_paise = 8900`,
+  `UPDATE variants SET price_paise = 8600 WHERE sku = 'CHAKLI-R' AND price_paise = 13900`,
+  `UPDATE variants SET price_paise = 16200 WHERE sku = 'CHAKLI-F' AND price_paise = 24900`,
+  `UPDATE variants SET price_paise = 6500 WHERE sku = 'CHIWDA-T' AND price_paise = 7900`,
+  `UPDATE variants SET price_paise = 10800 WHERE sku = 'CHIWDA-R' AND price_paise = 12900`,
+  `UPDATE variants SET price_paise = 19800 WHERE sku = 'CHIWDA-F' AND price_paise = 22900`
 ];
 
 let ready = null;

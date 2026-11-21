@@ -16,18 +16,18 @@ const trio = (suffix, q = [1, 1, 1]) => [{ sku: `SWALI-${suffix}`, qty: q[0] }, 
 const codes = r => r.data.errors.map(e => e.code);
 
 /* ---------- pricing demo calculations (integer paise) ---------- */
-test('1. Regular Dabba = ₹407 and 700g', async () => {
+test('1. Regular Dabba = ₹302 and 700g', async () => {
   const r = await quote(dabba('regular', trio('R')));
   assert.equal(r.status, 200); assert.equal(r.data.ok, true);
-  assert.equal(r.data.total_paise, 40700); assert.equal(r.data.dabbas[0].weight_g, 700); assert.equal(r.data.dabbas[0].packs, 3);
+  assert.equal(r.data.total_paise, 30200); assert.equal(r.data.dabbas[0].weight_g, 700); assert.equal(r.data.dabbas[0].packs, 3);
 });
-test('2. Trial Dabba = ₹257', async () => {
+test('2. Trial Dabba = ₹173', async () => {
   const r = await quote(dabba('trial', trio('T')));
-  assert.equal(r.data.total_paise, 25700); assert.equal(r.data.dabbas[0].weight_g, 400);
+  assert.equal(r.data.total_paise, 17300); assert.equal(r.data.dabbas[0].weight_g, 400);
 });
-test('3. Family Dabba = ₹727', async () => {
+test('3. Family Dabba = ₹558', async () => {
   const r = await quote(dabba('family', trio('F')));
-  assert.equal(r.data.total_paise, 72700); assert.equal(r.data.dabbas[0].weight_g, 1400);
+  assert.equal(r.data.total_paise, 55800); assert.equal(r.data.dabbas[0].weight_g, 1400);
 });
 
 /* ---------- selection rules ---------- */
@@ -44,19 +44,19 @@ test('5. Maximum six packs is enforced', async () => {
 });
 test('6. Several packs of the same product are allowed', async () => {
   const r = await quote(dabba('regular', [{ sku: 'SWALI-R', qty: 3 }]));
-  assert.equal(r.data.ok, true); assert.equal(r.data.total_paise, 3 * 13900); assert.equal(r.data.dabbas[0].weight_g, 750);
+  assert.equal(r.data.ok, true); assert.equal(r.data.total_paise, 3 * 10800); assert.equal(r.data.dabbas[0].weight_g, 750);
 });
 test('7. Formats cannot be mixed inside one Dabba, and each format prices correctly', async () => {
   const mixed = await quote(dabba('regular', [{ sku: 'SWALI-R', qty: 2 }, { sku: 'CHAKLI-T', qty: 1 }]));
   assert.ok(codes(mixed).includes('mixed_format'));
-  assert.equal((await quote(dabba('trial', [{ sku: 'SWALI-T', qty: 3 }]))).data.total_paise, 3 * 8900);
-  assert.equal((await quote(dabba('family', [{ sku: 'CHIWDA-F', qty: 3 }]))).data.total_paise, 3 * 22900);
+  assert.equal((await quote(dabba('trial', [{ sku: 'SWALI-T', qty: 3 }]))).data.total_paise, 3 * 6500);
+  assert.equal((await quote(dabba('family', [{ sku: 'CHIWDA-F', qty: 3 }]))).data.total_paise, 3 * 19800);
 });
 test('forged prices sent by the browser are ignored', async () => {
   const cart = dabba('regular', trio('R').map(i => ({ ...i, price_paise: 1, unit_price_paise: 1, price: 0.01 })));
   cart.total_paise = 100;
   const r = await place(cart, { expected_total_paise: 100 });
-  assert.equal(r.status, 409); assert.equal(r.data.error, 'price_changed'); assert.equal(r.data.total_paise, 40700);
+  assert.equal(r.status, 409); assert.equal(r.data.error, 'price_changed'); assert.equal(r.data.total_paise, 30200);
 });
 
 /* ---------- availability ---------- */
@@ -94,34 +94,34 @@ test('low-stock flag follows the threshold', async () => {
 /* ---------- price change, several Dabbas, editing ---------- */
 test('10. A price change between cart and checkout is caught', async () => {
   const cart = dabba('regular', trio('R'));
-  assert.equal((await place(cart, { expected_total_paise: 40700 })).status, 201);
-  await env.admin('/api/admin/variants/SWALI-R', { method: 'PUT', body: { price_paise: 15900 } });
-  const r = await place(cart, { expected_total_paise: 40700 });
-  assert.equal(r.status, 409); assert.equal(r.data.error, 'price_changed'); assert.equal(r.data.total_paise, 42700);
+  assert.equal((await place(cart, { expected_total_paise: 30200 })).status, 201);
+  await env.admin('/api/admin/variants/SWALI-R', { method: 'PUT', body: { price_paise: 12800 } });
+  const r = await place(cart, { expected_total_paise: 30200 });
+  assert.equal(r.status, 409); assert.equal(r.data.error, 'price_changed'); assert.equal(r.data.total_paise, 32200);
   const count = await env.db.prepare('SELECT COUNT(*) c FROM orders').first(); assert.equal(count.c, 1);   // second order was not created
-  assert.equal((await place(cart, { expected_total_paise: 42700 })).status, 201);
+  assert.equal((await place(cart, { expected_total_paise: 32200 })).status, 201);
 });
 test('11. Multiple separate Dabbas in one order keep their own snapshots', async () => {
   const cart = { dabbas: [{ format: 'regular', items: trio('R') }, { format: 'trial', items: trio('T') }] };
   const r = await place(cart);
-  assert.equal(r.status, 201); assert.equal(r.data.total_paise, 40700 + 25700);
+  assert.equal(r.status, 201); assert.equal(r.data.total_paise, 30200 + 17300);
   assert.match(r.data.order_id, /^SG-\d{4}-[A-Z0-9]{4}$/);
   const ds = (await env.db.prepare('SELECT * FROM order_dabbas WHERE order_id = ? ORDER BY dabba_no').bind(r.data.order_id).all()).results;
-  assert.deepEqual(ds.map(d => [d.format, d.packs, d.weight_g, d.subtotal_paise]), [['regular', 3, 700, 40700], ['trial', 3, 400, 25700]]);
+  assert.deepEqual(ds.map(d => [d.format, d.packs, d.weight_g, d.subtotal_paise]), [['regular', 3, 700, 30200], ['trial', 3, 400, 17300]]);
   const items = (await env.db.prepare('SELECT * FROM order_items WHERE order_id = ?').bind(r.data.order_id).all()).results;
   assert.equal(items.length, 6); assert.ok(items.every(i => i.unit_price_paise > 0 && i.line_paise === i.unit_price_paise * i.qty));
-  assert.match(r.data.whatsapp_text, /Dabba 1 – Regular \(3 packs, 700g\) – ₹407/); assert.match(r.data.whatsapp_text, /Dabba 2 – Trial/);
+  assert.match(r.data.whatsapp_text, /Dabba 1 – Regular \(3 packs, 700g\) – ₹302/); assert.match(r.data.whatsapp_text, /Dabba 2 – Trial/);
   assert.match(r.data.whatsapp_url, /^https:\/\/wa\.me\/919320685055\?text=/);
 });
 test('12. Editing a Dabba re-prices it from the server catalogue', async () => {
   const before = await quote(dabba('regular', trio('R')));
   const edited = await quote(dabba('regular', trio('R', [2, 1, 1])));
-  assert.equal(edited.data.total_paise, before.data.total_paise + 13900);
+  assert.equal(edited.data.total_paise, before.data.total_paise + 10800);
   assert.equal(edited.data.dabbas[0].packs, 4);
 });
 test('single shop items and Dabbas can share one order', async () => {
   const r = await place({ ...dabba('regular', trio('R')), lines: [{ sku: 'SWALI-GHEE-500', qty: 1 }] });
-  assert.equal(r.status, 201); assert.equal(r.data.total_paise, 40700 + 28000);
+  assert.equal(r.status, 201); assert.equal(r.data.total_paise, 30200 + 28000);
   assert.match(r.data.whatsapp_text, /1x Signature Swali – Pure Desi Ghee · 500gms – ₹280/);
 });
 test('a Dabba-only pack cannot be bought as a loose item, and vice versa', async () => {
@@ -240,4 +240,35 @@ test('migration: an older database with the Saffola name is renamed to "Fresh Oi
   for (const m of MIGRATIONS) await env.db.prepare(m).run();
   assert.equal((await env.db.prepare(`SELECT short_desc FROM products WHERE id = 'chakli'`).first()).short_desc, 'Crunchy, golden chakli, made fresh at home.');
   const rows = (await env.db.prepare(`SELECT COUNT(*) c FROM variants WHERE label LIKE '%Saffola%' OR type LIKE '%Saffola%'`).first()).c; assert.equal(rows, 0);
+});
+
+test('Dabba packs are always cheaper than buying the same snacks separately (price and per gram)', async () => {
+  const cat = (await env.call('/api/catalogue')).data;
+  for (const p of cat.products) {
+    const shop = p.variants.filter(v => v.kind === 'single' && !/Ghee/.test(v.type || ''));          // plain / oil packs
+    const holds = w => shop.filter(v => v.weight_g >= w).sort((a, b) => a.weight_g - b.weight_g)[0];   // smallest shop pack holding at least as much
+    for (const d of p.variants.filter(v => v.kind === 'dabba')) {
+      const s = holds(d.weight_g); assert.ok(s, `${d.sku} has a shop comparison`);
+      assert.ok(d.price_paise < s.price_paise, `${d.sku} (${d.price_paise}) should cost less than ${s.sku} (${s.price_paise})`);
+      assert.ok(d.price_paise / d.weight_g < s.price_paise / s.weight_g, `${d.sku} should be cheaper per gram than ${s.sku}`);
+    }
+  }
+  // and whole Dabbas against the same packs bought separately
+  for (const [fmt, suffix] of [['trial', 'T'], ['regular', 'R'], ['family', 'F']]) {
+    const dab = await quote(dabba(fmt, trio(suffix))); let separate = 0;
+    for (const p of cat.products) {
+      const d = p.variants.find(v => v.kind === 'dabba' && v.format === fmt);
+      const s = p.variants.filter(v => v.kind === 'single' && !/Ghee/.test(v.type || '')).filter(v => v.weight_g >= d.weight_g).sort((a, b) => a.weight_g - b.weight_g)[0];
+      separate += s.price_paise;
+    }
+    assert.ok(dab.data.total_paise < separate, `${fmt} Dabba ${dab.data.total_paise} should be below ${separate} bought separately`);
+  }
+});
+test('migration: old Dabba seed prices move to the new lower prices, admin-edited prices are kept', async () => {
+  const { MIGRATIONS } = await import('../worker/src/bootstrap.js');
+  await env.db.prepare(`UPDATE variants SET price_paise = 13900 WHERE sku = 'SWALI-R'`).run();      // old seed value
+  await env.db.prepare(`UPDATE variants SET price_paise = 11100 WHERE sku = 'CHAKLI-R'`).run();     // edited by the owner
+  for (const m of MIGRATIONS) await env.db.prepare(m).run();
+  assert.equal((await env.db.prepare(`SELECT price_paise p FROM variants WHERE sku = 'SWALI-R'`).first()).p, 10800);
+  assert.equal((await env.db.prepare(`SELECT price_paise p FROM variants WHERE sku = 'CHAKLI-R'`).first()).p, 11100);
 });
