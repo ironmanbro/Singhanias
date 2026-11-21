@@ -81,6 +81,27 @@
     document.querySelectorAll('#promise .reveal > div:first-child').forEach(el => el.classList.add('pi'));
   });
 
+  /* ---- Maa's Rasoi tabs: Swali / Chakli / Chiwda ---- */
+  safe(() => {
+    const tabs = [...document.querySelectorAll('[data-mtab]')], panels = [...document.querySelectorAll('[data-panel]')], sub = $('making-sub');
+    if (!tabs.length) return;
+    const SUB = {
+      swali: ['This is how every swali is made. No hurry, no shortcuts.', 'हर स्वाली ऐसे बनती है। कोई जल्दबाज़ी नहीं, कोई शॉर्टकट नहीं।'],
+      chakli: ['This is how every chakli is made. No hurry, no shortcuts.', 'हर चकली ऐसे बनती है। कोई जल्दबाज़ी नहीं, कोई शॉर्टकट नहीं।'],
+      chivda: ['This is how every chiwda is made. No hurry, no shortcuts.', 'हर चिवड़ा ऐसे बनता है। कोई जल्दबाज़ी नहीं, कोई शॉर्टकट नहीं।']
+    };
+    const show = id => {
+      tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.mtab === id));
+      panels.forEach(p => {
+        const on = p.dataset.panel === id; p.classList.toggle('hidden', !on);
+        if (on) p.querySelectorAll('.step').forEach((s, i) => { s.classList.remove('in'); s.classList.add('show'); void s.offsetWidth; setTimeout(() => s.classList.add('in'), 140 + i * 150); });   // replay the little scenes
+      });
+      if (sub) { sub.dataset.en = SUB[id][0]; sub.dataset.hi = SUB[id][1]; sub.innerHTML = document.documentElement.lang === 'hi' ? SUB[id][1] : SUB[id][0]; }
+    };
+    tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.mtab)));
+    tabs.forEach((t, i) => t.addEventListener('keydown', e => { if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { const n = tabs[(i + (e.key === 'ArrowRight' ? 1 : tabs.length - 1)) % tabs.length]; n.focus(); show(n.dataset.mtab); } }));
+  });
+
   /* ---- count-up numbers ---- */
   safe(() => {
     const els = document.querySelectorAll('[data-count]'); if (!els.length) return;

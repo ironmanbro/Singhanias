@@ -373,6 +373,44 @@ await test('Tiers: admin can change the tiers and the Dabba page follows', async
   await addOne(page, 'swali', 4); assert.match(await page.textContent('#disc-label'), /12%/);
 });
 
+
+/* ---------- Maa's Rasoi: the making story for all three snacks ---------- */
+await test("Maa's Rasoi: Swali, Chakli and Chiwda each have their own four animated steps", async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(900);
+  assert.equal(await page.locator('[data-mtab]').count(), 3); assert.equal(await page.locator('.making-panel').count(), 3); assert.equal(await page.locator('.making-panel .step').count(), 12);
+  assert.match(await page.textContent('#making-sub'), /This is how every swali is made\. No hurry, no shortcuts\./);
+  assert.equal(await page.locator('.making-panel:not(.hidden) .step').count(), 4);
+  for (const [id, word, titles] of [['chakli', 'chakli', ['Gundhna', 'Dabana', 'Ghumana', 'Talna']], ['chivda', 'chiwda', ['Bhunna', 'Tadka', 'Milana', 'Dabba mein']], ['swali', 'swali', ['Gundhna', 'Belna', 'Kaatna', 'Talna']]]) {
+    await page.evaluate(() => document.getElementById('making').scrollIntoView({ block: 'start' })); await page.waitForTimeout(300);
+    await page.click(`[data-mtab="${id}"]`); await page.waitForTimeout(500);
+    assert.equal(await page.getAttribute(`[data-mtab="${id}"]`, 'aria-selected'), 'true');
+    assert.match(await page.textContent('#making-sub'), new RegExp(`This is how every ${word} is made\\. No hurry, no shortcuts\\.`));
+    const vis = await page.locator('.making-panel:not(.hidden)'); assert.equal(await vis.count(), 1); assert.equal(await vis.getAttribute('data-panel'), id);
+    const heads = (await vis.locator('h3').allTextContents()).map(h => h.replace(/^\d\.\s*/, '').trim()); assert.deepEqual(heads, titles);
+    assert.equal(await vis.locator('svg.scene').count(), 4);
+    await page.waitForFunction(i => document.querySelectorAll(`[data-panel="${i}"] .step.in`).length === 4, id, { timeout: 4000 });
+  }
+});
+await test("Maa's Rasoi: Hindi, keyboard arrows, and no ingredient words in any panel", async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(900);
+  const all = await page.evaluate(() => document.getElementById('making').textContent);
+  assert.ok(!/maida|rava|ajwain|curd|jeera|besan|peanut|rice flour|saffola|ghee|curry/i.test(all), 'making story names no ingredients');
+  await page.evaluate(() => document.getElementById('making').scrollIntoView()); await page.focus('[data-mtab="swali"]'); await page.keyboard.press('ArrowRight');
+  assert.equal(await page.getAttribute('[data-mtab="chakli"]', 'aria-selected'), 'true');
+  await page.click('.lang-toggle >> nth=0'); await page.waitForTimeout(400);
+  assert.match(await page.textContent('#making-sub'), /हर चकली ऐसे बनती है/);
+  await page.click('[data-mtab="chivda"]'); assert.match(await page.textContent('#making-sub'), /हर चिवड़ा ऐसे बनता है/);
+  assert.match(await page.textContent('.making-panel:not(.hidden)'), /भूनना/);
+});
+await test("Maa's Rasoi: reduce motion still shows every panel", async (page, ctx) => {
+  const rm = await ctx.browser().newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  await rm.addInitScript(() => { try { sessionStorage.setItem('singhanias_intro', '1'); } catch (e) {} });
+  const p = await rm.newPage(); await p.goto(BASE + '/'); await p.waitForTimeout(800);
+  await p.evaluate(() => document.getElementById('making').scrollIntoView()); await p.click('[data-mtab="chivda"]'); await p.waitForTimeout(400);
+  assert.equal(await p.locator('.making-panel:not(.hidden) .step').count(), 4); assert.ok(await p.locator('.making-panel:not(.hidden) .step').first().isVisible());
+  await rm.close();
+});
+
 /* ---------- admin ---------- */
 await test('Admin: sign in, change a price and stock, mark an order paid', async page => {
   await page.goto(BASE + '/admin/'); await page.fill('#token', 'wrong'); await page.click('#login-btn'); await page.waitForTimeout(500);
