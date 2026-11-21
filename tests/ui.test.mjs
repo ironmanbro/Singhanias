@@ -198,6 +198,41 @@ await test('Desktop: summary is a sticky second column', async page => {
   assert.ok((await page.locator('#summary').boundingBox()).y < 200, 'summary stays in view while scrolling');
 });
 
+
+/* ---------- content, allergy list and mascot ---------- */
+await test('No Saffola brand and no ingredient lists anywhere; allergy information is shown', async page => {
+  for (const url of ['/', '/build-your-dabba/']) {
+    await page.goto(BASE + url); await page.waitForTimeout(900);
+    const text = await page.evaluate(() => document.body.innerText + ' ' + [...document.querySelectorAll('[data-hi]')].map(e => e.dataset.en || '').join(' '));
+    assert.ok(!/saffola|सफ़ोला/i.test(text), url + ' still mentions Saffola');
+    assert.ok(!/maida|rava|ajwain|curd\b|jeera|curry patta|kneaded firm/i.test(text.replace(/Contains:[^.\n]*/g, '')), url + ' still shows recipe words');
+  }
+  await page.goto(BASE + '/'); await page.waitForTimeout(800);
+  assert.match(await page.textContent('#allergy-grid'), /Wheat \(gluten\)/); assert.match(await page.textContent('#allergy-grid'), /Peanuts/); assert.match(await page.textContent('#allergy-note'), /serious allergy/);
+  await page.click('[data-info="chakli"]'); const modal = await page.textContent('#info-body');
+  assert.match(modal, /Allergen info|Allergy/i); assert.match(modal, /Sesame/); assert.ok(!/Ingredients/.test(modal));
+  assert.equal(await page.locator('[data-v="Fresh Oil"]').count(), 1);
+  await dabbaPage(page); assert.match(await page.locator('[data-product="chivda"]').textContent(), /Contains: Peanuts, Chickpea/);
+  const cat = (await api('/api/catalogue')).data; assert.ok(!JSON.stringify(cat).includes('Saffola'));
+});
+await test('Mascot Mathu: appears, speaks on tap, can be hidden and brought back', async page => {
+  await page.goto(BASE + '/'); await page.waitForSelector('#mathu');
+  await page.click('#mathu .mathu-btn'); await page.waitForSelector('#mathu .mathu-bubble.show');
+  assert.ok((await page.textContent('#mathu .m-msg')).length > 10);
+  await page.click('#mathu .hide'); assert.equal(await page.locator('#mathu').count(), 0);
+  await page.reload(); await page.waitForTimeout(800); assert.equal(await page.locator('#mathu').count(), 0);
+  await page.evaluate(() => document.getElementById('mathu-back').scrollIntoView()); await page.click('#mathu-back'); await page.waitForSelector('#mathu');
+  await dabbaPage(page); await page.waitForSelector('#mathu');
+  await addOne(page, 'swali', 3); await addOne(page, 'chakli', 3); await page.waitForSelector('#mathu .mathu-bubble.show');
+  assert.match(await page.textContent('#mathu .m-msg'), /full/i);
+});
+await test('Mascot on a phone: visible, does not cause sideways scroll or cover the Dabba bar', async page => {
+  await dabbaPage(page); await page.waitForSelector('#mathu');
+  const m = await page.locator('#mathu').boundingBox(), bar = await page.locator('#sbar').boundingBox();
+  assert.ok(m.y + m.height <= bar.y + 2, 'mascot sits above the bottom bar'); assert.ok(m.x >= 0 && m.x + m.width <= 390);
+  const w = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]); assert.ok(w[0] <= w[1]);
+}, { viewport: { width: 390, height: 844 }, mobile: true });
+
 /* ---------- admin ---------- */
 await test('Admin: sign in, change a price and stock, mark an order paid', async page => {
   await page.goto(BASE + '/admin/'); await page.fill('#token', 'wrong'); await page.click('#login-btn'); await page.waitForTimeout(500);

@@ -27,7 +27,7 @@
     adding:     ['Adding…', 'जोड़ रहे हैं…'], update: ['Update My Dabba', 'मेरा डब्बा अपडेट करें'], add: ['Add My Dabba', 'मेरा डब्बा जोड़ें'],
     adjusted:   ['We adjusted your Dabba to what is in stock.', 'हमने आपका डब्बा उपलब्ध स्टॉक के हिसाब से बदल दिया।'],
     addedSub:   ['{p} packs · {w} · {t}', '{p} पैक · {w} · {t}'], updatedSub: ['Dabba updated: {p} packs · {w} · {t}', 'डब्बा अपडेट हुआ: {p} पैक · {w} · {t}'],
-    from:       ['from', 'से'], pickSize: ['Pick a size', 'साइज़ चुनिए']
+    from:       ['from', 'से'], contains: ['Contains', 'इसमें है'], pickSize: ['Pick a size', 'साइज़ चुनिए']
   };
   const tr = (k, v = {}) => T[k][lang === 'hi' ? 1 : 0].replace(/\{(\w+)\}/g, (_, x) => v[x]);
 
@@ -82,6 +82,7 @@
             <span data-stock class="text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap"></span>
           </div>
           <p class="text-sm text-brand-muted">${desc}</p>
+          <p class="text-[11px] font-semibold text-brand-saffron">⚠ ${tr('contains')}: ${esc((window.ALLERGENS?.[p.id] || []).map(a => a[lang === 'hi' ? 1 : 0]).join(', '))}</p>
           <div class="flex items-end justify-between gap-3 mt-auto pt-2">
             <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark">${money(v.price_paise)}</p></div>
             <div class="flex items-center border border-brand-gold rounded-full overflow-hidden bg-white" role="group" aria-label="${name} quantity">
@@ -116,6 +117,7 @@
     if (meter.children.length !== max) meter.innerHTML = Array.from({ length: max }, () => '<span class="slot"></span>').join('');
     [...meter.children].forEach((s, i) => { const on = i < n; if (on && !s.classList.contains('on') && n > prevPacks) { s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); } s.classList.toggle('on', on); });
     if (n !== prevPacks) { for (const id of ['sum-count', 'sbar-packs']) bump($(id)); }
+    if (n >= max && prevPacks < max && window.Mathu) Mathu.say('Your Dabba is full! Press "Add My Dabba". 📦', 'आपका डब्बा भर गया! "मेरा डब्बा जोड़ें" दबाइए। 📦', 4500);
     prevPacks = n;
     const nowIds = new Set(lines.map(x => x.p.id));
     $('sum-items').innerHTML = lines.map(({ p, l }) => `<li class="${prevIds.has(p.id) ? '' : 'li-new '}py-2 flex items-center justify-between gap-2 text-sm">
@@ -268,6 +270,7 @@
 
   /* ---------- language ---------- */
   function applyStaticLang() {
+    if ($('allergy-note') && window.ALLERGEN_NOTE) $('allergy-note').textContent = ALLERGEN_NOTE[lang === 'hi' ? 1 : 0];
     document.documentElement.lang = lang === 'hi' ? 'hi' : 'en';
     document.querySelectorAll('[data-hi]').forEach(el => { if (el.dataset.en === undefined) el.dataset.en = el.innerHTML; el.innerHTML = lang === 'hi' ? el.dataset.hi : el.dataset.en; });
     $('lang-btn').textContent = lang === 'hi' ? 'English' : 'हिंदी';

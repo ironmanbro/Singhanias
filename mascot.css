@@ -1,0 +1,32 @@
+/* Mathu, the Singhania's mascot: a mathri in a turban. Fixed bottom-left; hidden with prefers-reduced-motion animations off. */
+.mathu { position: fixed; left: 10px; bottom: 84px; z-index: 40; width: 74px; }
+@media (min-width: 768px) { .mathu { left: 16px; bottom: 14px; width: 92px; } }
+.mathu-btn { display: block; width: 100%; background: none; border: 0; padding: 0; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.mathu-btn:focus-visible { outline: 3px solid #B99A58; outline-offset: 4px; border-radius: 50%; }
+.mathu svg { width: 100%; height: auto; display: block; overflow: visible; }
+.mathu .m-bob { animation: mBob 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: 50% 100%; }
+.mathu .m-eyes { transform-box: fill-box; transform-origin: center; animation: mBlink 5s infinite; }
+.mathu .m-hand { transform-box: fill-box; transform-origin: 10% 90%; animation: mWave 3.6s ease-in-out infinite; }
+.mathu .m-pupil { transition: transform .12s ease-out; }
+.mathu.hop .m-bob { animation: mHop .6s cubic-bezier(.3, 1.6, .5, 1); }
+.mathu.sleep .m-bob, .mathu.sleep .m-hand { animation: mBreathe 4s ease-in-out infinite; }
+.mathu.sleep .m-eyes { animation: none; transform: scaleY(.12); }
+.mathu.sleep .m-zzz { opacity: 1; }
+.m-zzz { opacity: 0; font: 700 14px 'Plus Jakarta Sans', sans-serif; fill: #641E2B; transition: opacity .4s; animation: mZ 2.4s ease-in-out infinite; }
+@keyframes mBob { 0%, 100% { transform: translateY(0) rotate(-1deg); } 50% { transform: translateY(-5px) rotate(1.5deg); } }
+@keyframes mHop { 0% { transform: translateY(0) scale(1, 1); } 25% { transform: translateY(0) scale(1.1, .88); } 55% { transform: translateY(-22px) scale(.94, 1.1); } 100% { transform: translateY(0) scale(1, 1); } }
+@keyframes mBlink { 0%, 93%, 100% { transform: scaleY(1); } 96% { transform: scaleY(.1); } }
+@keyframes mWave { 0%, 60%, 100% { transform: rotate(0); } 70% { transform: rotate(-22deg); } 80% { transform: rotate(10deg); } 90% { transform: rotate(-16deg); } }
+@keyframes mBreathe { 50% { transform: scale(1.03); } }
+@keyframes mZ { 0%, 100% { transform: translate(0, 0); } 50% { transform: translate(4px, -6px); } }
+
+.mathu-bubble { position: absolute; left: 0; bottom: calc(100% + 10px); width: max-content; max-width: min(250px, calc(100vw - 24px)); background: #fff; color: #3C3029; border: 2px solid #B99A58; border-radius: 16px; padding: 10px 34px 10px 14px; font-size: 13px; line-height: 1.4; font-weight: 600; box-shadow: 0 8px 22px rgba(60, 48, 41, .2); opacity: 0; transform: translateY(8px) scale(.9); transform-origin: 20% 100%; pointer-events: none; transition: opacity .25s, transform .35s cubic-bezier(.3, 1.5, .5, 1); }
+.mathu-bubble.show { opacity: 1; transform: none; pointer-events: auto; }
+.mathu-bubble::after { content: ""; position: absolute; left: 26px; bottom: -9px; width: 14px; height: 14px; background: #fff; border-right: 2px solid #B99A58; border-bottom: 2px solid #B99A58; transform: rotate(45deg); }
+.mathu-bubble button { position: absolute; top: 2px; right: 4px; width: 28px; height: 28px; border: 0; background: none; font-size: 14px; color: #6B5A50; cursor: pointer; }
+.mathu-bubble .hide { display: block; margin-top: 6px; background: none; border: 0; padding: 0; position: static; width: auto; height: auto; font-size: 11px; font-weight: 600; text-decoration: underline; color: #6B5A50; }
+@media (prefers-reduced-motion: reduce) {
+  .mathu *, .mathu-bubble { animation: none !important; transition: none !important; }
+  .mathu-bubble { transform: none; }
+}
+@media print { .mathu { display: none; } }

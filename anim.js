@@ -147,7 +147,7 @@
     const bar = document.createElement('div'); bar.id = 'scroll-progress'; bar.setAttribute('aria-hidden', 'true'); document.body.appendChild(bar);
     const top = document.createElement('button');
     top.type = 'button'; top.setAttribute('aria-label', 'Back to top'); top.textContent = '↑';
-    top.className = 'fixed left-4 bottom-20 md:bottom-6 z-40 w-12 h-12 rounded-full bg-brand-terracotta text-white text-xl font-bold shadow-xl';
+    top.className = 'fixed right-4 bottom-36 md:bottom-24 z-40 w-12 h-12 rounded-full bg-brand-terracotta text-white text-xl font-bold shadow-xl';
     top.style.cssText = 'opacity:0;transform:translateY(20px) scale(.8);pointer-events:none;transition:opacity .3s,transform .4s cubic-bezier(.3,1.6,.5,1)';
     top.onclick = () => window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
     document.body.appendChild(top);

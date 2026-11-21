@@ -229,3 +229,15 @@ test('unknown routes and wrong methods return JSON errors, never HTML', async ()
   assert.equal((await env.call('/api/nope')).status, 404);
   assert.equal((await env.call('/api/orders')).status, 404);
 });
+
+test('migration: an older database with the Saffola name is renamed to "Fresh Oil"', async () => {
+  const { MIGRATIONS } = await import('../worker/src/bootstrap.js');
+  await env.db.prepare(`UPDATE variants SET type = 'Fresh Saffola Oil', label = 'Fresh Saffola Oil · 500gms' WHERE sku = 'SWALI-OIL-500'`).run();
+  for (const m of MIGRATIONS) await env.db.prepare(m).run();
+  const v = await env.db.prepare(`SELECT type, label FROM variants WHERE sku = 'SWALI-OIL-500'`).first();
+  assert.deepEqual(v, { type: 'Fresh Oil', label: 'Fresh Oil · 500gms' });
+  await env.db.prepare(`UPDATE products SET short_desc = 'Crunchy rice-flour chakli with sesame and jeera.' WHERE id = 'chakli'`).run();
+  for (const m of MIGRATIONS) await env.db.prepare(m).run();
+  assert.equal((await env.db.prepare(`SELECT short_desc FROM products WHERE id = 'chakli'`).first()).short_desc, 'Crunchy, golden chakli, made fresh at home.');
+  const rows = (await env.db.prepare(`SELECT COUNT(*) c FROM variants WHERE label LIKE '%Saffola%' OR type LIKE '%Saffola%'`).first()).c; assert.equal(rows, 0);
+});

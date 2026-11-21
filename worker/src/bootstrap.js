@@ -32,12 +32,20 @@ export function seedStatements(cat = catalogue, { stock = true } = {}) {
   return out;
 }
 
+/** One-off data fixes for databases created by earlier versions. Idempotent: safe to run on every start. */
+export const MIGRATIONS = [
+  `UPDATE variants SET type = 'Fresh Oil' WHERE type = 'Fresh Saffola Oil'`,
+  `UPDATE variants SET label = REPLACE(label, 'Fresh Saffola Oil', 'Fresh Oil') WHERE label LIKE '%Saffola%'`,
+  `UPDATE products SET short_desc = 'Crunchy, golden chakli, made fresh at home.', short_desc_hi = 'कुरकुरी, सुनहरी चकली, घर पर ताज़ा बनी।' WHERE id = 'chakli' AND short_desc LIKE '%jeera%'`,
+  `UPDATE products SET short_desc = 'Light, crunchy and tangy roasted poha chiwda, made fresh at home.', short_desc_hi = 'हल्का, कुरकुरा और चटपटा भुना पोहा चिवड़ा, घर पर ताज़ा बना।' WHERE id = 'chivda' AND short_desc LIKE '%curry leaves%'`
+];
+
 let ready = null;
 /** Called once per Worker instance before the first API request. Safe to run concurrently (all statements are idempotent). */
 export function ensureReady(env) {
   if (!ready) {
     ready = (async () => {
-      await env.DB.batch(SCHEMA.map(s => env.DB.prepare(s)));
+      await env.DB.batch([...SCHEMA, ...MIGRATIONS].map(s => env.DB.prepare(s)));
       const row = await env.DB.prepare('SELECT COUNT(*) AS n FROM products').first();
       if (!row || !row.n) await env.DB.batch(seedStatements().map(s => env.DB.prepare(s)));
     })().catch(e => { ready = null; throw e; });
