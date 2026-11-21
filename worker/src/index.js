@@ -1,8 +1,8 @@
 // Singhania's API (Cloudflare Worker + D1). Static pages are served by Workers Assets; only /api/* reaches this code.
-import { priceCart, validateCustomer, genOrderId, buildWhatsAppText, referenceUnit } from './core.js';
+import { priceCart, validateCustomer, genOrderId, buildWhatsAppText, referenceUnit, normalizeTiers } from './core.js';
 import { ensureReady } from './bootstrap.js';
 
-const DEFAULT_SETTINGS = { dabba_enabled: true, min_packs: 3, max_packs: 6, low_stock_threshold: 5, reservation_hours: 12 };
+const DEFAULT_SETTINGS = { dabba_enabled: true, min_packs: 3, max_packs: 6, low_stock_threshold: 5, reservation_hours: 12, dabba_tiers: [{ min_packs: 3, percent: 10 }, { min_packs: 6, percent: 15 }] };
 const HEADERS = { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store', 'x-content-type-options': 'nosniff' };
 const json = (data, status = 200) => new Response(JSON.stringify(data), { status, headers: HEADERS });
 const nowISO = () => new Date().toISOString();
@@ -29,7 +29,7 @@ async function loadCatalogue(env) {
 function publicCatalogue(cat) {
   const thr = cat.settings.low_stock_threshold;
   return {
-    settings: { dabba_enabled: cat.settings.dabba_enabled, min_packs: cat.settings.min_packs, max_packs: cat.settings.max_packs },
+    settings: { dabba_enabled: cat.settings.dabba_enabled, min_packs: cat.settings.min_packs, max_packs: cat.settings.max_packs, dabba_tiers: cat.settings.dabba_tiers },
     formats: [...cat.formats.values()].filter(f => f.enabled).map(f => ({ id: f.id, label: f.label, label_hi: f.label_hi })),
     products: [...cat.products.values()].filter(p => p.enabled).map(p => ({
       id: p.id, name: p.name, name_hi: p.name_hi, short_desc: p.short_desc, short_desc_hi: p.short_desc_hi, image: p.image,
@@ -87,7 +87,7 @@ async function createOrder(env, { priced, customer, ref, hours }) {
       st.push(env.DB.prepare(`INSERT INTO stock_movements (sku, delta, reserved_delta, reason, order_id, created_at) VALUES (?, 0, ?, 'reserve', ?, ?)`).bind(sku, qty, orderId, created));
     }
     for (const d of priced.dabbas) {
-      st.push(env.DB.prepare('INSERT INTO order_dabbas (order_id, dabba_no, format, packs, weight_g, subtotal_paise) VALUES (?, ?, ?, ?, ?, ?)').bind(orderId, d.no, d.format, d.packs, d.weight_g, d.subtotal_paise));
+      st.push(env.DB.prepare('INSERT INTO order_dabbas (order_id, dabba_no, format, packs, weight_g, subtotal_paise, gross_paise, discount_percent, discount_paise) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)').bind(orderId, d.no, d.format, d.packs, d.weight_g, d.subtotal_paise, d.gross_paise, d.discount_percent, d.discount_paise));
       for (const it of d.items) st.push(insertItem(env, orderId, d.no, it));
     }
     for (const l of priced.lines) st.push(insertItem(env, orderId, null, l));
@@ -200,6 +200,7 @@ async function admin(req, env, path, m) {
     if ('max_packs' in b) next.max_packs = int(b.max_packs, 1, 20);
     if ('low_stock_threshold' in b) next.low_stock_threshold = int(b.low_stock_threshold, 0, 1000);
     if ('reservation_hours' in b) next.reservation_hours = int(b.reservation_hours, 1, 168);
+    if ('dabba_tiers' in b) { try { next.dabba_tiers = normalizeTiers(b.dabba_tiers); } catch (e) { throw new HttpError(400, 'invalid_tiers'); } }
     if (next.max_packs < next.min_packs) throw new HttpError(400, 'max_below_min');
     await env.DB.batch(Object.entries(next).map(([k, v]) => env.DB.prepare('INSERT INTO settings (key, value) VALUES (?, ?) ON CONFLICT(key) DO UPDATE SET value = excluded.value').bind(k, JSON.stringify(v))));
     return json({ settings: next });

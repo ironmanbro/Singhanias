@@ -8,7 +8,7 @@ export const SCHEMA = [
   `CREATE TABLE IF NOT EXISTS variants (sku TEXT PRIMARY KEY, product_id TEXT NOT NULL REFERENCES products(id), kind TEXT NOT NULL CHECK (kind IN ('dabba','single')), format TEXT REFERENCES formats(id), type TEXT, size TEXT, label TEXT NOT NULL, weight_g INTEGER NOT NULL CHECK (weight_g > 0), price_paise INTEGER NOT NULL CHECK (price_paise >= 0), enabled INTEGER NOT NULL DEFAULT 1)`,
   `CREATE TABLE IF NOT EXISTS stock (sku TEXT PRIMARY KEY REFERENCES variants(sku), qty INTEGER NOT NULL DEFAULT 0, reserved INTEGER NOT NULL DEFAULT 0, CHECK (qty >= 0 AND reserved >= 0 AND reserved <= qty))`,
   `CREATE TABLE IF NOT EXISTS orders (id TEXT PRIMARY KEY, status TEXT NOT NULL CHECK (status IN ('pending','paid','cancelled','expired')), customer_json TEXT NOT NULL, total_paise INTEGER NOT NULL, ref TEXT, created_at TEXT NOT NULL, expires_at TEXT NOT NULL, paid_at TEXT, closed_at TEXT, whatsapp_text TEXT NOT NULL)`,
-  `CREATE TABLE IF NOT EXISTS order_dabbas (order_id TEXT NOT NULL REFERENCES orders(id), dabba_no INTEGER NOT NULL, format TEXT NOT NULL, packs INTEGER NOT NULL, weight_g INTEGER NOT NULL, subtotal_paise INTEGER NOT NULL, PRIMARY KEY (order_id, dabba_no))`,
+  `CREATE TABLE IF NOT EXISTS order_dabbas (order_id TEXT NOT NULL REFERENCES orders(id), dabba_no INTEGER NOT NULL, format TEXT NOT NULL, packs INTEGER NOT NULL, weight_g INTEGER NOT NULL, subtotal_paise INTEGER NOT NULL, gross_paise INTEGER NOT NULL DEFAULT 0, discount_percent INTEGER NOT NULL DEFAULT 0, discount_paise INTEGER NOT NULL DEFAULT 0, PRIMARY KEY (order_id, dabba_no))`,
   `CREATE TABLE IF NOT EXISTS order_items (id INTEGER PRIMARY KEY AUTOINCREMENT, order_id TEXT NOT NULL REFERENCES orders(id), dabba_no INTEGER, sku TEXT NOT NULL, product_name TEXT NOT NULL, label TEXT NOT NULL, qty INTEGER NOT NULL CHECK (qty > 0), weight_g INTEGER NOT NULL, unit_price_paise INTEGER NOT NULL, line_paise INTEGER NOT NULL)`,
   `CREATE TABLE IF NOT EXISTS stock_movements (id INTEGER PRIMARY KEY AUTOINCREMENT, sku TEXT NOT NULL, delta INTEGER NOT NULL DEFAULT 0, reserved_delta INTEGER NOT NULL DEFAULT 0, reason TEXT NOT NULL, order_id TEXT, created_at TEXT NOT NULL)`,
   `CREATE UNIQUE INDEX IF NOT EXISTS uq_movement_once ON stock_movements (order_id, sku, reason) WHERE order_id IS NOT NULL`,
@@ -46,15 +46,41 @@ export const MIGRATIONS = [
   `UPDATE variants SET price_paise = 16200 WHERE sku = 'CHAKLI-F' AND price_paise = 24900`,
   `UPDATE variants SET price_paise = 6500 WHERE sku = 'CHIWDA-T' AND price_paise = 7900`,
   `UPDATE variants SET price_paise = 10800 WHERE sku = 'CHIWDA-R' AND price_paise = 12900`,
-  `UPDATE variants SET price_paise = 19800 WHERE sku = 'CHIWDA-F' AND price_paise = 22900`
+  `UPDATE variants SET price_paise = 19800 WHERE sku = 'CHIWDA-F' AND price_paise = 22900`,
+  `UPDATE variants SET price_paise = 7200 WHERE sku = 'SWALI-T' AND price_paise = 6500`,
+  `UPDATE variants SET price_paise = 12000 WHERE sku = 'SWALI-R' AND price_paise = 10800`,
+  `UPDATE variants SET price_paise = 22000 WHERE sku = 'SWALI-F' AND price_paise = 19800`,
+  `UPDATE variants SET price_paise = 4800 WHERE sku = 'CHAKLI-T' AND price_paise = 4300`,
+  `UPDATE variants SET price_paise = 9600 WHERE sku = 'CHAKLI-R' AND price_paise = 8600`,
+  `UPDATE variants SET price_paise = 17600 WHERE sku = 'CHAKLI-F' AND price_paise = 16200`,
+  `UPDATE variants SET price_paise = 7200 WHERE sku = 'CHIWDA-T' AND price_paise = 6500`,
+  `UPDATE variants SET price_paise = 12000 WHERE sku = 'CHIWDA-R' AND price_paise = 10800`,
+  `UPDATE variants SET price_paise = 22000 WHERE sku = 'CHIWDA-F' AND price_paise = 19800`,
+  `INSERT OR IGNORE INTO settings (key, value) VALUES ('dabba_tiers', '[{"min_packs":3,"percent":10},{"min_packs":6,"percent":15}]')`
 ];
+
+/** Adds columns to tables created by an earlier version (SQLite has no "ADD COLUMN IF NOT EXISTS"). */
+export const COLUMN_MIGRATIONS = [
+  ['order_dabbas', 'gross_paise', 'INTEGER NOT NULL DEFAULT 0'],
+  ['order_dabbas', 'discount_percent', 'INTEGER NOT NULL DEFAULT 0'],
+  ['order_dabbas', 'discount_paise', 'INTEGER NOT NULL DEFAULT 0']
+];
+export async function addMissingColumns(db, defs = COLUMN_MIGRATIONS) {
+  const have = {};
+  for (const [table, col, def] of defs) {
+    if (!have[table]) have[table] = new Set((await db.prepare(`PRAGMA table_info(${table})`).all()).results.map(r => r.name));
+    if (!have[table].has(col)) { await db.prepare(`ALTER TABLE ${table} ADD COLUMN ${col} ${def}`).run(); have[table].add(col); }
+  }
+}
 
 let ready = null;
 /** Called once per Worker instance before the first API request. Safe to run concurrently (all statements are idempotent). */
 export function ensureReady(env) {
   if (!ready) {
     ready = (async () => {
-      await env.DB.batch([...SCHEMA, ...MIGRATIONS].map(s => env.DB.prepare(s)));
+      await env.DB.batch(SCHEMA.map(s => env.DB.prepare(s)));
+      await addMissingColumns(env.DB);
+      await env.DB.batch(MIGRATIONS.map(s => env.DB.prepare(s)));
       const row = await env.DB.prepare('SELECT COUNT(*) AS n FROM products').first();
       if (!row || !row.n) await env.DB.batch(seedStatements().map(s => env.DB.prepare(s)));
     })().catch(e => { ready = null; throw e; });

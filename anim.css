@@ -1,12 +1,6 @@
 /* Singhania's: motion layer. Transform/opacity only (smooth on phones). Loaded after fx.css.
    Everything is switched off by the "reduce motion" setting at the bottom of this file. */
 
-/* ---------- page-to-page transition (supported browsers) ---------- */
-@view-transition { navigation: auto; }
-::view-transition-old(root) { animation: .25s ease both vtOut; }
-::view-transition-new(root) { animation: .45s ease both vtIn; }
-@keyframes vtOut { to { opacity: 0; transform: translateY(-8px); } }
-@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
 
 html, body { overflow-x: clip; }
 
@@ -136,5 +130,4 @@ button:not(:disabled):active, .rip:active { scale: .97; }
   .marquee-track { animation: none !important; }
   .petal-float, .twinkle, .dusk .star { display: none; }
   .uline { width: 120px; }
-  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
 }

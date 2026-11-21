@@ -13,11 +13,6 @@ body { background:#F5EBDD; color:#3C3029; font-family:'Plus Jakarta Sans','Noto 
 
 /* ---------- motion ---------- */
 html, body { overflow-x: clip; }
-@view-transition { navigation: auto; }
-::view-transition-old(root) { animation: .25s ease both vtOut; }
-::view-transition-new(root) { animation: .45s ease both vtIn; }
-@keyframes vtOut { to { opacity: 0; transform: translateY(-8px); } }
-@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
 header.sticky { animation: hdrIn .7s cubic-bezier(.2,.8,.2,1) both; }
 @keyframes hdrIn { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
 main > section:first-child > *:not(h1) { animation: rise .8s cubic-bezier(.2,.8,.2,1) both; }
@@ -151,3 +146,11 @@ main > section:first-child > *:not(.absolute) { position: relative; z-index: 1; 
 @keyframes savePop { 0% { opacity: 0; transform: translateY(8px) scale(.92); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: none; } }
 .save-chip { display: inline-block; margin-left: .4rem; padding: 1px 8px; border-radius: 999px; background: #E7F3EA; color: #245B35; font: 700 11px 'Plus Jakarta Sans', sans-serif; vertical-align: middle; animation: chipIn .6s cubic-bezier(.3,1.6,.5,1) .5s both; }
 @keyframes chipIn { from { opacity: 0; transform: scale(.5) rotate(-8deg); } }
+
+/* tiers */
+.slot-wrap { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.slot-wrap .slot { flex: none; width: 100%; }
+.slot-tag { font: 700 10px/1 'Plus Jakarta Sans', sans-serif; color: #6B5A50; min-height: 10px; transition: color .3s, transform .45s cubic-bezier(.3,1.8,.5,1); }
+.slot-tag.on { color: #245B35; transform: scale(1.2); }
+.tier-note { margin-top: .6rem; font-size: 12.5px; font-weight: 600; color: #245B35; min-height: 1rem; }
+.tier-note.pop { animation: savePop .6s cubic-bezier(.3,1.6,.5,1); }

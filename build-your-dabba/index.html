@@ -97,10 +97,12 @@
                 <p id="sum-count" class="text-sm text-brand-muted mt-1"></p>
                 <div id="meter" class="flex gap-1.5 mt-2" aria-hidden="true"></div>
                 <div id="sum-empty" class="sum-empty" aria-hidden="true"><span></span><span></span><span></span></div>
+                <p id="sum-tier" class="tier-note" role="status"></p>
                 <ul id="sum-items" class="mt-4 divide-y divide-brand-gold/30"></ul>
                 <dl class="mt-4 space-y-1 text-sm">
                     <div class="flex justify-between"><dt class="text-brand-muted" data-hi="कुल वज़न">Total net weight</dt><dd id="sum-weight" class="font-semibold">0g</dd></div>
-                    <div id="row-was" class="hidden flex justify-between"><dt class="text-brand-muted" data-hi="उतना ही वज़न, दुकान के दाम पर">Same weight at shop prices</dt><dd id="sum-was" class="line-through text-brand-muted">₹0</dd></div>
+                    <div id="row-gross" class="hidden flex justify-between"><dt class="text-brand-muted" data-hi="पैक का कुल">Packs total</dt><dd id="sum-gross" class="text-brand-muted">₹0</dd></div>
+                    <div id="row-disc" class="hidden flex justify-between font-semibold text-[#245B35]"><dt id="disc-label"></dt><dd id="sum-disc">−₹0</dd></div>
                     <div class="flex justify-between text-base"><dt class="font-bold" data-hi="उप-योग">Subtotal</dt><dd id="sum-total" class="font-serif text-xl font-bold text-brand-terracotta">₹0</dd></div>
                 </dl>
                 <p id="sum-save" class="save-pill hidden" role="status"></p>

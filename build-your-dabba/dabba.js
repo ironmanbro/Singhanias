@@ -27,7 +27,7 @@
     adding:     ['Adding…', 'जोड़ रहे हैं…'], update: ['Update My Dabba', 'मेरा डब्बा अपडेट करें'], add: ['Add My Dabba', 'मेरा डब्बा जोड़ें'],
     adjusted:   ['We adjusted your Dabba to what is in stock.', 'हमने आपका डब्बा उपलब्ध स्टॉक के हिसाब से बदल दिया।'],
     addedSub:   ['{p} packs · {w} · {t}', '{p} पैक · {w} · {t}'], updatedSub: ['Dabba updated: {p} packs · {w} · {t}', 'डब्बा अपडेट हुआ: {p} पैक · {w} · {t}'],
-    from:       ['from', 'से'], saveLine: ['You save {s} ({pct}) compared with buying the same weight separately', 'समान वज़न अलग-अलग ख़रीदने की तुलना में आप {s} ({pct}) बचाते हैं'], chip: ['Save {s}', '{s} बचाएँ'], youSaved: ['You saved {s}', 'आपने {s} बचाए'], savesShort: ['saves {s}', '{s} की बचत'], contains: ['Contains', 'इसमें है'], pickSize: ['Pick a size', 'साइज़ चुनिए']
+    from:       ['from', 'से'], saveLine: ['You save {s} ({pct}) compared with buying the same weight separately', 'समान वज़न अलग-अलग ख़रीदने की तुलना में आप {s} ({pct}) बचाते हैं'], chip: ['Up to {p} off in a Dabba', 'Dabba में {p} तक की छूट'], tierStart: ['Pick {k} packs to get {p} off', '{p} की छूट पाने के लिए {k} पैक चुनिए'], tierHave: ['{p} Dabba discount applied', '{p} डब्बा छूट लग गई'], tierNext: ['Add {k} more {w} to unlock {p} off', '{p} की छूट पाने के लिए {k} और पैक जोड़िए'], tierBest: ['Best Dabba discount unlocked: {p} off! 🎉', 'सबसे बड़ी डब्बा छूट मिल गई: {p}! 🎉'], packOne: ['pack', 'पैक'], packMany: ['packs', 'पैक'], discLabel: ['Dabba discount ({p})', 'डब्बा छूट ({p})'], unlocked: ['{p} Dabba discount unlocked! 🎉', '{p} डब्बा छूट मिल गई! 🎉'], youSaved: ['You saved {s}', 'आपने {s} बचाए'], savesShort: ['{s} off', '{s} की छूट'], contains: ['Contains', 'इसमें है'], pickSize: ['Pick a size', 'साइज़ चुनिए']
   };
   const tr = (k, v = {}) => T[k][lang === 'hi' ? 1 : 0].replace(/\{(\w+)\}/g, (_, x) => v[x]);
 
@@ -47,8 +47,12 @@
   const subtotal = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * l.v.price_paise : 0); }, 0);
   const totalWeight = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * l.v.weight_g : 0); }, 0);
   const refOf = v => (v.reference_paise != null ? v.reference_paise : v.price_paise);
-  const unitSaving = v => Math.max(0, refOf(v) - v.price_paise);
-  const saving = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * unitSaving(l.v) : 0); }, 0);
+  const tiers = () => (settings().dabba_tiers || []).filter(t => t.percent > 0).slice().sort((a, b) => a.min_packs - b.min_packs);
+  const tierAt = n => tiers().filter(t => n >= t.min_packs).pop() || null;
+  const refTotal = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * refOf(l.v) : 0); }, 0);
+  const discountPaise = n => { const t = tierAt(n); return t ? Math.round(subtotal() * t.percent / 100) : 0; };   // the server recalculates this; here it is only a preview
+  const netTotal = n => subtotal() - discountPaise(n);
+  const saving = n => Math.max(0, refTotal() - netTotal(n));
   const maxFor = p => { const l = lineFor(p); if (!l) return 0; const room = settings().max_packs - (packs() - l.qty); return Math.max(0, Math.min(l.v.available, room)); };
 
   /* ---------- rendering ---------- */
@@ -88,7 +92,7 @@
           <p class="text-sm text-brand-muted">${desc}</p>
           <p class="text-[11px] font-semibold text-brand-saffron">⚠ ${tr('contains')}: ${esc((window.ALLERGENS?.[p.id] || []).map(a => a[lang === 'hi' ? 1 : 0]).join(', '))}</p>
           <div class="flex items-end justify-between gap-3 mt-auto pt-2">
-            <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark"><span class="price-flip" style="--i:${idx}">${money(v.price_paise)}</span>${unitSaving(v) > 0 ? `<span class="save-chip">${tr('chip', { s: money(unitSaving(v)) })}</span>` : ''}</p></div>
+            <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark"><span class="price-flip" style="--i:${idx}">${money(v.price_paise)}</span>${tiers().length ? `<span class="save-chip">${tr('chip', { p: Math.max(...tiers().map(t => t.percent)) + '%' })}</span>` : ''}</p></div>
             <div class="flex items-center border border-brand-gold rounded-full overflow-hidden bg-white" role="group" aria-label="${name} quantity">
               <button type="button" data-dec="${p.id}" class="qty-btn w-11 h-11 text-xl font-bold" aria-label="${tr('dec')}: ${name}">−</button>
               <span data-qty class="w-8 text-center font-bold" aria-live="polite">0</span>
@@ -148,13 +152,14 @@
     $('sum-count').textContent = n ? tr('count', { a: n, b: max }) : tr('empty');
     // pack meter: one slot per allowed pack; newly filled slots pop
     const meter = $('meter');
-    if (meter.children.length !== max) meter.innerHTML = Array.from({ length: max }, () => '<span class="slot"></span>').join('');
-    [...meter.children].forEach((s, i) => { const on = i < n; if (on && !s.classList.contains('on') && n > prevPacks) { s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); } s.classList.toggle('on', on); });
+    if (meter.querySelectorAll('.slot').length !== max) meter.innerHTML = Array.from({ length: max }, () => '<span class="slot-wrap"><span class="slot"></span><span class="slot-tag"></span></span>').join('');
+    meter.querySelectorAll('.slot-wrap').forEach((w, i) => { const t = tiers().find(x => x.min_packs === i + 1), tag = w.querySelector('.slot-tag'); tag.textContent = t ? t.percent + '%' : ''; tag.classList.toggle('on', !!t && n >= t.min_packs); });
+    [...meter.querySelectorAll('.slot')].forEach((s, i) => { const on = i < n; if (on && !s.classList.contains('on') && n > prevPacks) { s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); } s.classList.toggle('on', on); });
     if (n !== prevPacks) { for (const id of ['sum-count', 'sbar-packs']) bump($(id)); }
-    if (n >= max && prevPacks < max && window.Mathu) Mathu.say('Your Dabba is full! Press "Add My Dabba". 📦', 'आपका डब्बा भर गया! "मेरा डब्बा जोड़ें" दबाइए। 📦', 4500);
+    if (n >= max && prevPacks < max && window.Mathu) { const tp = (tierAt(n) || { percent: 0 }).percent; Mathu.say('Your Dabba is full' + (tp > 0 ? ' and you get ' + tp + '% off' : '') + '! Press "Add My Dabba". 📦', 'आपका डब्बा भर गया' + (tp > 0 ? ' और ' + tp + '% छूट मिली' : '') + '! "मेरा डब्बा जोड़ें" दबाइए। 📦', 4500); }
     updateLiveDabba(n, max);
     $('meter').classList.toggle('meter-full', n >= max);
-    [...$('meter').children].forEach((s, i) => s.style.setProperty('--i', i));
+    [...$('meter').querySelectorAll('.slot')].forEach((s, i) => s.style.setProperty('--i', i));
     $('sum-empty').classList.toggle('gone', n > 0);
     prevPacks = n;
     const nowIds = new Set(lines.map(x => x.p.id));
@@ -163,11 +168,24 @@
         <span class="flex items-center gap-2"><span class="font-semibold">${money(l.qty * l.v.price_paise)}</span>
         <button type="button" data-remove="${p.id}" class="min-h-[44px] min-w-[44px] text-brand-muted hover:text-brand-terracotta" aria-label="${tr('remove')}: ${esc(p.name)}">✕</button></span></li>`).join('');
     prevIds = nowIds;
-    const prevTotal = $('sum-total').textContent, newTotal = money(subtotal());
-    const sv = saving(), prevSv = refresh.prevSv || 0; refresh.prevSv = sv;
-    $('row-was').classList.toggle('hidden', !(sv > 0)); $('sum-was').textContent = money(subtotal() + sv);
+    const gross = subtotal(), disc = discountPaise(n), net = gross - disc, tier = tierAt(n), pct = tier ? tier.percent : 0;
+    const prevTotal = $('sum-total').textContent, newTotal = money(net);
+    const sv = saving(n), prevSv = refresh.prevSv || 0; refresh.prevSv = sv;
+    $('row-gross').classList.toggle('hidden', !(disc > 0)); $('sum-gross').textContent = money(gross);
+    $('row-disc').classList.toggle('hidden', !(disc > 0)); $('sum-disc').textContent = '−' + money(disc); $('disc-label').textContent = tr('discLabel', { p: pct + '%' });
     const pill = $('sum-save'); pill.classList.toggle('hidden', !(sv > 0));
-    if (sv > 0) { pill.textContent = tr('saveLine', { s: money(sv), pct: Math.round(sv / (subtotal() + sv) * 100) + '%' }); if (sv !== prevSv && !reduced) { pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); } }
+    if (sv > 0) { pill.textContent = tr('saveLine', { s: money(sv), pct: Math.round(sv / refTotal() * 100) + '%' }); if (sv !== prevSv && !reduced) { pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); } }
+    // tier guidance: what you have, and what the next tier needs
+    const nextT = tiers().find(t => t.min_packs > n), tn = $('sum-tier');
+    let tmsg = '';
+    if (tiers().length) {
+      if (!tier) tmsg = tr('tierStart', { k: tiers()[0].min_packs, p: tiers()[0].percent + '%' });
+      else if (nextT) tmsg = tr('tierHave', { p: pct + '%' }) + ' · ' + tr('tierNext', { k: nextT.min_packs - n, w: nextT.min_packs - n === 1 ? tr('packOne') : tr('packMany'), p: nextT.percent + '%' });
+      else tmsg = tr('tierBest', { p: pct + '%' });
+    }
+    if (tn.textContent !== tmsg) { tn.textContent = tmsg; if (tmsg && !reduced) { tn.classList.remove('pop'); void tn.offsetWidth; tn.classList.add('pop'); } }
+    if (pct > (refresh.prevPct || 0) && refresh.prevPct !== undefined && n >= min && n < max && window.Mathu) Mathu.say(tr('unlocked', { p: pct + '%' }).replace(' 🎉', ''), tr('unlocked', { p: pct + '%' }), 3800);
+    refresh.prevPct = pct;
     $('sum-weight').textContent = weight(totalWeight());
     $('sum-total').textContent = newTotal;
     if (prevTotal !== newTotal) { bump($('sum-total')); bump($('sbar-total')); }
@@ -178,8 +196,8 @@
     if (wasDisabled && !$('add-btn').disabled && !reduced) { $('add-btn').classList.remove('unlock'); void $('add-btn').offsetWidth; $('add-btn').classList.add('unlock'); setTimeout(() => $('add-btn').classList.remove('unlock'), 800); }
     $('add-btn').textContent = state.editId ? tr('update') : tr('add');
     // phone bar
-    $('sbar-packs').textContent = tr('count', { a: n, b: max }) + (n ? ' · ' + weight(totalWeight()) : '') + (sv > 0 ? ' · ' + tr('savesShort', { s: money(sv) }) : '');
-    $('sbar-total').textContent = money(subtotal());
+    $('sbar-packs').textContent = tr('count', { a: n, b: max }) + (n ? ' · ' + weight(totalWeight()) : '') + (pct > 0 ? ' · ' + tr('savesShort', { s: pct + '%' }) : '');
+    $('sbar-total').textContent = money(net);
     if (!state.editId) store.set('draft', { format: state.format, counts: state.counts });
   }
 
@@ -274,7 +292,7 @@
       const sd = q.dabbas[0], fmt = state.cat.formats.find(f => f.id === state.format);
       const item = {
         type: 'dabba', id: state.editId || 'd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        format: sd.format, format_label: fmt ? fmt.label : sd.format_label, packs: sd.packs, weight_g: sd.weight_g, paise: sd.subtotal_paise, saving_paise: sd.saving_paise || 0,
+        format: sd.format, format_label: fmt ? fmt.label : sd.format_label, packs: sd.packs, weight_g: sd.weight_g, paise: sd.subtotal_paise, saving_paise: sd.saving_paise || 0, gross_paise: sd.gross_paise || sd.subtotal_paise, discount_percent: sd.discount_percent || 0, discount_paise: sd.discount_paise || 0,
         items: sd.items.map(i => ({ sku: i.sku, product: i.product_id, name: i.product_name, qty: i.qty, weight_g: i.weight_g, unit_price_paise: i.unit_price_paise }))
       };
       const cart = readCart(), at = cart.findIndex(i => i.type === 'dabba' && i.id === item.id);

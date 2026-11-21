@@ -17,8 +17,8 @@ const api = async (path, method = 'GET', body, auth) => {
 async function resetState() {   // cancel pending orders, restore stock, prices and settings used by the tests
   const st = (await api('/api/admin/state', 'GET', null, true)).data;
   for (const o of st.orders.filter(o => o.status === 'pending')) await api(`/api/admin/orders/${o.id}/cancel`, 'POST', null, true);
-  await api('/api/admin/settings', 'PUT', { dabba_enabled: true, min_packs: 3, max_packs: 6 }, true);
-  const seed = { 'SWALI-T': 6500, 'SWALI-R': 10800, 'SWALI-F': 19800, 'CHAKLI-T': 4300, 'CHAKLI-R': 8600, 'CHAKLI-F': 16200, 'CHIWDA-T': 6500, 'CHIWDA-R': 10800, 'CHIWDA-F': 19800 };
+  await api('/api/admin/settings', 'PUT', { dabba_enabled: true, min_packs: 3, max_packs: 6, dabba_tiers: [{ min_packs: 3, percent: 10 }, { min_packs: 6, percent: 15 }] }, true);
+  const seed = { 'SWALI-T': 7200, 'SWALI-R': 12000, 'SWALI-F': 22000, 'CHAKLI-T': 4800, 'CHAKLI-R': 9600, 'CHAKLI-F': 17600, 'CHIWDA-T': 7200, 'CHIWDA-R': 12000, 'CHIWDA-F': 22000 };
   for (const p of st.products) {
     await api(`/api/admin/products/${p.id}`, 'PUT', { enabled: true }, true);
     for (const v of p.variants) {
@@ -50,7 +50,7 @@ await test('Dabba page: Regular Dabba shows 3 packs, 700g, ₹302 and enables Ad
   assert.equal(await page.textContent('#sum-msg'), 'Choose at least 3 packs to create your Dabba.');
   assert.ok(await page.locator('#add-btn').isDisabled());
   for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
-  assert.equal((await page.textContent('#sum-total')).trim(), '₹302');
+  assert.equal((await page.textContent('#sum-total')).trim(), '₹302.40');
   assert.equal((await page.textContent('#sum-weight')).trim(), '700g');
   assert.match(await page.textContent('#sum-count'), /3 of 6 packs/);
   assert.ok(await page.locator('#add-btn').isEnabled());
@@ -58,8 +58,8 @@ await test('Dabba page: Regular Dabba shows 3 packs, 700g, ₹302 and enables Ad
 await test('Dabba page: Trial = ₹173 and Family = ₹558', async page => {
   await dabbaPage(page);
   for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
-  await page.click('[data-format="trial"]'); assert.equal((await page.textContent('#sum-total')).trim(), '₹173');
-  await page.click('[data-format="family"]'); assert.equal((await page.textContent('#sum-total')).trim(), '₹558');
+  await page.click('[data-format="trial"]'); assert.equal((await page.textContent('#sum-total')).trim(), '₹172.80');
+  await page.click('[data-format="family"]'); assert.equal((await page.textContent('#sum-total')).trim(), '₹554.40');
   assert.equal((await page.textContent('#sum-weight')).trim(), '1.4kg');
 });
 await test('Dabba page: maximum of 6 packs, "Dabba is full" message, + disabled, remove works', async page => {
@@ -85,11 +85,11 @@ await test('Add to cart, badge, checkout drawer shows the Dabba, and it persists
   for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
   await page.click('#add-btn'); await page.waitForSelector('#added:not(.hidden)');
   assert.equal((await page.textContent('#cart-badge')).trim(), '3');
-  const cart = await cartOf(page); assert.equal(cart.length, 1); assert.equal(cart[0].type, 'dabba'); assert.equal(cart[0].paise, 30200);
-  assert.deepEqual(cart[0].items.map(i => [i.sku, i.qty, i.weight_g, i.unit_price_paise]), [['SWALI-R', 1, 250, 10800], ['CHAKLI-R', 1, 200, 8600], ['CHIWDA-R', 1, 250, 10800]]);
+  const cart = await cartOf(page); assert.equal(cart.length, 1); assert.equal(cart[0].type, 'dabba'); assert.equal(cart[0].paise, 30240);
+  assert.deepEqual(cart[0].items.map(i => [i.sku, i.qty, i.weight_g, i.unit_price_paise]), [['SWALI-R', 1, 250, 12000], ['CHAKLI-R', 1, 200, 9600], ['CHIWDA-R', 1, 250, 12000]]);
   await page.click('#added-go'); await page.waitForSelector('#cart-drawer:not(.translate-x-full)');
   assert.match(await page.textContent('#cart-items-container'), /Your Dabba · Regular/); assert.match(await page.textContent('#cart-items-container'), /3 packs · 700g/);
-  assert.equal((await page.textContent('#cart-total-price')).trim(), '₹302');
+  assert.equal((await page.textContent('#cart-total-price')).trim(), '₹302.40');
   await page.reload(); await page.waitForTimeout(800);
   assert.equal((await page.textContent('#cart-badge')).trim(), '3'); assert.equal((await cartOf(page)).length, 1);
 });
@@ -99,14 +99,14 @@ await test('Several Dabbas in one cart; edit one; remove one', async page => {
   await page.click('#add-btn'); await page.click('#added-again');
   await page.click('[data-format="trial"]'); await addOne(page, 'swali', 3);
   await page.click('#add-btn'); await page.waitForSelector('#added:not(.hidden)');
-  let cart = await cartOf(page); assert.equal(cart.length, 2); assert.deepEqual(cart.map(d => d.paise), [30200, 19500]);
+  let cart = await cartOf(page); assert.equal(cart.length, 2); assert.deepEqual(cart.map(d => d.paise), [30240, 19440]);
   // edit the first Dabba
   await page.goto(BASE + '/build-your-dabba/?edit=' + cart[0].id); await page.waitForSelector('[data-product]');
-  assert.equal((await page.textContent('#sum-total')).trim(), '₹302'); assert.equal(await page.locator('#edit-banner').isVisible(), true);
-  await addOne(page, 'swali'); assert.equal((await page.textContent('#sum-total')).trim(), '₹410');
+  assert.equal((await page.textContent('#sum-total')).trim(), '₹302.40'); assert.equal(await page.locator('#edit-banner').isVisible(), true);
+  await addOne(page, 'swali'); assert.equal((await page.textContent('#sum-total')).trim(), '₹410.40');
   assert.equal((await page.textContent('#add-btn')).trim(), 'Update My Dabba');
   await page.click('#add-btn'); await page.waitForSelector('#added:not(.hidden)');
-  cart = await cartOf(page); assert.equal(cart.length, 2); assert.equal(cart[0].paise, 41000); assert.equal(cart[0].packs, 4);
+  cart = await cartOf(page); assert.equal(cart.length, 2); assert.equal(cart[0].paise, 41040); assert.equal(cart[0].packs, 4);
   // remove from the cart drawer
   await page.goto(BASE + '/?cart=1'); await page.waitForSelector('[data-dabba]');
   await page.locator('[data-dabba]').first().getByRole('button', { name: 'Remove' }).click();
@@ -121,8 +121,8 @@ await test('Full checkout: server creates the order, stock is reserved, cart cle
   await page.click('#order-btn'); await page.waitForSelector('#pay-modal:not(.hidden)');
   const url = decodeURIComponent(await page.evaluate(() => window.__opened));
   assert.match(url, /^https:\/\/wa\.me\/919320685055\?text=/); assert.match(url, /\*Order No:\* SG-\d{4}-[A-Z0-9]{4}/);
-  assert.match(url, /Dabba 1 – Regular \(3 packs, 700g\) – ₹302/); assert.match(url, /\*Total Amount:\* ₹302/);
-  assert.match(await page.textContent('#pay-sub'), /SG-\d{4}-[A-Z0-9]{4} · ₹302/);
+  assert.match(url, /Dabba 1 – Regular \(3 packs, 700g\) – ₹302.40/); assert.match(url, /\*Total Amount:\* ₹302.40/);
+  assert.match(await page.textContent('#pay-sub'), /SG-\d{4}-[A-Z0-9]{4} · ₹302.40/);
   assert.equal((await cartOf(page)).length, 0);
   const cat = (await api('/api/catalogue')).data; assert.equal(cat.products[0].variants.find(v => v.sku === 'SWALI-R').available, 24);
 });
@@ -130,12 +130,12 @@ await test('Price changed after adding to cart: checkout refreshes prices and cr
   await dabbaPage(page);
   for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
   await page.click('#add-btn'); await page.click('#added-go'); await page.waitForSelector('#cart-drawer:not(.translate-x-full)');
-  await api('/api/admin/variants/SWALI-R', 'PUT', { price_paise: 12800 }, true);
+  await api('/api/admin/variants/SWALI-R', 'PUT', { price_paise: 14000 }, true);
   await page.fill('#cust-name', 'Asha Singhania'); await page.fill('#cust-phone', '9876500000'); await page.fill('#cust-address', '12 MG Road, Malad East'); await page.fill('#cust-pin', '400097');
   const before = (await api('/api/admin/state', 'GET', null, true)).data.orders.length;
   await page.click('#order-btn'); await page.waitForSelector('#cart-error:not(.hidden)');
   assert.match(await page.textContent('#cart-error'), /prices changed/i);
-  assert.equal((await page.textContent('#cart-total-price')).trim(), '₹322');
+  assert.equal((await page.textContent('#cart-total-price')).trim(), '₹320.40');
   assert.equal((await api('/api/admin/state', 'GET', null, true)).data.orders.length, before);
 });
 await test('Single shop items still work and are priced by the server', async page => {
@@ -180,7 +180,7 @@ await test('Mobile 390×844: no horizontal scroll, sticky bar, sheet, big tap ta
   assert.ok(await page.locator('#sbar').isVisible());
   const box = await page.locator('[data-inc="swali"]').boundingBox(); assert.ok(box.width >= 40 && box.height >= 40, `qty button ${box.width}x${box.height}`);
   for (const id of ['swali', 'chakli', 'chivda']) await page.tap(`[data-inc="${id}"]`);
-  assert.equal((await page.textContent('#sbar-total')).trim(), '₹302');
+  assert.equal((await page.textContent('#sbar-total')).trim(), '₹302.40');
   await page.tap('#sbar-open'); await page.waitForTimeout(400);
   assert.ok(await page.locator('#summary').isVisible()); assert.ok(await page.locator('#add-btn').isEnabled());
   assert.match(await page.textContent('#sum-items'), /Signature Chakli/);
@@ -325,30 +325,52 @@ await test('Reduce motion: Dabba page extras are calm but fully working', async 
 });
 
 
-/* ---------- savings on the Dabba page, in the cart and on the home page ---------- */
-await test('Savings: Dabba page shows what you save, per pack and for the whole Dabba', async page => {
+/* ---------- tiered discount on the Dabba page, in the cart and on the home page ---------- */
+await test('Tiers: 10% from 3 packs, 15% at 6; rows, meter tags, guidance and the saving pill', async page => {
   await dabbaPage(page);
-  assert.match(await page.textContent('[data-product="swali"] .save-chip'), /Save ₹12/); assert.match(await page.textContent('[data-product="chakli"] .save-chip'), /Save ₹10/);
-  assert.ok(await page.locator('#sum-save.hidden').count(), 'nothing claimed before you pick');
+  assert.match(await page.textContent('[data-product="swali"] .save-chip'), /Up to 15% off in a Dabba/);
+  assert.equal(await page.locator('#meter .slot-tag').allTextContents().then(a => a.join(',')), ',,10%,,,15%');
+  assert.match(await page.textContent('#sum-tier'), /Pick 3 packs to get 10% off/); assert.ok(await page.locator('#sum-save.hidden').count());
   for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
-  assert.match(await page.textContent('#sum-save'), /You save ₹34 \(10%\) compared with buying the same weight separately/);
-  assert.equal((await page.textContent('#sum-was')).trim(), '₹336'); assert.equal((await page.textContent('#sum-total')).trim(), '₹302');
-  assert.match(await page.textContent('#sbar-packs'), /saves ₹34/);
-  await page.click('[data-format="family"]'); assert.match(await page.textContent('#sum-save'), /You save ₹58/); assert.equal((await page.textContent('#sum-was')).trim(), '₹616');
+  assert.equal((await page.textContent('#sum-gross')).trim(), '₹336'); assert.match(await page.textContent('#disc-label'), /Dabba discount \(10%\)/); assert.equal((await page.textContent('#sum-disc')).trim(), '−₹33.60');
+  assert.equal((await page.textContent('#sum-total')).trim(), '₹302.40');
+  assert.match(await page.textContent('#sum-save'), /You save ₹33\.60 \(10%\) compared with buying the same weight separately/);
+  assert.match(await page.textContent('#sum-tier'), /10% Dabba discount applied · Add 3 more packs to unlock 15% off/);
+  assert.match(await page.textContent('#sbar-packs'), /10% off/);
+  await addOne(page, 'swali'); assert.equal((await page.textContent('#sum-total')).trim(), '₹410.40'); assert.match(await page.textContent('#sum-tier'), /Add 2 more packs to unlock 15% off/);
+  await addOne(page, 'chakli'); await addOne(page, 'chivda');     // 2 + 2 + 2
+  assert.equal((await page.textContent('#sum-total')).trim(), '₹571.20'); assert.equal((await page.textContent('#sum-disc')).trim(), '−₹100.80'); assert.match(await page.textContent('#disc-label'), /15%/);
+  assert.match(await page.textContent('#sum-tier'), /Best Dabba discount unlocked: 15% off/); assert.match(await page.textContent('#sum-save'), /\(15%\)/);
+  assert.ok(await page.locator('#meter .slot-tag.on').count() === 2, 'both tier marks lit');
+  await page.click('[data-format="family"]'); assert.equal((await page.textContent('#sum-total')).trim(), '₹1,047.20');    // 6 Family packs: ₹1,232 less 15%
 });
-await test('Savings: shown in the confirmation, the cart and the order text; promo on the home page', async page => {
+await test('Tiers: below the first tier there is no discount row; removing packs drops the tier again', async page => {
+  await dabbaPage(page); await addOne(page, 'swali', 2);
+  assert.ok(await page.locator('#row-disc.hidden').count()); assert.equal((await page.textContent('#sum-total')).trim(), '₹240');
+  await addOne(page, 'chakli'); assert.ok(!(await page.locator('#row-disc.hidden').count()));
+  await page.click('[data-remove="chakli"]'); assert.ok(await page.locator('#row-disc.hidden').count()); assert.equal((await page.textContent('#sum-total')).trim(), '₹240');
+});
+await test('Tiers: confirmation, cart, order text and the home promo all show the discount', async page => {
   await page.goto(BASE + '/'); await page.waitForTimeout(1200);
-  assert.match(await page.textContent('#promo-save'), /Save up to ₹58 with a Dabba/);
+  assert.match(await page.textContent('#promo-save'), /10% off with 3 packs · 15% off with 6 packs, compared with buying the same weight separately/);
   await dabbaPage(page); for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
   await page.click('#add-btn'); await page.waitForSelector('#added:not(.hidden)', { timeout: 4000 });
-  assert.match(await page.textContent('#added-sub'), /You saved ₹34/);
-  assert.equal((await cartOf(page))[0].saving_paise, 3400);
+  assert.match(await page.textContent('#added-sub'), /You saved ₹33\.60/);
+  const item = (await cartOf(page))[0]; assert.deepEqual([item.paise, item.gross_paise, item.discount_percent, item.discount_paise, item.saving_paise], [30240, 33600, 10, 3360, 3360]);
   await page.click('#added-go'); await page.waitForSelector('#cart-drawer:not(.translate-x-full)');
-  assert.match(await page.textContent('[data-dabba]'), /You save ₹34/); assert.match(await page.textContent('#cart-saving'), /Dabba savings in your jhola: ₹34/);
+  assert.match(await page.textContent('[data-dabba]'), /10% Dabba discount applied · You save ₹33\.60/); assert.match(await page.textContent('#cart-saving'), /Dabba savings in your jhola: ₹33\.60/);
+  assert.equal((await page.textContent('#cart-total-price')).trim(), '₹302.40');
   await page.evaluate(() => { window.open = u => { window.__opened = u; }; });
   await page.fill('#cust-name', 'Asha Singhania'); await page.fill('#cust-phone', '9876500000'); await page.fill('#cust-address', '12 MG Road, Malad East'); await page.fill('#cust-pin', '400097');
   await page.click('#order-btn'); await page.waitForSelector('#pay-modal:not(.hidden)');
-  assert.match(decodeURIComponent(await page.evaluate(() => window.__opened)), /₹302 \(saves ₹34\)/);
+  assert.match(decodeURIComponent(await page.evaluate(() => window.__opened)), /₹302\.40 \(10% Dabba discount applied: saves ₹33\.60\)/);
+});
+await test('Tiers: admin can change the tiers and the Dabba page follows', async page => {
+  await page.goto(BASE + '/admin/'); await page.fill('#token', TOKEN); await page.click('#login-btn'); await page.waitForSelector('#app:not(.hidden)');
+  assert.equal(await page.inputValue('#s-tiers'), '3:10, 6:15');
+  await page.fill('#s-tiers', '3:10, 4:12, 6:15'); await page.click('#s-save'); await page.waitForTimeout(700);
+  await dabbaPage(page); assert.equal(await page.locator('#meter .slot-tag').allTextContents().then(a => a.join(',')), ',,10%,12%,,15%');
+  await addOne(page, 'swali', 4); assert.match(await page.textContent('#disc-label'), /12%/);
 });
 
 /* ---------- admin ---------- */
@@ -360,7 +382,7 @@ await test('Admin: sign in, change a price and stock, mark an order paid', async
   await row.locator('[data-f="price"]').fill('95.50'); await row.locator('[data-f="qty"]').fill('11'); await row.locator('[data-save]').click(); await page.waitForTimeout(700);
   const v = (await api('/api/admin/state', 'GET', null, true)).data.products[0].variants.find(x => x.sku === 'SWALI-T');
   assert.equal(v.price_paise, 9550); assert.equal(v.qty, 11);
-  await api('/api/admin/variants/SWALI-T', 'PUT', { price_paise: 6500 }, true); await api('/api/admin/stock/SWALI-T', 'POST', { qty: 25 }, true);
+  await api('/api/admin/variants/SWALI-T', 'PUT', { price_paise: 7200 }, true); await api('/api/admin/stock/SWALI-T', 'POST', { qty: 25 }, true);
   const o = (await api('/api/orders', 'POST', { customer: { name: 'Asha S', phone: '9876500000', address: '12 MG Road, Malad', pin: '400097' }, dabbas: [{ format: 'regular', items: [{ sku: 'SWALI-R', qty: 3 }] }] })).data;
   await page.click('#refresh'); await page.waitForSelector(`[data-paid="${o.order_id}"]`); await page.click(`[data-paid="${o.order_id}"]`); await page.waitForTimeout(700);
   const st = (await api('/api/admin/state', 'GET', null, true)).data; assert.equal(st.orders.find(x => x.id === o.order_id).status, 'paid');

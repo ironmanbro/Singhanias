@@ -25,6 +25,7 @@
   function render(d) {
     $('s-enabled').checked = d.settings.dabba_enabled; $('s-min').value = d.settings.min_packs; $('s-max').value = d.settings.max_packs;
     $('s-low').value = d.settings.low_stock_threshold; $('s-hours').value = d.settings.reservation_hours;
+    $('s-tiers').value = (d.settings.dabba_tiers || []).map(t => `${t.min_packs}:${t.percent}`).join(', ');
     $('formats').innerHTML = d.formats.map(f => `<label class="flex items-center gap-2 font-semibold"><input type="checkbox" data-format="${esc(f.id)}" ${f.enabled ? 'checked' : ''} class="w-5 h-5"> ${esc(f.label)} format</label>`).join('');
     $('products').innerHTML = d.products.map(p => `
       <div>
@@ -59,7 +60,8 @@
   $('token').addEventListener('keydown', e => { if (e.key === 'Enter') $('login-btn').click(); });
   $('logout').onclick = signOut; $('refresh').onclick = () => act(load, 'Refreshed');
 
-  $('s-save').onclick = () => act(() => call('/api/admin/settings', 'PUT', { dabba_enabled: $('s-enabled').checked, min_packs: +$('s-min').value, max_packs: +$('s-max').value, low_stock_threshold: +$('s-low').value, reservation_hours: +$('s-hours').value }), 'Settings saved');
+  const parseTiers = txt => txt.split(',').map(x => x.trim()).filter(Boolean).map(x => { const m = x.match(/^(\d+)\s*:\s*(\d+)$/); if (!m) throw new Error('Tiers look like 3:10, 6:15'); return { min_packs: +m[1], percent: +m[2] }; });
+  $('s-save').onclick = () => act(() => call('/api/admin/settings', 'PUT', { dabba_enabled: $('s-enabled').checked, min_packs: +$('s-min').value, max_packs: +$('s-max').value, low_stock_threshold: +$('s-low').value, reservation_hours: +$('s-hours').value, dabba_tiers: parseTiers($('s-tiers').value) }), 'Settings saved');
 
   document.addEventListener('change', e => {
     const f = e.target.closest('[data-format]'); if (f) return act(() => call('/api/admin/formats/' + f.dataset.format, 'PUT', { enabled: f.checked }), 'Format updated');

@@ -22,6 +22,23 @@ export function referenceUnit(cat, v) {
   return best ? Math.round(best.price_paise * v.weight_g / best.weight_g) : null;
 }
 
+/** Tier discount: the tier with the highest min_packs that the Dabba reaches. tiers = [{ min_packs, percent }] */
+export function tierFor(tiers, packs) {
+  let best = null;
+  for (const t of Array.isArray(tiers) ? tiers : []) if (packs >= t.min_packs && (!best || t.min_packs > best.min_packs)) best = t;
+  return best;
+}
+/** Validates and sorts tiers coming from the admin page. Throws a plain Error('invalid_tiers') when something is wrong. */
+export function normalizeTiers(v) {
+  if (!Array.isArray(v) || v.length > 6) throw new Error('invalid_tiers');
+  const seen = new Set(), out = [];
+  for (const t of v) {
+    if (!t || !Number.isInteger(t.min_packs) || t.min_packs < 1 || t.min_packs > 20 || !Number.isInteger(t.percent) || t.percent < 0 || t.percent > 90 || seen.has(t.min_packs)) throw new Error('invalid_tiers');
+    seen.add(t.min_packs); out.push({ min_packs: t.min_packs, percent: t.percent });
+  }
+  return out.sort((a, b) => a.min_packs - b.min_packs);
+}
+
 const isQty = n => Number.isInteger(n) && n >= 1 && n <= MAX_LINE_QTY;
 
 /**
@@ -58,20 +75,22 @@ export function priceCart(cat, input) {
       merged.set(it.sku, (merged.get(it.sku) || 0) + it.qty);
     }
     const items = [];
-    let packs = 0, weight = 0, subtotal = 0, saving = 0;
+    let packs = 0, weight = 0, gross = 0, refTotal = 0;
     for (const [sku, qty] of merged) {
       const v = cat.variants.get(sku);
       if (!v) { err('unknown_sku', 'An item in your Dabba no longer exists.', { sku, dabba: no }); continue; }
       if (v.kind !== 'dabba') { err('wrong_kind', 'This item cannot be added to a Dabba.', { sku, dabba: no }); continue; }
       if (v.format !== fmt.id) { err('mixed_format', 'All packs in a Dabba must use the same format.', { sku, dabba: no }); continue; }
       if (!usable(v)) { err('unavailable', `${cat.products.get(v.product_id)?.name || sku} is not available right now.`, { sku, dabba: no }); continue; }
-      const line = qty * v.price_paise, ref = referenceUnit(cat, v), refUnit = ref != null && ref > v.price_paise ? ref : v.price_paise;
-      items.push({ ...priceItem(v), qty, line_paise: line, reference_unit_paise: refUnit, saving_paise: qty * (refUnit - v.price_paise) });
-      packs += qty; weight += qty * v.weight_g; subtotal += line; saving += qty * (refUnit - v.price_paise); take(sku, qty);
+      const line = qty * v.price_paise, ref = referenceUnit(cat, v), refUnit = ref != null ? ref : v.price_paise;
+      items.push({ ...priceItem(v), qty, line_paise: line, reference_unit_paise: refUnit });
+      packs += qty; weight += qty * v.weight_g; gross += line; refTotal += qty * refUnit; take(sku, qty);
     }
     if (packs < min) err('min_packs', `Choose at least ${min} packs to create your Dabba.`, { dabba: no });
     if (packs > max) err('max_packs', `Your Dabba is full. You can select up to ${max} packs.`, { dabba: no });
-    dabbas.push({ no, format: fmt.id, format_label: fmt.label, packs, weight_g: weight, subtotal_paise: subtotal, saving_paise: saving, reference_paise: subtotal + saving, items });
+    // Tier discount, per Dabba, on the list price of its packs. subtotal_paise is what the customer PAYS for this Dabba.
+    const tier = tierFor(cat.settings.dabba_tiers, packs), pct = tier ? tier.percent : 0, discount = Math.round(gross * pct / 100), net = gross - discount;
+    dabbas.push({ no, format: fmt.id, format_label: fmt.label, packs, weight_g: weight, gross_paise: gross, discount_percent: pct, discount_paise: discount, subtotal_paise: net, reference_paise: refTotal, saving_paise: Math.max(0, refTotal - net), items });
   });
 
   const lines = [];
@@ -130,7 +149,7 @@ export function genOrderId(now = new Date(), rand = Math.random) {
 export function buildWhatsAppText({ orderId, customer, priced, ref }) {
   const lines = [];
   priced.dabbas.forEach(d => {
-    lines.push(`• Dabba ${d.no} – ${d.format_label} (${d.packs} packs, ${formatWeight(d.weight_g)}) – ${formatMoney(d.subtotal_paise)}${d.saving_paise > 0 ? ` (saves ${formatMoney(d.saving_paise)})` : ''}`);
+    lines.push(`• Dabba ${d.no} – ${d.format_label} (${d.packs} packs, ${formatWeight(d.weight_g)}) – ${formatMoney(d.subtotal_paise)}${d.discount_paise > 0 ? ` (${d.discount_percent}% Dabba discount applied: saves ${formatMoney(d.discount_paise)})` : ''}`);
     d.items.forEach(it => lines.push(`   ◦ ${it.qty}x ${it.product_name} ${formatWeight(it.weight_g)} – ${formatMoney(it.line_paise)}`));
   });
   priced.lines.forEach(l => lines.push(`• ${l.qty}x ${l.product_name} – ${l.label} – ${formatMoney(l.line_paise)}`));

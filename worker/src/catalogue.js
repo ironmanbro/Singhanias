@@ -1,12 +1,22 @@
 // Seed data for first start. Edit prices/stock afterwards in /admin/ (the database is then the source of truth).
 export default {
- "_comment": "Single source of truth for the catalogue SEED. Prices are integer paise and are DUMMY placeholders. initial_stock is a STARTING value only: set real stock in /admin/. After first start, the database (edited in /admin/) is the source of truth. Dabba packs are priced BELOW the shop price of the same snack (see the invariant test in tests/api.test.mjs).",
+ "_comment": "Single source of truth for the catalogue SEED. Prices are integer paise and are DUMMY placeholders. initial_stock is a STARTING value only: set real stock in /admin/. After first start, the database (edited in /admin/) is the source of truth. Dabba packs are listed at the shop price for the same weight; the tier discount (settings.dabba_tiers) makes a Dabba cheaper than buying separately.",
  "settings": {
   "dabba_enabled": true,
   "min_packs": 3,
   "max_packs": 6,
   "low_stock_threshold": 5,
-  "reservation_hours": 12
+  "reservation_hours": 12,
+  "dabba_tiers": [
+   {
+    "min_packs": 3,
+    "percent": 10
+   },
+   {
+    "min_packs": 6,
+    "percent": 15
+   }
+  ]
  },
  "formats": [
   {
@@ -50,7 +60,7 @@ export default {
      "size": null,
      "label": "Trial 150g",
      "weight_g": 150,
-     "price_paise": 6500,
+     "price_paise": 7200,
      "enabled": true
     },
     {
@@ -61,7 +71,7 @@ export default {
      "size": null,
      "label": "Regular 250g",
      "weight_g": 250,
-     "price_paise": 10800,
+     "price_paise": 12000,
      "enabled": true
     },
     {
@@ -72,7 +82,7 @@ export default {
      "size": null,
      "label": "Family 500g",
      "weight_g": 500,
-     "price_paise": 19800,
+     "price_paise": 22000,
      "enabled": true
     },
     {
@@ -194,7 +204,7 @@ export default {
      "size": null,
      "label": "Trial 100g",
      "weight_g": 100,
-     "price_paise": 4300,
+     "price_paise": 4800,
      "enabled": true
     },
     {
@@ -205,7 +215,7 @@ export default {
      "size": null,
      "label": "Regular 200g",
      "weight_g": 200,
-     "price_paise": 8600,
+     "price_paise": 9600,
      "enabled": true
     },
     {
@@ -216,7 +226,7 @@ export default {
      "size": null,
      "label": "Family 400g",
      "weight_g": 400,
-     "price_paise": 16200,
+     "price_paise": 17600,
      "enabled": true
     },
     {
@@ -272,7 +282,7 @@ export default {
      "size": null,
      "label": "Trial 150g",
      "weight_g": 150,
-     "price_paise": 6500,
+     "price_paise": 7200,
      "enabled": true
     },
     {
@@ -283,7 +293,7 @@ export default {
      "size": null,
      "label": "Regular 250g",
      "weight_g": 250,
-     "price_paise": 10800,
+     "price_paise": 12000,
      "enabled": true
     },
     {
@@ -294,7 +304,7 @@ export default {
      "size": null,
      "label": "Family 500g",
      "weight_g": 500,
-     "price_paise": 19800,
+     "price_paise": 22000,
      "enabled": true
     },
     {

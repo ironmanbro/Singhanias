@@ -3,16 +3,19 @@ import { readFileSync } from 'node:fs';
 import { SCHEMA, seedStatements } from '../worker/src/bootstrap.js';
 
 export const ADMIN = 'test-admin-token';
-const schema = SCHEMA;
+const schemaFor = legacy => legacy ? SCHEMA.map(s => s.includes('CREATE TABLE IF NOT EXISTS order_dabbas') ? OLD_ORDER_DABBAS : s) : SCHEMA;
 
-export async function start() {
+const OLD_ORDER_DABBAS = 'CREATE TABLE IF NOT EXISTS order_dabbas (order_id TEXT NOT NULL REFERENCES orders(id), dabba_no INTEGER NOT NULL, format TEXT NOT NULL, packs INTEGER NOT NULL, weight_g INTEGER NOT NULL, subtotal_paise INTEGER NOT NULL, PRIMARY KEY (order_id, dabba_no))';
+
+/** legacy: true builds the database the way the PREVIOUS version did (no discount columns, nothing seeded) to test self-upgrade. */
+export async function start({ legacy = false } = {}) {
   const mf = new Miniflare({
     modules: true, scriptPath: new URL('../worker/src/index.js', import.meta.url).pathname, modulesRoot: new URL('../worker/src', import.meta.url).pathname, modulesRules: [{ type: 'ESModule', include: ['**/*.js'] }],
     compatibilityDate: '2025-01-01', d1Databases: { DB: 'test-db' },
     bindings: { ADMIN_TOKEN: ADMIN, WHATSAPP_NUMBER: '919320685055' }
   });
   const db = await mf.getD1Database('DB');
-  for (const s of schema) await db.prepare(s).run();
+  for (const s of schemaFor(legacy)) await db.prepare(s).run();
   const reset = async ({ testStock = true } = {}) => {
     await db.batch(['stock_movements', 'order_items', 'order_dabbas', 'orders', 'stock', 'variants', 'products', 'formats', 'settings'].map(t => db.prepare(`DELETE FROM ${t}`)));
     await db.batch(seedStatements(undefined, { stock: testStock }).map(s => db.prepare(s)));

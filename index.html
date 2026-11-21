@@ -797,7 +797,7 @@
             netErr:   ['We could not reach our order system. Please try again, or message us directly on WhatsApp.', 'हमारा ऑर्डर सिस्टम नहीं मिल रहा। कृपया दोबारा कोशिश करें, या सीधे WhatsApp पर संदेश भेजें।'],
             priceChanged: ['Some prices changed. Please review your jhola and order again.', 'कुछ दाम बदल गए हैं। कृपया अपना झोला देखकर दोबारा ऑर्डर करें।'],
             sending:  ['Sending…', 'भेज रहे हैं…'], chatDirect: ['Message us on WhatsApp', 'WhatsApp पर संदेश भेजें'],
-            saveUpTo: ['Save up to {s} with a Dabba, compared with buying the same weight separately', 'डब्बे में {s} तक की बचत, समान वज़न अलग-अलग ख़रीदने की तुलना में'], youSave: ['You save {s}', 'आप {s} बचाते हैं'], savingTotal: ['Dabba savings in your jhola: {s}', 'आपके झोले में डब्बे की बचत: {s}']
+            saveTiers: ['{t}, compared with buying the same weight separately', '{t}, समान वज़न अलग-अलग ख़रीदने की तुलना में'], youSave: ['You save {s}', 'आप {s} बचाते हैं'], discApplied: ['{p}% Dabba discount applied', '{p}% डब्बा छूट लगी'], savingTotal: ['Dabba savings in your jhola: {s}', 'आपके झोले में डब्बे की बचत: {s}']
         };
         /* ==================================================== */
 
@@ -964,7 +964,7 @@
                         <p class="font-bold text-brand-terracotta whitespace-nowrap">${money(item.paise)}</p>
                     </div>
                     <ul class="text-xs text-brand-dark space-y-0.5">${item.items.map(x => `<li>${x.qty}× ${x.name} <span class="text-brand-muted">${fmtWeight(x.weight_g)}</span></li>`).join('')}</ul>
-                    ${item.saving_paise > 0 ? `<p class="text-xs font-bold text-[#245B35]">✓ ${tr('youSave').replace('{s}', money(item.saving_paise))}</p>` : ''}
+                    ${item.discount_percent > 0 ? `<p class="text-xs font-bold text-[#245B35]">✓ ${tr('discApplied').replace('{p}', item.discount_percent)} · ${tr('youSave').replace('{s}', money(item.saving_paise || item.discount_paise))}</p>` : ''}
                     <div class="flex gap-3 pt-1">
                         <a href="/build-your-dabba/?edit=${encodeURIComponent(item.id)}" class="text-xs font-bold text-brand-indigo underline min-h-[36px] inline-flex items-center">${tr('edit')}</a>
                         <button onclick="removeItem(${idx})" class="text-xs font-bold text-brand-muted underline min-h-[36px]">${tr('remove')}</button>
@@ -1006,7 +1006,7 @@
         });
         function applyQuote(q) {   // overwrite browser prices with the server's
             const ds = cart.filter(i => i.type === 'dabba');
-            ds.forEach((d, n) => { const sd = q.dabbas[n]; if (!sd) return; d.paise = sd.subtotal_paise; d.saving_paise = sd.saving_paise || 0; d.weight_g = sd.weight_g; d.packs = sd.packs; d.items.forEach(x => { const si = sd.items.find(y => y.sku === x.sku); if (si) { x.unit_price_paise = si.unit_price_paise; x.weight_g = si.weight_g; } }); });
+            ds.forEach((d, n) => { const sd = q.dabbas[n]; if (!sd) return; d.paise = sd.subtotal_paise; d.saving_paise = sd.saving_paise || 0; d.gross_paise = sd.gross_paise || sd.subtotal_paise; d.discount_percent = sd.discount_percent || 0; d.discount_paise = sd.discount_paise || 0; d.weight_g = sd.weight_g; d.packs = sd.packs; d.items.forEach(x => { const si = sd.items.find(y => y.sku === x.sku); if (si) { x.unit_price_paise = si.unit_price_paise; x.weight_g = si.weight_g; } }); });
             cart.filter(i => i.type === 'single').forEach(i => { const sl = q.lines.find(y => y.sku === i.sku); if (sl) i.paise = sl.unit_price_paise; });
             saveCart();
         }
@@ -1030,12 +1030,12 @@
                 updateCartUI();
             } catch (e) { /* offline: checkout will report it */ }
         }
-        function renderPromoSave() {   // "Save up to ₹X": the biggest saving among the Dabba sizes (one pack of each snack), from the server's own numbers
+        function renderPromoSave() {   // "10% off with 3 packs · 15% off with 6 packs", straight from the server's tier settings
             const cat = window.__cat, el = $('promo-save'); if (!cat || !el) return;
-            const by = {};
-            cat.products.forEach(p => p.variants.filter(v => v.kind === 'dabba').forEach(v => { by[v.format] = (by[v.format] || 0) + Math.max(0, (v.reference_paise ?? v.price_paise) - v.price_paise); }));
-            const best = Math.max(0, ...Object.values(by));
-            el.classList.toggle('hidden', !(best > 0)); if (best > 0) el.textContent = '💰 ' + tr('saveUpTo').replace('{s}', money(best));
+            const tiers = (cat.settings.dabba_tiers || []).filter(t => t.percent > 0).sort((a, b) => a.min_packs - b.min_packs), h = lang === 'hi';
+            el.classList.toggle('hidden', !tiers.length); if (!tiers.length) return;
+            const t = tiers.map(x => h ? `${x.min_packs} पैक पर ${x.percent}% छूट` : `${x.percent}% off with ${x.min_packs} packs`).join(' · ');
+            el.textContent = '💰 ' + tr('saveTiers').replace('{t}', t);
         }
         async function loadLivePrices() {   // one source of truth: shop cards use the same prices as the database
             try {

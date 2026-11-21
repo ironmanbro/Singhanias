@@ -19,6 +19,12 @@ Static site (HTML + Tailwind + vanilla JS) with a small Cloudflare Worker API an
 
 Money is stored as integer paise. Prices in the browser are only for display; the server is the source of truth.
 
+## Dabba pricing and tiers
+- Dabba packs are listed at the shop price for the same weight. A **tier discount** is then applied per Dabba by the server: 10% from 3 packs, 15% at 6 packs (3–5 packs get 10%).
+- Tiers are edited in `/admin/` under "Dabba discount tiers" (format `3:10, 6:15`; leave empty for no discount). They are stored in the database setting `dabba_tiers`.
+- The discount is rounded to whole paise, stored with each order (`gross_paise`, `discount_percent`, `discount_paise`), and shown in the cart and the WhatsApp message.
+- "You save" compares the Dabba price with the same weight at shop prices (pro-rata of the smallest shop pack that holds at least that much).
+
 ## Run locally
 ```bash
 npm install
