@@ -1,5 +1,5 @@
 // Singhania's API (Cloudflare Worker + D1). Static pages are served by Workers Assets; only /api/* reaches this code.
-import { priceCart, validateCustomer, genOrderId, buildWhatsAppText } from './core.js';
+import { priceCart, validateCustomer, genOrderId, buildWhatsAppText, referenceUnit } from './core.js';
 import { ensureReady } from './bootstrap.js';
 
 const DEFAULT_SETTINGS = { dabba_enabled: true, min_packs: 3, max_packs: 6, low_stock_threshold: 5, reservation_hours: 12 };
@@ -35,7 +35,7 @@ function publicCatalogue(cat) {
       id: p.id, name: p.name, name_hi: p.name_hi, short_desc: p.short_desc, short_desc_hi: p.short_desc_hi, image: p.image,
       variants: [...cat.variants.values()].filter(v => v.product_id === p.id && v.enabled).map(v => {
         const avail = cat.available.get(v.sku) ?? 0;
-        return { sku: v.sku, kind: v.kind, format: v.format, type: v.type, size: v.size, label: v.label, weight_g: v.weight_g, price_paise: v.price_paise, available: Math.min(avail, 99), in_stock: avail > 0, low_stock: avail > 0 && avail <= thr };
+        return { sku: v.sku, kind: v.kind, format: v.format, type: v.type, size: v.size, label: v.label, weight_g: v.weight_g, price_paise: v.price_paise, reference_paise: v.kind === 'dabba' ? (referenceUnit(cat, v) ?? v.price_paise) : undefined, available: Math.min(avail, 99), in_stock: avail > 0, low_stock: avail > 0 && avail <= thr };
       })
     }))
   };
@@ -106,7 +106,7 @@ async function createOrder(env, { priced, customer, ref, hours }) {
 const insertItem = (env, orderId, dabbaNo, it) => env.DB.prepare('INSERT INTO order_items (order_id, dabba_no, sku, product_name, label, qty, weight_g, unit_price_paise, line_paise) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)')
   .bind(orderId, dabbaNo, it.sku, it.product_name, it.label, it.qty, it.weight_g, it.unit_price_paise, it.line_paise);
 
-const quoteView = p => ({ ok: p.ok, errors: p.errors, total_paise: p.total_paise, dabbas: p.dabbas, lines: p.lines });
+const quoteView = p => ({ ok: p.ok, errors: p.errors, total_paise: p.total_paise, saving_paise: p.saving_paise, dabbas: p.dabbas, lines: p.lines });
 
 /* ------------------------------------------------------------------ http helpers */
 async function readJson(req) {

@@ -342,7 +342,8 @@
                 <p class="text-xs uppercase tracking-widest text-brand-gold font-bold" data-hi="नया">New</p>
                 <h3 class="font-serif text-2xl sm:text-3xl font-bold mt-1" data-hi="आपका डब्बा। आपकी पसंद।">Your Dabba. Your Favourites.</h3>
                 <p class="text-white/85 text-sm mt-2" data-hi="सिग्नेचर स्वाली, चकली और चिवड़ा के 3 से 6 पैक चुनिए और अपना डब्बा बनाइए।">Pick 3 to 6 packs of Signature Swali, Chakli and Chiwda and create a Dabba made just for you.</p>
-                <span class="inline-block mt-4 bg-brand-gold text-brand-dark font-bold px-6 py-2.5 rounded-full" data-hi="अपना डब्बा बनाइए →">Build Your Dabba →</span>
+                <p id="promo-save" class="hidden mt-3 inline-block bg-white/15 border border-white/30 rounded-full px-4 py-1.5 text-sm font-bold text-brand-gold"></p>
+                <br><span class="inline-block mt-4 bg-brand-gold text-brand-dark font-bold px-6 py-2.5 rounded-full" data-hi="अपना डब्बा बनाइए →">Build Your Dabba →</span>
             </a>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 
@@ -693,6 +694,7 @@
             </div>
 
             <div id="cart-items-container" class="space-y-4"></div>
+            <p id="cart-saving" class="hidden rounded-xl bg-[#E7F3EA] border border-[#9CC9A8] text-[#245B35] text-sm font-bold p-3 text-center"></p>
             <div id="cart-error" class="hidden rounded-xl border border-red-300 bg-red-50 text-red-800 text-sm p-3 space-y-1" role="alert"></div>
             <button id="reorder-btn" type="button" class="hidden w-full border border-brand-indigo text-brand-indigo min-h-[44px] rounded-full text-sm font-semibold hover:bg-brand-indigo hover:text-white transition" data-hi="↻ पिछला ऑर्डर दोबारा डालें">↻ Reorder my last order</button>
 
@@ -794,7 +796,8 @@
             packs:    ['packs', 'पैक'], edit: ['Edit', 'बदलें'], remove: ['Remove', 'हटाएँ'], yourDabba: ['Your Dabba', 'आपका डब्बा'],
             netErr:   ['We could not reach our order system. Please try again, or message us directly on WhatsApp.', 'हमारा ऑर्डर सिस्टम नहीं मिल रहा। कृपया दोबारा कोशिश करें, या सीधे WhatsApp पर संदेश भेजें।'],
             priceChanged: ['Some prices changed. Please review your jhola and order again.', 'कुछ दाम बदल गए हैं। कृपया अपना झोला देखकर दोबारा ऑर्डर करें।'],
-            sending:  ['Sending…', 'भेज रहे हैं…'], chatDirect: ['Message us on WhatsApp', 'WhatsApp पर संदेश भेजें']
+            sending:  ['Sending…', 'भेज रहे हैं…'], chatDirect: ['Message us on WhatsApp', 'WhatsApp पर संदेश भेजें'],
+            saveUpTo: ['Save up to {s} with a Dabba, compared with buying the same weight separately', 'डब्बे में {s} तक की बचत, समान वज़न अलग-अलग ख़रीदने की तुलना में'], youSave: ['You save {s}', 'आप {s} बचाते हैं'], savingTotal: ['Dabba savings in your jhola: {s}', 'आपके झोले में डब्बे की बचत: {s}']
         };
         /* ==================================================== */
 
@@ -844,7 +847,7 @@
             document.querySelectorAll('.lang-toggle').forEach(b => b.textContent = lang === 'hi' ? 'English' : 'हिंदी');
             $('chat-fab').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(tr('chatMsg'))}`;
             window.FX && FX.onLang();
-            renderAllergy();
+            renderAllergy(); renderPromoSave();
             updateCartUI();
         }
         function renderAllergy() {
@@ -961,6 +964,7 @@
                         <p class="font-bold text-brand-terracotta whitespace-nowrap">${money(item.paise)}</p>
                     </div>
                     <ul class="text-xs text-brand-dark space-y-0.5">${item.items.map(x => `<li>${x.qty}× ${x.name} <span class="text-brand-muted">${fmtWeight(x.weight_g)}</span></li>`).join('')}</ul>
+                    ${item.saving_paise > 0 ? `<p class="text-xs font-bold text-[#245B35]">✓ ${tr('youSave').replace('{s}', money(item.saving_paise))}</p>` : ''}
                     <div class="flex gap-3 pt-1">
                         <a href="/build-your-dabba/?edit=${encodeURIComponent(item.id)}" class="text-xs font-bold text-brand-indigo underline min-h-[36px] inline-flex items-center">${tr('edit')}</a>
                         <button onclick="removeItem(${idx})" class="text-xs font-bold text-brand-muted underline min-h-[36px]">${tr('remove')}</button>
@@ -987,6 +991,8 @@
                 </div>`;
 
             $('reorder-btn').classList.toggle('hidden', !(store.get('last', []).length && !cart.length));
+            const sv = cart.reduce((a, i) => a + (i.type === 'dabba' ? (i.saving_paise || 0) : 0), 0);
+            $('cart-saving').classList.toggle('hidden', !(sv > 0)); if (sv > 0) $('cart-saving').textContent = '🎉 ' + tr('savingTotal').replace('{s}', money(sv));
         }
         const fmtWeight = g => (g >= 1000 && g % 100 === 0 ? `${g / 1000}kg` : `${g}g`);
         function changeQty(i, d) { if (cart[i].type !== 'single') return; cart[i].qty = Math.min(20, cart[i].qty + d); if (cart[i].qty <= 0) cart.splice(i, 1); saveCart(); showCartError([]); updateCartUI(); }
@@ -1000,7 +1006,7 @@
         });
         function applyQuote(q) {   // overwrite browser prices with the server's
             const ds = cart.filter(i => i.type === 'dabba');
-            ds.forEach((d, n) => { const sd = q.dabbas[n]; if (!sd) return; d.paise = sd.subtotal_paise; d.weight_g = sd.weight_g; d.packs = sd.packs; d.items.forEach(x => { const si = sd.items.find(y => y.sku === x.sku); if (si) { x.unit_price_paise = si.unit_price_paise; x.weight_g = si.weight_g; } }); });
+            ds.forEach((d, n) => { const sd = q.dabbas[n]; if (!sd) return; d.paise = sd.subtotal_paise; d.saving_paise = sd.saving_paise || 0; d.weight_g = sd.weight_g; d.packs = sd.packs; d.items.forEach(x => { const si = sd.items.find(y => y.sku === x.sku); if (si) { x.unit_price_paise = si.unit_price_paise; x.weight_g = si.weight_g; } }); });
             cart.filter(i => i.type === 'single').forEach(i => { const sl = q.lines.find(y => y.sku === i.sku); if (sl) i.paise = sl.unit_price_paise; });
             saveCart();
         }
@@ -1024,11 +1030,19 @@
                 updateCartUI();
             } catch (e) { /* offline: checkout will report it */ }
         }
+        function renderPromoSave() {   // "Save up to ₹X": the biggest saving among the Dabba sizes (one pack of each snack), from the server's own numbers
+            const cat = window.__cat, el = $('promo-save'); if (!cat || !el) return;
+            const by = {};
+            cat.products.forEach(p => p.variants.filter(v => v.kind === 'dabba').forEach(v => { by[v.format] = (by[v.format] || 0) + Math.max(0, (v.reference_paise ?? v.price_paise) - v.price_paise); }));
+            const best = Math.max(0, ...Object.values(by));
+            el.classList.toggle('hidden', !(best > 0)); if (best > 0) el.textContent = '💰 ' + tr('saveUpTo').replace('{s}', money(best));
+        }
         async function loadLivePrices() {   // one source of truth: shop cards use the same prices as the database
             try {
                 const res = await fetch('/api/catalogue'); if (!res.ok) return;
-                (await res.json()).products.forEach(p => p.variants.forEach(v => { if (v.kind === 'single') PRICE_PAISE[v.sku] = v.price_paise; }));
-                updatePrices();
+                const cat = await res.json(); window.__cat = cat;
+                cat.products.forEach(p => p.variants.forEach(v => { if (v.kind === 'single') PRICE_PAISE[v.sku] = v.price_paise; }));
+                updatePrices(); renderPromoSave();
             } catch (e) { /* keep fallback prices */ }
         }
 

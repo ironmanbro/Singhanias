@@ -324,6 +324,33 @@ await test('Reduce motion: Dabba page extras are calm but fully working', async 
   await rm.close();
 });
 
+
+/* ---------- savings on the Dabba page, in the cart and on the home page ---------- */
+await test('Savings: Dabba page shows what you save, per pack and for the whole Dabba', async page => {
+  await dabbaPage(page);
+  assert.match(await page.textContent('[data-product="swali"] .save-chip'), /Save ₹12/); assert.match(await page.textContent('[data-product="chakli"] .save-chip'), /Save ₹10/);
+  assert.ok(await page.locator('#sum-save.hidden').count(), 'nothing claimed before you pick');
+  for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
+  assert.match(await page.textContent('#sum-save'), /You save ₹34 \(10%\) compared with buying the same weight separately/);
+  assert.equal((await page.textContent('#sum-was')).trim(), '₹336'); assert.equal((await page.textContent('#sum-total')).trim(), '₹302');
+  assert.match(await page.textContent('#sbar-packs'), /saves ₹34/);
+  await page.click('[data-format="family"]'); assert.match(await page.textContent('#sum-save'), /You save ₹58/); assert.equal((await page.textContent('#sum-was')).trim(), '₹616');
+});
+await test('Savings: shown in the confirmation, the cart and the order text; promo on the home page', async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(1200);
+  assert.match(await page.textContent('#promo-save'), /Save up to ₹58 with a Dabba/);
+  await dabbaPage(page); for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
+  await page.click('#add-btn'); await page.waitForSelector('#added:not(.hidden)', { timeout: 4000 });
+  assert.match(await page.textContent('#added-sub'), /You saved ₹34/);
+  assert.equal((await cartOf(page))[0].saving_paise, 3400);
+  await page.click('#added-go'); await page.waitForSelector('#cart-drawer:not(.translate-x-full)');
+  assert.match(await page.textContent('[data-dabba]'), /You save ₹34/); assert.match(await page.textContent('#cart-saving'), /Dabba savings in your jhola: ₹34/);
+  await page.evaluate(() => { window.open = u => { window.__opened = u; }; });
+  await page.fill('#cust-name', 'Asha Singhania'); await page.fill('#cust-phone', '9876500000'); await page.fill('#cust-address', '12 MG Road, Malad East'); await page.fill('#cust-pin', '400097');
+  await page.click('#order-btn'); await page.waitForSelector('#pay-modal:not(.hidden)');
+  assert.match(decodeURIComponent(await page.evaluate(() => window.__opened)), /₹302 \(saves ₹34\)/);
+});
+
 /* ---------- admin ---------- */
 await test('Admin: sign in, change a price and stock, mark an order paid', async page => {
   await page.goto(BASE + '/admin/'); await page.fill('#token', 'wrong'); await page.click('#login-btn'); await page.waitForTimeout(500);

@@ -144,3 +144,10 @@ main > section:first-child { position: relative; }
   .steps::before { transform: scaleX(1); } .uline-l { width: 140px; } .card-in { animation-play-state: running; }
 }
 main > section:first-child > *:not(.absolute) { position: relative; z-index: 1; }
+
+/* savings */
+.save-pill { margin-top: .75rem; padding: .55rem .8rem; border-radius: .6rem; background: #E7F3EA; border: 1px solid #9CC9A8; color: #245B35; font-size: 13px; font-weight: 700; }
+.save-pill.pop { animation: savePop .6s cubic-bezier(.3,1.6,.5,1); }
+@keyframes savePop { 0% { opacity: 0; transform: translateY(8px) scale(.92); } 60% { transform: scale(1.04); } 100% { opacity: 1; transform: none; } }
+.save-chip { display: inline-block; margin-left: .4rem; padding: 1px 8px; border-radius: 999px; background: #E7F3EA; color: #245B35; font: 700 11px 'Plus Jakarta Sans', sans-serif; vertical-align: middle; animation: chipIn .6s cubic-bezier(.3,1.6,.5,1) .5s both; }
+@keyframes chipIn { from { opacity: 0; transform: scale(.5) rotate(-8deg); } }

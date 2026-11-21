@@ -100,8 +100,10 @@
                 <ul id="sum-items" class="mt-4 divide-y divide-brand-gold/30"></ul>
                 <dl class="mt-4 space-y-1 text-sm">
                     <div class="flex justify-between"><dt class="text-brand-muted" data-hi="कुल वज़न">Total net weight</dt><dd id="sum-weight" class="font-semibold">0g</dd></div>
+                    <div id="row-was" class="hidden flex justify-between"><dt class="text-brand-muted" data-hi="उतना ही वज़न, दुकान के दाम पर">Same weight at shop prices</dt><dd id="sum-was" class="line-through text-brand-muted">₹0</dd></div>
                     <div class="flex justify-between text-base"><dt class="font-bold" data-hi="उप-योग">Subtotal</dt><dd id="sum-total" class="font-serif text-xl font-bold text-brand-terracotta">₹0</dd></div>
                 </dl>
+                <p id="sum-save" class="save-pill hidden" role="status"></p>
                 <p id="sum-msg" class="text-sm text-brand-terracotta font-semibold mt-3 min-h-[1.25rem]" role="status"></p>
                 <button id="add-btn" type="button" disabled class="mt-3 w-full min-h-[52px] rounded-full bg-brand-terracotta text-white font-bold disabled:opacity-45 disabled:cursor-not-allowed" data-hi="मेरा डब्बा जोड़ें">Add My Dabba</button>
                 <p id="allergy-note" class="text-[11px] text-brand-muted text-center mt-2"></p>

@@ -272,3 +272,29 @@ test('migration: old Dabba seed prices move to the new lower prices, admin-edite
   assert.equal((await env.db.prepare(`SELECT price_paise p FROM variants WHERE sku = 'SWALI-R'`).first()).p, 10800);
   assert.equal((await env.db.prepare(`SELECT price_paise p FROM variants WHERE sku = 'CHAKLI-R'`).first()).p, 11100);
 });
+
+/* ---------- savings (server-computed, never taken from the browser) ---------- */
+test('Savings: the server works out what the same weight costs separately', async () => {
+  const reg = (await quote(dabba('regular', trio('R')))).data;
+  assert.equal(reg.saving_paise, 3400); assert.equal(reg.dabbas[0].reference_paise, 33600); assert.equal(reg.dabbas[0].saving_paise, 3400);
+  assert.deepEqual(reg.dabbas[0].items.map(i => [i.sku, i.reference_unit_paise, i.saving_paise]), [['SWALI-R', 12000, 1200], ['CHAKLI-R', 9600, 1000], ['CHIWDA-R', 12000, 1200]]);
+  assert.equal((await quote(dabba('trial', trio('T')))).data.saving_paise, 1900);
+  assert.equal((await quote(dabba('family', trio('F')))).data.saving_paise, 5800);
+  assert.equal((await quote({ lines: [{ sku: 'SWALI-OIL-250', qty: 1 }] })).data.saving_paise, 0);   // loose packs never claim a saving
+});
+test('Savings never go negative and follow price changes and disabled shop packs', async () => {
+  await env.admin('/api/admin/variants/SWALI-R', { method: 'PUT', body: { price_paise: 13000 } });   // dearer than the shop: no saving claimed
+  const a = (await quote(dabba('regular', trio('R')))).data;
+  assert.equal(a.dabbas[0].items[0].saving_paise, 0); assert.equal(a.saving_paise, 0 + 1000 + 1200);
+  await env.admin('/api/admin/variants/SWALI-R', { method: 'PUT', body: { price_paise: 10800 } });
+  for (const sku of ['SWALI-OIL-250', 'SWALI-GHEE-250', 'SWALI-AIR-250']) await env.admin(`/api/admin/variants/${sku}`, { method: 'PUT', body: { enabled: false } });
+  const b = (await quote(dabba('regular', trio('R')))).data;     // the 500g shop pack (₹220) is now the comparison: 250/500 of it = ₹110
+  assert.equal(b.dabbas[0].items[0].reference_unit_paise, 11000); assert.equal(b.dabbas[0].items[0].saving_paise, 200);
+});
+test('Catalogue exposes the comparison price for Dabba packs only; orders mention the saving', async () => {
+  const cat = (await env.call('/api/catalogue')).data;
+  const sw = cat.products[0].variants;
+  assert.equal(sw.find(v => v.sku === 'SWALI-R').reference_paise, 12000); assert.equal(sw.find(v => v.sku === 'SWALI-OIL-250').reference_paise, undefined);
+  const o = await place(dabba('regular', trio('R')));
+  assert.match(o.data.whatsapp_text, /Dabba 1 – Regular \(3 packs, 700g\) – ₹302 \(saves ₹34\)/);
+});

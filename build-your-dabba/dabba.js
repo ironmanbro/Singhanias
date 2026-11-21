@@ -27,7 +27,7 @@
     adding:     ['Adding…', 'जोड़ रहे हैं…'], update: ['Update My Dabba', 'मेरा डब्बा अपडेट करें'], add: ['Add My Dabba', 'मेरा डब्बा जोड़ें'],
     adjusted:   ['We adjusted your Dabba to what is in stock.', 'हमने आपका डब्बा उपलब्ध स्टॉक के हिसाब से बदल दिया।'],
     addedSub:   ['{p} packs · {w} · {t}', '{p} पैक · {w} · {t}'], updatedSub: ['Dabba updated: {p} packs · {w} · {t}', 'डब्बा अपडेट हुआ: {p} पैक · {w} · {t}'],
-    from:       ['from', 'से'], contains: ['Contains', 'इसमें है'], pickSize: ['Pick a size', 'साइज़ चुनिए']
+    from:       ['from', 'से'], saveLine: ['You save {s} ({pct}) compared with buying the same weight separately', 'समान वज़न अलग-अलग ख़रीदने की तुलना में आप {s} ({pct}) बचाते हैं'], chip: ['Save {s}', '{s} बचाएँ'], youSaved: ['You saved {s}', 'आपने {s} बचाए'], savesShort: ['saves {s}', '{s} की बचत'], contains: ['Contains', 'इसमें है'], pickSize: ['Pick a size', 'साइज़ चुनिए']
   };
   const tr = (k, v = {}) => T[k][lang === 'hi' ? 1 : 0].replace(/\{(\w+)\}/g, (_, x) => v[x]);
 
@@ -46,6 +46,9 @@
   const lineFor = p => { const v = dabbaVariant(p.id, state.format); return v ? { v, qty: state.counts[p.id] || 0 } : null; };
   const subtotal = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * l.v.price_paise : 0); }, 0);
   const totalWeight = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * l.v.weight_g : 0); }, 0);
+  const refOf = v => (v.reference_paise != null ? v.reference_paise : v.price_paise);
+  const unitSaving = v => Math.max(0, refOf(v) - v.price_paise);
+  const saving = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * unitSaving(l.v) : 0); }, 0);
   const maxFor = p => { const l = lineFor(p); if (!l) return 0; const room = settings().max_packs - (packs() - l.qty); return Math.max(0, Math.min(l.v.available, room)); };
 
   /* ---------- rendering ---------- */
@@ -85,7 +88,7 @@
           <p class="text-sm text-brand-muted">${desc}</p>
           <p class="text-[11px] font-semibold text-brand-saffron">⚠ ${tr('contains')}: ${esc((window.ALLERGENS?.[p.id] || []).map(a => a[lang === 'hi' ? 1 : 0]).join(', '))}</p>
           <div class="flex items-end justify-between gap-3 mt-auto pt-2">
-            <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark"><span class="price-flip" style="--i:${idx}">${money(v.price_paise)}</span></p></div>
+            <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark"><span class="price-flip" style="--i:${idx}">${money(v.price_paise)}</span>${unitSaving(v) > 0 ? `<span class="save-chip">${tr('chip', { s: money(unitSaving(v)) })}</span>` : ''}</p></div>
             <div class="flex items-center border border-brand-gold rounded-full overflow-hidden bg-white" role="group" aria-label="${name} quantity">
               <button type="button" data-dec="${p.id}" class="qty-btn w-11 h-11 text-xl font-bold" aria-label="${tr('dec')}: ${name}">−</button>
               <span data-qty class="w-8 text-center font-bold" aria-live="polite">0</span>
@@ -161,6 +164,10 @@
         <button type="button" data-remove="${p.id}" class="min-h-[44px] min-w-[44px] text-brand-muted hover:text-brand-terracotta" aria-label="${tr('remove')}: ${esc(p.name)}">✕</button></span></li>`).join('');
     prevIds = nowIds;
     const prevTotal = $('sum-total').textContent, newTotal = money(subtotal());
+    const sv = saving(), prevSv = refresh.prevSv || 0; refresh.prevSv = sv;
+    $('row-was').classList.toggle('hidden', !(sv > 0)); $('sum-was').textContent = money(subtotal() + sv);
+    const pill = $('sum-save'); pill.classList.toggle('hidden', !(sv > 0));
+    if (sv > 0) { pill.textContent = tr('saveLine', { s: money(sv), pct: Math.round(sv / (subtotal() + sv) * 100) + '%' }); if (sv !== prevSv && !reduced) { pill.classList.remove('pop'); void pill.offsetWidth; pill.classList.add('pop'); } }
     $('sum-weight').textContent = weight(totalWeight());
     $('sum-total').textContent = newTotal;
     if (prevTotal !== newTotal) { bump($('sum-total')); bump($('sbar-total')); }
@@ -171,7 +178,7 @@
     if (wasDisabled && !$('add-btn').disabled && !reduced) { $('add-btn').classList.remove('unlock'); void $('add-btn').offsetWidth; $('add-btn').classList.add('unlock'); setTimeout(() => $('add-btn').classList.remove('unlock'), 800); }
     $('add-btn').textContent = state.editId ? tr('update') : tr('add');
     // phone bar
-    $('sbar-packs').textContent = tr('count', { a: n, b: max }) + (n ? ' · ' + weight(totalWeight()) : '');
+    $('sbar-packs').textContent = tr('count', { a: n, b: max }) + (n ? ' · ' + weight(totalWeight()) : '') + (sv > 0 ? ' · ' + tr('savesShort', { s: money(sv) }) : '');
     $('sbar-total').textContent = money(subtotal());
     if (!state.editId) store.set('draft', { format: state.format, counts: state.counts });
   }
@@ -267,7 +274,7 @@
       const sd = q.dabbas[0], fmt = state.cat.formats.find(f => f.id === state.format);
       const item = {
         type: 'dabba', id: state.editId || 'd_' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6),
-        format: sd.format, format_label: fmt ? fmt.label : sd.format_label, packs: sd.packs, weight_g: sd.weight_g, paise: sd.subtotal_paise,
+        format: sd.format, format_label: fmt ? fmt.label : sd.format_label, packs: sd.packs, weight_g: sd.weight_g, paise: sd.subtotal_paise, saving_paise: sd.saving_paise || 0,
         items: sd.items.map(i => ({ sku: i.sku, product: i.product_id, name: i.product_name, qty: i.qty, weight_g: i.weight_g, unit_price_paise: i.unit_price_paise }))
       };
       const cart = readCart(), at = cart.findIndex(i => i.type === 'dabba' && i.id === item.id);
@@ -278,7 +285,7 @@
       // the brass dabba hops into the Jhola, the bag catches it, then the confirmation appears
       if (window.Jhola) await Jhola.fly({ from: $('add-btn'), to: $('cart-link'), brass: true, label: '+' + sd.packs });
       updateBadge();
-      $('added-sub').textContent = tr(editing ? 'updatedSub' : 'addedSub', { p: sd.packs, w: weight(sd.weight_g), t: money(sd.subtotal_paise) });
+      $('added-sub').textContent = tr(editing ? 'updatedSub' : 'addedSub', { p: sd.packs, w: weight(sd.weight_g), t: money(sd.subtotal_paise) }) + (sd.saving_paise > 0 ? ' · ' + tr('youSaved', { s: money(sd.saving_paise) }) : '');
       sheet(false); openAdded();
       if (editing) { state.editId = null; $('edit-banner').classList.add('hidden'); history.replaceState(null, '', location.pathname); }
     } catch (e) { toast(tr('loadErr')); }
