@@ -39,6 +39,9 @@
   const settings = () => state.cat.settings;
   const dabbaVariant = (productId, fmt) => state.cat.products.find(p => p.id === productId)?.variants.find(v => v.kind === 'dabba' && v.format === fmt);
   const products = () => state.cat.products.filter(p => p.variants.some(v => v.kind === 'dabba'));
+  let prevPacks = 0, prevIds = new Set();
+  const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const bump = el => { if (!el || reduced) return; el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump'); };
   const packs = () => Object.values(state.counts).reduce((a, b) => a + b, 0);
   const lineFor = p => { const v = dabbaVariant(p.id, state.format); return v ? { v, qty: state.counts[p.id] || 0 } : null; };
   const subtotal = () => products().reduce((s, p) => { const l = lineFor(p); return s + (l ? l.qty * l.v.price_paise : 0); }, 0);
@@ -47,20 +50,29 @@
 
   /* ---------- rendering ---------- */
   function renderFormats() {
-    $('formats').innerHTML = state.cat.formats.map(f => {
+    $('formats').innerHTML = '<span id="seg-pill" aria-hidden="true"></span>' + state.cat.formats.map(f => {
       const prices = products().map(p => dabbaVariant(p.id, f.id)).filter(Boolean).map(v => v.price_paise);
       const label = lang === 'hi' && f.label_hi ? f.label_hi : f.label;
       return `<button type="button" role="radio" aria-checked="${f.id === state.format}" data-format="${f.id}" class="seg min-h-[56px] rounded-lg border border-brand-gold bg-white text-brand-dark px-2 py-2 text-sm font-bold leading-tight">
         ${esc(label)}<span class="block text-[11px] font-medium opacity-80">${prices.length ? tr('from') + ' ' + money(Math.min(...prices)) : ''}</span></button>`;
     }).join('');
+    movePill(true);
   }
+  function movePill(instant) {            // the maroon highlight slides to the chosen size
+    const pill = $('seg-pill'), on = $('formats').querySelector('.seg[aria-checked="true"]'); if (!pill || !on) return;
+    if (instant) pill.style.transition = 'none';
+    pill.style.width = on.offsetWidth + 'px'; pill.style.transform = `translateX(${on.offsetLeft}px)`;
+    if (instant) { void pill.offsetWidth; pill.style.transition = ''; }
+  }
+  function markFormat() { $('formats').querySelectorAll('.seg').forEach(b => b.setAttribute('aria-checked', b.dataset.format === state.format)); movePill(false); }
+  addEventListener('resize', () => movePill(true));
 
   function renderCards() {
     const list = products().filter(p => dabbaVariant(p.id, state.format));
     if (!list.length) { $('cards').innerHTML = `<p class="rounded-lg bg-white border border-brand-gold/50 p-4 text-sm">${tr('none')}</p>`; return; }
-    $('cards').innerHTML = list.map(p => {
+    $('cards').innerHTML = list.map((p, idx) => {
       const v = dabbaVariant(p.id, state.format), name = esc(p.name), hi = esc(p.name_hi || ''), desc = esc(lang === 'hi' && p.short_desc_hi ? p.short_desc_hi : p.short_desc);
-      return `<article class="bg-white rounded-xl border border-brand-gold/50 overflow-hidden sm:flex" data-product="${p.id}">
+      return `<article class="card-in bg-white rounded-xl border border-brand-gold/50 overflow-hidden sm:flex" style="--i:${idx}" data-product="${p.id}">
         <div class="sm:w-44 sm:shrink-0 aspect-[16/10] sm:aspect-auto bg-brand-card">
           <img src="${esc(p.image)}" alt="${name}" width="360" height="360" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.style.visibility='hidden'">
         </div>
@@ -88,7 +100,7 @@
     // cards
     document.querySelectorAll('[data-product]').forEach(card => {
       const p = products().find(x => x.id === card.dataset.product), l = lineFor(p); if (!l) return;
-      card.querySelector('[data-qty]').textContent = l.qty;
+      const qe = card.querySelector('[data-qty]'); if (qe.textContent !== String(l.qty)) { qe.textContent = l.qty; bump(qe); }
       card.querySelector('[data-dec]').disabled = l.qty <= 0;
       card.querySelector('[data-inc]').disabled = l.qty >= maxFor(p);
       const st = card.querySelector('[data-stock]');
@@ -99,12 +111,22 @@
     // summary
     const lines = products().map(p => ({ p, l: lineFor(p) })).filter(x => x.l && x.l.qty > 0);
     $('sum-count').textContent = n ? tr('count', { a: n, b: max }) : tr('empty');
-    $('sum-items').innerHTML = lines.map(({ p, l }) => `<li class="py-2 flex items-center justify-between gap-2 text-sm">
+    // pack meter: one slot per allowed pack; newly filled slots pop
+    const meter = $('meter');
+    if (meter.children.length !== max) meter.innerHTML = Array.from({ length: max }, () => '<span class="slot"></span>').join('');
+    [...meter.children].forEach((s, i) => { const on = i < n; if (on && !s.classList.contains('on') && n > prevPacks) { s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); } s.classList.toggle('on', on); });
+    if (n !== prevPacks) { for (const id of ['sum-count', 'sbar-packs']) bump($(id)); }
+    prevPacks = n;
+    const nowIds = new Set(lines.map(x => x.p.id));
+    $('sum-items').innerHTML = lines.map(({ p, l }) => `<li class="${prevIds.has(p.id) ? '' : 'li-new '}py-2 flex items-center justify-between gap-2 text-sm">
         <span class="min-w-0"><span class="font-semibold">${l.qty}× ${esc(p.name)}</span><span class="block text-xs text-brand-muted">${weight(l.v.weight_g)} · ${money(l.v.price_paise)}</span></span>
         <span class="flex items-center gap-2"><span class="font-semibold">${money(l.qty * l.v.price_paise)}</span>
         <button type="button" data-remove="${p.id}" class="min-h-[44px] min-w-[44px] text-brand-muted hover:text-brand-terracotta" aria-label="${tr('remove')}: ${esc(p.name)}">✕</button></span></li>`).join('');
+    prevIds = nowIds;
+    const prevTotal = $('sum-total').textContent, newTotal = money(subtotal());
     $('sum-weight').textContent = weight(totalWeight());
-    $('sum-total').textContent = money(subtotal());
+    $('sum-total').textContent = newTotal;
+    if (prevTotal !== newTotal) { bump($('sum-total')); bump($('sbar-total')); }
     const msg = n < min ? tr('min', { n: min }) : n >= max ? tr('full', { n: max }) : '';
     $('sum-msg').textContent = msg;
     $('add-btn').disabled = n < min || n > max;
@@ -123,7 +145,7 @@
   /* ---------- selection logic ---------- */
   function setFormat(fmt) {
     if (fmt === state.format) return;
-    state.format = fmt;
+    state.format = fmt; markFormat();
     let clamped = false;
     for (const p of products()) {                                   // keep quantities, but never above stock or the max
       const v = dabbaVariant(p.id, fmt), q = state.counts[p.id] || 0;
@@ -133,7 +155,7 @@
     while (packs() > settings().max_packs) {                        // trim extras if needed
       const id = Object.keys(state.counts).reverse().find(k => state.counts[k] > 0); state.counts[id]--; clamped = true;
     }
-    renderAll(); if (clamped) toast(tr('adjusted'));
+    renderCards(); refresh(); if (clamped) toast(tr('adjusted'));
   }
   function change(id, d) {
     const p = products().find(x => x.id === id); if (!p) return;
@@ -141,6 +163,29 @@
     if (d > 0 && cur >= maxFor(p)) return;     // stock and the pack limit are both enforced here (and again by the server)
     if (d < 0 && cur <= 0) return;
     state.counts[id] = cur + d; refresh();
+    if (d > 0) flyChip(id);
+  }
+  function flyChip(id) {                  // a little photo hops from the card into the Dabba summary
+    if (reduced) return;
+    const img = document.querySelector(`[data-product="${id}"] img`); if (!img) return;
+    const target = mobile() ? $('sbar-total') : $('sum-count'); if (!target) return;
+    const a = img.getBoundingClientRect(), b = target.getBoundingClientRect();
+    const chip = document.createElement('img'); chip.src = img.src; chip.alt = ''; chip.className = 'chip-fly';
+    chip.style.left = a.left + a.width / 2 - 20 + 'px'; chip.style.top = a.top + a.height / 2 - 20 + 'px';
+    document.body.appendChild(chip);
+    const dx = b.left + 10 - (a.left + a.width / 2), dy = b.top + b.height / 2 - (a.top + a.height / 2);
+    const an = chip.animate([{ transform: 'translate(0,0) scale(1)', opacity: 1 }, { transform: `translate(${dx * .5}px, ${dy * .5 - 70}px) scale(.8)`, opacity: 1, offset: .5 }, { transform: `translate(${dx}px, ${dy}px) scale(.3)`, opacity: .2 }], { duration: 650, easing: 'cubic-bezier(.4,0,.2,1)' });
+    an.onfinish = () => chip.remove();
+  }
+  function confetti() {
+    if (reduced) return;
+    const cols = ['#641E2B', '#B99A58', '#C9AE74', '#8C3A4B', '#EADCC6'];
+    for (let i = 0; i < 34; i++) {
+      const c = document.createElement('span'), ang = Math.random() * Math.PI * 2, dist = 90 + Math.random() * 190;
+      c.className = 'confetti'; c.style.left = innerWidth / 2 + 'px'; c.style.top = innerHeight / 2 - 40 + 'px'; c.style.background = cols[i % cols.length];
+      c.style.setProperty('--dx', Math.cos(ang) * dist + 'px'); c.style.setProperty('--dy', Math.sin(ang) * dist + 120 + 'px'); c.style.setProperty('--rot', Math.random() * 720 - 360 + 'deg');
+      document.body.appendChild(c); setTimeout(() => c.remove(), 1300);
+    }
   }
 
   document.addEventListener('click', e => {
@@ -192,7 +237,7 @@
     finally { refresh(); }
   }
   $('add-btn').onclick = addToCart;
-  function openAdded() { $('added').classList.remove('hidden'); $('added').classList.add('flex'); setTimeout(() => $('added-go').focus(), 50); }
+  function openAdded() { $('added').classList.remove('hidden'); $('added').classList.add('flex'); confetti(); setTimeout(() => $('added-go').focus(), 50); }
   function closeAdded() { $('added').classList.add('hidden'); $('added').classList.remove('flex'); }
   $('added-again').onclick = () => { state.counts = {}; store.set('draft', null); closeAdded(); refresh(); window.scrollTo({ top: 0, behavior: 'smooth' }); };
 

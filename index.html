@@ -19,7 +19,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Kalam:wght@400;700&family=Noto+Sans+Devanagari:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Yatra+One&display=swap" rel="stylesheet">
     <!-- Built Tailwind CSS (rebuild command is in tailwind.config.js) -->
     <link rel="stylesheet" href="styles.css">
+    <script>document.documentElement.classList.add('js')</script>
     <link rel="stylesheet" href="fx.css">
+    <link rel="stylesheet" href="anim.css">
     <noscript><style>.env,#intro{display:none}.ink{clip-path:none}.reveal{opacity:1;transform:none}</style></noscript>
 
     <style>
@@ -187,6 +189,19 @@
                 </div>
             </div>
             <div class="scallop absolute bottom-0 inset-x-0"></div>
+        </section>
+
+        <!-- Scrolling ribbon -->
+        <div class="marquee" aria-hidden="true"><div class="marquee-track"><span>Mom's Special Recipe</span><span>Zero Preservatives</span><span>Fresh in Small Batches</span><span>Saffola Oil or Desi Ghee</span><span>Homemade Marwari Flavours</span><span>Packed with Love</span><span>Mom's Special Recipe</span><span>Zero Preservatives</span><span>Fresh in Small Batches</span><span>Saffola Oil or Desi Ghee</span><span>Homemade Marwari Flavours</span><span>Packed with Love</span></div></div>
+
+        <!-- Numbers that count up -->
+        <section class="py-10 px-4 bg-brand-bg" aria-label="Why Singhania's">
+            <div class="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+                <div class="reveal"><p class="stat-num font-serif text-4xl font-bold text-brand-terracotta"><span data-count="100" data-suffix="%">100%</span></p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1" data-hi="घर का बना">Home-made</p></div>
+                <div class="reveal"><p class="stat-num font-serif text-4xl font-bold text-brand-terracotta"><span data-count="0">0</span></p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1" data-hi="प्रिज़र्वेटिव">Preservatives</p></div>
+                <div class="reveal"><p class="stat-num font-serif text-4xl font-bold text-brand-terracotta"><span data-count="3">3</span></p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1" data-hi="सिग्नेचर स्नैक्स">Signature snacks</p></div>
+                <div class="reveal"><p class="stat-num font-serif text-4xl font-bold text-brand-terracotta"><span data-count="3">3</span></p><p class="text-xs uppercase tracking-widest text-brand-muted mt-1" data-hi="पैक साइज़">Pack sizes</p></div>
+            </div>
         </section>
 
         <div class="leheriya" aria-hidden="true"></div>
@@ -1106,7 +1121,7 @@
         // Scroll-reveal with fail-safe so content is never left hidden
         const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('show'); io.unobserve(e.target); } }), { threshold: .1 });
         document.querySelectorAll('.reveal').forEach(el => io.observe(el));
-        setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('show')), 1500);
+        setTimeout(() => document.querySelectorAll('.reveal').forEach(el => el.classList.add('show')), 12000);   // fail-safe only
 
         $('footer-wa').href = `https://wa.me/${WHATSAPP_NUMBER}`;
         $('gift-wa').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent("Namaste! I'd like to enquire about gifting / a bulk order from Singhania's.")}`;
@@ -1147,5 +1162,6 @@
         if (new URLSearchParams(location.search).get('cart') === '1') { toggleCart(); history.replaceState(null, '', location.pathname); }
     </script>
     <script src="fx.js"></script>
+    <script src="anim.js"></script>
 </body>
 </html>

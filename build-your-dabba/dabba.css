@@ -3,8 +3,50 @@ body { background:#F5EBDD; color:#3C3029; font-family:'Plus Jakarta Sans','Noto 
 .font-serif { font-family:'Playfair Display','Yatra One',serif; }
 #summary { transition:transform .25s ease; }
 #summary.open { transform:translateY(0); }
-.seg[aria-checked="true"] { background:#641E2B; color:#fff; border-color:#641E2B; }
+.seg { position:relative; z-index:1; transition:color .3s, border-color .3s, scale .12s; }
+.seg[aria-checked="true"] { background:transparent; color:#fff; border-color:#641E2B; }
+#seg-pill { position:absolute; top:0; left:0; height:100%; border-radius:.5rem; background:#641E2B; z-index:0; transition:transform .4s cubic-bezier(.3,1.2,.4,1), width .4s cubic-bezier(.3,1.2,.4,1); pointer-events:none; }
 .qty-btn:disabled { opacity:.35; cursor:not-allowed; }
 .skeleton { background:linear-gradient(90deg,#EADCC6,#F5EBDD,#EADCC6); background-size:200% 100%; animation:sk 1.4s infinite; }
 @keyframes sk { to { background-position:-200% 0; } }
 @media (prefers-reduced-motion:reduce) { #summary, .skeleton { transition:none; animation:none; } }
+
+/* ---------- motion ---------- */
+html, body { overflow-x: clip; }
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: .25s ease both vtOut; }
+::view-transition-new(root) { animation: .45s ease both vtIn; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+header.sticky { animation: hdrIn .7s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes hdrIn { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+main > section:first-child > * { animation: rise .8s cubic-bezier(.2,.8,.2,1) both; }
+main > section:first-child > *:nth-child(2) { animation-delay: .1s; } main > section:first-child > *:nth-child(3) { animation-delay: .2s; }
+@keyframes rise { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: none; } }
+.card-in { animation: rise .6s cubic-bezier(.2,.8,.2,1) both; animation-delay: calc(var(--i, 0) * 90ms); }
+.card-in img { transition: scale .8s cubic-bezier(.2,.8,.2,1); }
+.card-in:hover img { scale: 1.06; }
+.card-in { transition: box-shadow .3s; } .card-in:hover { box-shadow: 0 12px 26px rgba(60,48,41,.13); }
+.qty-btn { transition: scale .12s, background-color .2s; } .qty-btn:not(:disabled):active { scale: .8; } .qty-btn:not(:disabled):hover { background: #F5EBDD; }
+.bump { animation: bump .45s cubic-bezier(.3,1.6,.5,1); }
+@keyframes bump { 40% { transform: scale(1.18); } }
+.slot { flex: 1; height: 8px; border-radius: 4px; background: #EADCC6; transition: background-color .35s; }
+.slot.on { background: #641E2B; }
+.slot.pop { animation: slotPop .5s cubic-bezier(.3,1.7,.5,1); }
+@keyframes slotPop { 0% { transform: scaleY(.4) scaleX(.6); } 60% { transform: scaleY(2) scaleX(1.1); } 100% { transform: none; } }
+.li-new { animation: liIn .45s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes liIn { from { opacity: 0; transform: translateX(24px); background: rgba(185,154,88,.25); } to { opacity: 1; transform: none; background: transparent; } }
+.chip-fly { position: fixed; z-index: 70; width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid #B99A58; pointer-events: none; box-shadow: 0 6px 14px rgba(0,0,0,.25); }
+.confetti { position: fixed; z-index: 80; width: 8px; height: 12px; border-radius: 2px; pointer-events: none; animation: confettiFly 1.2s cubic-bezier(.2,.7,.3,1) forwards; }
+@keyframes confettiFly { to { transform: translate(var(--dx), var(--dy)) rotate(var(--rot)); opacity: 0; } }
+#added > div { animation: dialogPop .5s cubic-bezier(.3,1.5,.5,1); }
+@keyframes dialogPop { from { opacity: 0; transform: scale(.8) translateY(20px); } }
+#add-btn:not(:disabled) { animation: ctaPulse 2.4s ease-out infinite; }
+@keyframes ctaPulse { 0% { box-shadow: 0 0 0 0 rgba(100,30,43,.45); } 70%, 100% { box-shadow: 0 0 0 14px rgba(100,30,43,0); } }
+#add-btn { transition: background-color .25s, scale .12s; } #add-btn:not(:disabled):active { scale: .97; }
+#sbar { animation: barUp .5s cubic-bezier(.2,.8,.2,1) both; }
+@keyframes barUp { from { transform: translateY(100%); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; transition-delay: 0s !important; }
+  .confetti, .chip-fly { display: none; }
+}

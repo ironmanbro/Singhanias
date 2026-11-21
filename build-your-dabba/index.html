@@ -57,7 +57,7 @@
 
                 <div class="mt-4">
                     <p id="fmt-label" class="text-xs font-bold uppercase tracking-wider text-brand-dark" data-hi="पैक का साइज़">Pack size</p>
-                    <div id="formats" role="radiogroup" aria-labelledby="fmt-label" class="mt-2 grid grid-cols-3 gap-2"></div>
+                    <div id="formats" role="radiogroup" aria-labelledby="fmt-label" class="mt-2 grid grid-cols-3 gap-2 relative"></div>
                     <p class="text-xs text-brand-muted mt-2" data-hi="एक डब्बे के सभी पैक एक ही साइज़ के होते हैं।">All packs in one Dabba use the same size.</p>
                 </div>
 
@@ -72,6 +72,7 @@
                     <button id="sheet-close" type="button" class="lg:hidden min-h-[44px] min-w-[44px] text-xl" aria-label="Close summary">✕</button>
                 </div>
                 <p id="sum-count" class="text-sm text-brand-muted mt-1"></p>
+                <div id="meter" class="flex gap-1.5 mt-2" aria-hidden="true"></div>
                 <ul id="sum-items" class="mt-4 divide-y divide-brand-gold/30"></ul>
                 <dl class="mt-4 space-y-1 text-sm">
                     <div class="flex justify-between"><dt class="text-brand-muted" data-hi="कुल वज़न">Total net weight</dt><dd id="sum-weight" class="font-semibold">0g</dd></div>

@@ -1,0 +1,140 @@
+/* Singhania's: motion layer. Transform/opacity only (smooth on phones). Loaded after fx.css.
+   Everything is switched off by the "reduce motion" setting at the bottom of this file. */
+
+/* ---------- page-to-page transition (supported browsers) ---------- */
+@view-transition { navigation: auto; }
+::view-transition-old(root) { animation: .25s ease both vtOut; }
+::view-transition-new(root) { animation: .45s ease both vtIn; }
+@keyframes vtOut { to { opacity: 0; transform: translateY(-8px); } }
+@keyframes vtIn { from { opacity: 0; transform: translateY(10px); } }
+
+html, body { overflow-x: clip; }
+
+/* ---------- scroll progress bar ---------- */
+#scroll-progress { position: fixed; top: 0; left: 0; width: 100%; height: 3px; z-index: 95; pointer-events: none; transform: scaleX(0); transform-origin: 0 50%;
+  background: linear-gradient(90deg, #B99A58, #8C3A4B, #641E2B); }
+
+/* ---------- header ---------- */
+header.sticky { animation: hdrIn .8s cubic-bezier(.2, .8, .2, 1) both; }
+@keyframes hdrIn { from { transform: translateY(-100%); opacity: 0; } to { transform: none; opacity: 1; } }
+header nav a { position: relative; }
+header nav a::after { content: ""; position: absolute; left: 0; bottom: -6px; height: 2px; width: 100%; background: #B99A58; transform: scaleX(0); transform-origin: left; transition: transform .35s ease; }
+header nav a:hover::after { transform: scaleX(1); }
+header a[href="#top"] > div:first-child { transition: transform .9s cubic-bezier(.3, 1.4, .5, 1); }
+header a[href="#top"]:hover > div:first-child { transform: rotate(360deg) scale(1.1); }
+
+/* ---------- hero entrance (starts after the diya intro) ---------- */
+.js .rise { opacity: 0; }
+.anim-go .rise { animation: rise .9s cubic-bezier(.2, .8, .2, 1) both; animation-delay: calc(var(--d, 0) * 110ms + 100ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+.js .hero-art { opacity: 0; }
+.anim-go .hero-art { animation: heroArt 1.2s cubic-bezier(.2, .8, .2, 1) .35s both; }
+@keyframes heroArt { from { opacity: 0; transform: scale(.88) rotate(-3deg); } to { opacity: 1; transform: none; } }
+.w { display: inline-block; opacity: 0; transform: translateY(.6em) rotate(2deg); }
+.anim-go .w { animation: wordIn .7s cubic-bezier(.2, .9, .3, 1) both; animation-delay: calc(var(--wi, 0) * 70ms + 250ms); }
+@keyframes wordIn { to { opacity: 1; transform: none; } }
+
+/* badge shimmer + CTA glow ring */
+#hero .inline-flex.bg-brand-card { position: relative; overflow: hidden; }
+#hero .inline-flex.bg-brand-card::after { content: ""; position: absolute; inset: 0; background: linear-gradient(100deg, transparent 35%, rgba(255, 255, 255, .7) 50%, transparent 65%); transform: translateX(-120%); animation: shimmer 3.6s ease-in-out 1.5s infinite; }
+@keyframes shimmer { 60%, 100% { transform: translateX(120%); } }
+.cta-ring { position: relative; }
+.cta-ring::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(185, 154, 88, .7); animation: ctaRing 2.6s ease-out 2s infinite; pointer-events: none; }
+@keyframes ctaRing { 70%, 100% { box-shadow: 0 0 0 16px rgba(185, 154, 88, 0); } }
+
+/* floating petals + twinkles in the hero */
+.petal-float { position: absolute; bottom: -20px; width: 10px; height: 14px; border-radius: 50% 50% 50% 0; opacity: 0; pointer-events: none; animation: petalUp linear infinite; }
+@keyframes petalUp { 0% { transform: translate(0, 0) rotate(0); opacity: 0; } 12% { opacity: .75; } 100% { transform: translate(var(--dx, 40px), -92vh) rotate(540deg); opacity: 0; } }
+.twinkle { position: absolute; width: 4px; height: 4px; border-radius: 50%; background: #fff; box-shadow: 0 0 8px 2px rgba(201, 174, 116, .9); animation: twinkle 3s ease-in-out infinite; pointer-events: none; }
+@keyframes twinkle { 0%, 100% { opacity: 0; transform: scale(.4); } 50% { opacity: 1; transform: scale(1.1); } }
+
+/* ---------- marquee strip ---------- */
+.marquee { overflow: hidden; background: #641E2B; color: #EADCC6; border-block: 2px solid #B99A58; }
+.marquee-track { display: flex; width: max-content; animation: marquee 32s linear infinite; }
+.marquee:hover .marquee-track { animation-play-state: paused; }
+.marquee-track span { padding: 12px 28px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-size: 12px; white-space: nowrap; }
+.marquee-track span::after { content: "✦"; margin-left: 56px; color: #C9AE74; }
+@keyframes marquee { to { transform: translateX(-50%); } }
+
+/* ---------- stats strip ---------- */
+.stat-num { font-variant-numeric: tabular-nums; }
+
+/* ---------- scroll reveals (variants + stagger) ---------- */
+.reveal.rv-left:not(.show) { transform: translateX(-34px); }
+.reveal.rv-right:not(.show) { transform: translateX(34px); }
+.reveal.rv-zoom:not(.show) { transform: scale(.9) translateY(18px); }
+.uline { height: 2px; width: 0; margin: .6rem auto 0; background: linear-gradient(90deg, transparent, #B99A58, transparent); transition: width 1s cubic-bezier(.2, .8, .2, 1); }
+.uline.in { width: 120px; }
+
+/* ---------- image hover: zoom + shine + tilt ---------- */
+.arch { --tx: 0deg; --ty: 0deg; transform: perspective(900px) rotateX(var(--tx)) rotateY(var(--ty)); transition: transform .25s ease-out; will-change: transform; }
+.arch img { scale: 1; transition: scale .9s cubic-bezier(.2, .8, .2, 1); }
+.arch:hover img { scale: 1.07; }
+.arch::after { content: ""; position: absolute; inset: 0; background: linear-gradient(110deg, transparent 35%, rgba(255, 255, 255, .38) 50%, transparent 65%); transform: translateX(-130%); pointer-events: none; }
+.arch:hover::after { animation: shine 1s ease; }
+@keyframes shine { to { transform: translateX(130%); } }
+
+/* product cards: gentle lift */
+#dabba .grid > div.reveal { transition: opacity .7s, transform .45s cubic-bezier(.2, .8, .2, 1), box-shadow .35s; }
+#dabba .grid > div.reveal.show:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(60, 48, 41, .14); }
+
+/* promise cards + icons */
+.pi { display: inline-block; }
+.reveal.show .pi { animation: iconPop .8s cubic-bezier(.3, 1.6, .5, 1) .25s both; }
+.reveal:hover .pi { animation: wiggle .7s ease; }
+@keyframes iconPop { from { transform: scale(0) rotate(-40deg); } to { transform: none; } }
+@keyframes wiggle { 20% { transform: rotate(-14deg) scale(1.2); } 50% { transform: rotate(12deg) scale(1.2); } 80% { transform: rotate(-6deg); } }
+
+/* making steps: numbers pop in */
+.step h3 { transition: color .3s; }
+.step.in h3 { animation: rise .6s ease both; }
+
+/* FAQ */
+details summary { transition: background .25s, padding .25s; border-radius: 8px; }
+details summary:hover { background: rgba(185, 154, 88, .12); }
+details[open] > p { animation: faqIn .4s cubic-bezier(.2, .8, .2, 1); transform-origin: top; }
+@keyframes faqIn { from { opacity: 0; transform: translateY(-8px) scaleY(.92); } }
+
+/* gifting */
+#gifting .text-3xl { display: inline-block; animation: giftBounce 2.2s ease-in-out infinite; }
+@keyframes giftBounce { 0%, 100% { transform: translateY(0) rotate(0); } 40% { transform: translateY(-14px) rotate(-8deg); } 60% { transform: translateY(-6px) rotate(6deg); } }
+
+/* ---------- buttons: ripple + press ---------- */
+.rip { position: relative; overflow: hidden; }
+.ripple { position: absolute; border-radius: 50%; background: rgba(255, 255, 255, .45); transform: scale(0); animation: ripple .65s ease-out forwards; pointer-events: none; }
+@keyframes ripple { to { transform: scale(1); opacity: 0; } }
+button:not(:disabled):active, .rip:active { scale: .97; }
+[data-add], #order-btn, #gift-wa, .vbtn { transition: transform .2s, background-color .25s, box-shadow .25s, scale .12s; }
+[data-add]:hover, #order-btn:hover { box-shadow: 0 8px 18px rgba(100, 30, 43, .25); }
+.magnetic { transition: transform .25s ease-out; }
+
+/* ---------- floating chat button ---------- */
+#chat-fab::before { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: 0 0 0 0 rgba(37, 211, 102, .6); animation: fabRing 2.6s ease-out infinite; pointer-events: none; }
+@keyframes fabRing { 70%, 100% { box-shadow: 0 0 0 18px rgba(37, 211, 102, 0); } }
+
+/* ---------- cart ---------- */
+@keyframes pop { 30% { transform: scale(1.3) rotate(-10deg); } 60% { transform: scale(.95) rotate(6deg); } 100% { transform: scale(1); } }
+.bump { animation: bump .45s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes bump { 40% { transform: scale(1.18); } }
+.stagger > * { animation: slideIn .5s cubic-bezier(.2, .8, .2, 1) both; }
+.stagger > *:nth-child(2) { animation-delay: .07s; } .stagger > *:nth-child(3) { animation-delay: .14s; } .stagger > *:nth-child(4) { animation-delay: .21s; } .stagger > *:nth-child(n+5) { animation-delay: .28s; }
+@keyframes slideIn { from { opacity: 0; transform: translateX(32px); } }
+#ship-bar { background-image: repeating-linear-gradient(45deg, rgba(255, 255, 255, .28) 0 8px, transparent 8px 16px); background-size: 22px 22px; animation: stripes 1s linear infinite; }
+@keyframes stripes { to { background-position: 22px 0; } }
+#mbar { animation: barUp .5s cubic-bezier(.2, .8, .2, 1); }
+@keyframes barUp { from { transform: translateY(100%); } }
+
+/* ---------- dusk footer ---------- */
+.dusk .sun { animation: sunPulse 6s ease-in-out infinite; }
+@keyframes sunPulse { 50% { transform: scale(1.12); opacity: 1; } }
+.dusk .star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: #FFF4D6; animation: twinkle 3.5s ease-in-out infinite; }
+
+/* ---------- reduce motion: switch everything off ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; animation-iteration-count: 1 !important; animation-delay: 0s !important; transition-duration: .001ms !important; transition-delay: 0s !important; scroll-behavior: auto !important; }
+  .js .rise, .js .hero-art, .w { opacity: 1 !important; transform: none !important; }
+  .marquee-track { animation: none !important; }
+  .petal-float, .twinkle, .dusk .star { display: none; }
+  .uline { width: 120px; }
+  ::view-transition-old(root), ::view-transition-new(root) { animation: none; }
+}
