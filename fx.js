@@ -211,21 +211,8 @@
     }
   });
 
-  FX.onAdd = btn => {
-    const card = btn.closest('.reveal'), src = card && card.querySelector('img,svg.art'), cart = $('cart-btn').getBoundingClientRect();
-    const tx = cart.left + cart.width / 2, ty = cart.top + cart.height / 2;
-    if (!src || reduced) { play('chime'); return; }
-    const r = src.getBoundingClientRect(), c = src.cloneNode(true);
-    Object.assign(c.style, { position: 'fixed', left: r.left + 'px', top: r.top + 'px', width: r.width + 'px', height: r.height + 'px', objectFit: 'cover', borderRadius: '50%', zIndex: 95, pointerEvents: 'none', margin: 0 });
-    document.body.appendChild(c);
-    const dx = tx - (r.left + r.width / 2), dy = ty - (r.top + r.height / 2);
-    const a = c.animate([
-      { transform: 'translate(0,0) scale(1)', opacity: 1 },
-      { transform: `translate(${dx * .5}px,${dy * .5 - 120}px) scale(.35)`, opacity: 1, offset: .55 },
-      { transform: `translate(${dx}px,${dy}px) scale(.05)`, opacity: .3 }
-    ], { duration: 800, easing: 'cubic-bezier(.4,0,.2,1)' });
-    a.onfinish = () => { c.remove(); FX.petals(tx, ty, 14); play('chime'); };
-  };
+  FX.play = play;
+  FX.onAdd = btn => { play('chime'); };   // fallback only: the real animation lives in jhola.js
   FX.onOrder = () => { FX.fireworks(); };
   let prevTotal = null;
   FX.onCart = total => {

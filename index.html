@@ -23,6 +23,7 @@
     <link rel="stylesheet" href="fx.css">
     <link rel="stylesheet" href="anim.css">
     <link rel="stylesheet" href="mascot.css">
+    <link rel="stylesheet" href="jhola.css">
     <noscript><style>.env,#intro{display:none}.ink{clip-path:none}.reveal{opacity:1;transform:none}</style></noscript>
 
     <style>
@@ -881,12 +882,8 @@
                 ex ? ex.qty = Math.min(20, ex.qty + n) : cart.push({ type: 'single', sku, name: NAMES[p], variant: labelOf(p), paise: priceOf(p), qty: n });
                 qty[p] = 1; $(p + '-qty').textContent = 1;
                 saveCart(); updateCartUI();
-                const old = add.innerHTML;
-                add.textContent = '✓'; add.classList.add('!bg-green-700');
-                setTimeout(() => { add.innerHTML = old; add.classList.remove('!bg-green-700'); }, 1200);
                 toast(`${n}x ${NAMES[p]} ${tr('added')}`);
-                window.FX && FX.onAdd(add);
-                const b = $('cart-btn'); b.classList.remove('pop'); void b.offsetWidth; b.classList.add('pop');
+                window.Jhola ? Jhola.add(add, n) : (window.FX && FX.onAdd(add));
                 return;
             }
             const info = e.target.closest('[data-info]');
@@ -1174,5 +1171,6 @@
     <script src="fx.js"></script>
     <script src="anim.js"></script>
     <script src="mascot.js"></script>
+    <script src="jhola.js"></script>
 </body>
 </html>

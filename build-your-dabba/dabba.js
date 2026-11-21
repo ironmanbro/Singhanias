@@ -230,8 +230,11 @@
       };
       const cart = readCart(), at = cart.findIndex(i => i.type === 'dabba' && i.id === item.id);
       if (at >= 0) cart[at] = item; else cart.push(item);
-      store.set('cart', cart); updateBadge();
+      store.set('cart', cart);
       const editing = !!state.editId;
+      // the brass dabba hops into the Jhola, the bag catches it, then the confirmation appears
+      if (window.Jhola) await Jhola.fly({ from: $('add-btn'), to: $('cart-link'), brass: true, label: '+' + sd.packs });
+      updateBadge();
       $('added-sub').textContent = tr(editing ? 'updatedSub' : 'addedSub', { p: sd.packs, w: weight(sd.weight_g), t: money(sd.subtotal_paise) });
       sheet(false); openAdded();
       if (editing) { state.editId = null; $('edit-banner').classList.add('hidden'); history.replaceState(null, '', location.pathname); }

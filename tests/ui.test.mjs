@@ -233,6 +233,47 @@ await test('Mascot on a phone: visible, does not cause sideways scroll or cover 
   const w = await page.evaluate(() => [document.documentElement.scrollWidth, innerWidth]); assert.ok(w[0] <= w[1]);
 }, { viewport: { width: 390, height: 844 }, mobile: true });
 
+
+/* ---------- Add to Jhola animation ---------- */
+await test('Add to Jhola: tick on the button, snack flies to the bag, bag catches it, button returns', async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(900);
+  await page.evaluate(() => document.querySelector('[data-add="chakli"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(900);
+  await page.click('[data-add="chakli"]');
+  await page.waitForSelector('.jh-token', { timeout: 1500 });
+  assert.match(await page.textContent('[data-add="chakli"]'), /Added/); assert.ok(await page.locator('[data-add="chakli"].jh-done').count());
+  await page.waitForSelector('#cart-btn.jh-catch', { timeout: 2500 });
+  assert.equal(await page.locator('.jh-token').count(), 0, 'flying snack is removed after landing');
+  assert.match(await page.textContent('.jh-label'), /\+1/);
+  await page.waitForFunction(() => /Add to Jhola/.test(document.querySelector('[data-add="chakli"]').textContent), null, { timeout: 4000 });
+  assert.equal(await page.locator('[data-add="chakli"].jh-done').count(), 0);
+  assert.equal((await page.textContent('#cart-badge')).trim(), '1');
+});
+await test('Add to Jhola: tapping twice quickly adds twice and still ends cleanly', async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(900);
+  await page.evaluate(() => document.querySelector('[data-add="chivda"]').scrollIntoView({ block: 'center' })); await page.waitForTimeout(900);
+  await page.click('[data-add="chivda"]'); await page.waitForTimeout(150); await page.click('[data-add="chivda"]');
+  await page.waitForFunction(() => /Add to Jhola/.test(document.querySelector('[data-add="chivda"]').textContent), null, { timeout: 5000 });
+  assert.equal((await page.textContent('#cart-badge')).trim(), '2'); assert.equal(await page.locator('.jh-token, .jh-ghost').count(), 0);
+});
+await test('Dabba page: the brass dabba hops into the Jhola, then the confirmation appears', async page => {
+  await dabbaPage(page); for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
+  await page.click('#add-btn'); await page.waitForSelector('.jh-token.brass', { timeout: 1500 });
+  assert.ok(await page.locator('#added.hidden').count(), 'confirmation waits for the landing');
+  await page.waitForSelector('#added:not(.hidden)', { timeout: 4000 });
+  assert.equal((await page.textContent('#cart-badge')).trim(), '3');
+});
+await test('Reduce motion: add to Jhola still works instantly with no flying snack', async (page, ctx) => {
+  const rm = await ctx.browser().newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  await rm.addInitScript(() => { try { sessionStorage.setItem('singhanias_intro', '1'); } catch (e) {} });
+  const p = await rm.newPage(); await p.goto(BASE + '/'); await p.waitForTimeout(700);
+  await p.evaluate(() => document.querySelector('[data-add="swali"]').scrollIntoView({ block: 'center' })); await p.waitForTimeout(400);
+  await p.click('[data-add="swali"]'); await p.waitForTimeout(300);
+  assert.equal(await p.locator('.jh-token').count(), 0); assert.equal((await p.textContent('#cart-badge')).trim(), '1');
+  await dabbaPage(p); for (const id of ['swali', 'chakli', 'chivda']) await addOne(p, id);
+  await p.click('#add-btn'); await p.waitForSelector('#added:not(.hidden)', { timeout: 3000 });
+  await rm.close();
+});
+
 /* ---------- admin ---------- */
 await test('Admin: sign in, change a price and stock, mark an order paid', async page => {
   await page.goto(BASE + '/admin/'); await page.fill('#token', 'wrong'); await page.click('#login-btn'); await page.waitForTimeout(500);
