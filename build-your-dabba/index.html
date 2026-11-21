@@ -43,6 +43,12 @@
             <p class="text-xs uppercase tracking-widest text-brand-saffron font-bold" data-hi="नया">New</p>
             <h1 class="font-serif text-3xl sm:text-5xl font-bold text-brand-dark mt-2" data-hi="आपका डब्बा। आपकी पसंद।">Your Dabba. Your Favourites.</h1>
             <p class="text-brand-muted max-w-xl mx-auto mt-3" data-hi="अपनी पसंद का स्वाद चुनिए। सिंघानिया के अपने पसंदीदा स्नैक्स चुनकर बनाइए अपना डब्बा।">Bring together the flavours you love. Choose your favourite Singhania's snacks and create a Dabba made just for you.</p>
+        
+            <ol class="steps relative max-w-2xl mx-auto mt-8 grid grid-cols-3 gap-3 text-center" aria-label="How it works">
+                <li class="step-i"><span class="step-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="16" r="3"/><circle cx="13" cy="13" r="4.5"/><circle cx="19" cy="9.5" r="3.5" opacity=".6"/></svg></span><span class="step-t" data-hi="साइज़ चुनिए">Pick a size</span></li>
+                <li class="step-i"><span class="step-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10h16l-1.5 9h-13z"/><path d="M8 10c0-4 8-4 8 0"/></svg></span><span class="step-t" data-hi="अपने पैक चुनिए">Choose your packs</span></li>
+                <li class="step-i"><span class="step-ico"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8h12l1 12H5z"/><path d="M9 8a3 3 0 0 1 6 0"/><path d="M9.5 14.5l2 2 3.5-4"/></svg></span><span class="step-t" data-hi="झोले में डालिए">Add to your Jhola</span></li>
+            </ol>
         </section>
 
         <div id="edit-banner" class="hidden max-w-6xl mx-auto px-4">
@@ -56,6 +62,7 @@
             <!-- Left: choices -->
             <section id="choose" aria-labelledby="choose-h" class="min-w-0">
                 <h2 id="choose-h" class="font-serif text-2xl font-bold text-brand-dark" data-hi="अपनी पसंद चुनिए">Choose Your Favourites</h2>
+                <div class="uline-l" aria-hidden="true"></div>
 
                 <div class="mt-4">
                     <p id="fmt-label" class="text-xs font-bold uppercase tracking-wider text-brand-dark" data-hi="पैक का साइज़">Pack size</p>
@@ -73,8 +80,23 @@
                     <h2 id="sum-h" class="font-serif text-2xl font-bold text-brand-dark" data-hi="आपका डब्बा">Your Dabba</h2>
                     <button id="sheet-close" type="button" class="lg:hidden min-h-[44px] min-w-[44px] text-xl" aria-label="Close summary">✕</button>
                 </div>
+                <div id="live-dabba" class="live-dabba" aria-hidden="true">
+                    <svg viewBox="0 0 200 140" class="w-full h-full overflow-visible">
+                        <defs><linearGradient id="lbrass" x1="0" x2="1"><stop offset="0" stop-color="#B07A1E"/><stop offset=".45" stop-color="#F2D27A"/><stop offset="1" stop-color="#9A6516"/></linearGradient></defs>
+                        <ellipse cx="100" cy="133" rx="62" ry="6" fill="#3C3029" opacity=".16"/>
+                        <g class="ld-wrap">
+                            <g id="ld-snacks"></g>
+                            <rect x="48" y="74" width="104" height="55" rx="8" fill="url(#lbrass)"/>
+                            <rect x="48" y="92" width="104" height="4" fill="#7A4E10" opacity=".35"/><rect x="48" y="113" width="104" height="4" fill="#7A4E10" opacity=".35"/>
+                            <circle cx="100" cy="103" r="9" fill="#641E2B"/><text x="100" y="108" text-anchor="middle" font-size="13" font-weight="700" fill="#F5EBDD" font-family="Playfair Display,serif">S</text>
+                            <g class="ld-lid"><rect x="42" y="62" width="116" height="15" rx="6" fill="url(#lbrass)"/><rect x="90" y="53" width="20" height="9" rx="4" fill="url(#lbrass)"/></g>
+                        </g>
+                    </svg>
+                    <span class="ld-full">FULL</span>
+                </div>
                 <p id="sum-count" class="text-sm text-brand-muted mt-1"></p>
                 <div id="meter" class="flex gap-1.5 mt-2" aria-hidden="true"></div>
+                <div id="sum-empty" class="sum-empty" aria-hidden="true"><span></span><span></span><span></span></div>
                 <ul id="sum-items" class="mt-4 divide-y divide-brand-gold/30"></ul>
                 <dl class="mt-4 space-y-1 text-sm">
                     <div class="flex justify-between"><dt class="text-brand-muted" data-hi="कुल वज़न">Total net weight</dt><dd id="sum-weight" class="font-semibold">0g</dd></div>
@@ -94,7 +116,7 @@
             <p id="sbar-packs" class="text-xs text-white/80"></p>
             <p id="sbar-total" class="font-serif text-xl font-bold leading-tight">₹0</p>
         </div>
-        <button id="sbar-open" type="button" aria-controls="summary" aria-expanded="false" class="min-h-[44px] px-5 rounded-full bg-brand-gold text-brand-dark font-bold text-sm" data-hi="डब्बा देखें ▲">View Dabba ▲</button>
+        <button id="sbar-open" type="button" aria-controls="summary" aria-expanded="false" class="min-h-[44px] px-5 rounded-full bg-brand-gold text-brand-dark font-bold text-sm" data-hi="डब्बा देखें <span class='nudge'>▲</span>">View Dabba <span class="nudge">▲</span></button>
     </div>
 
     <!-- Added confirmation -->

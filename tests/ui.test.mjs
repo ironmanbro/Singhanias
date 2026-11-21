@@ -274,6 +274,56 @@ await test('Reduce motion: add to Jhola still works instantly with no flying sna
   await rm.close();
 });
 
+
+/* ---------- more Dabba page motion ---------- */
+await test('Dabba page: live brass dabba fills with snacks, shows FULL, and empties again', async page => {
+  await dabbaPage(page);
+  assert.equal(await page.locator('#ld-snacks .ld-disc').count(), 0); assert.ok(!(await page.locator('#live-dabba.open').count()));
+  await addOne(page, 'swali', 2); await addOne(page, 'chakli');
+  assert.equal(await page.locator('#ld-snacks .ld-disc').count(), 3); assert.ok(await page.locator('#live-dabba.open').count());
+  assert.ok(await page.locator('#ld-snacks .ld-disc.new').count() >= 1, 'new snacks drop in with an animation');
+  await addOne(page, 'chivda', 3);
+  assert.equal(await page.locator('#ld-snacks .ld-disc').count(), 6); assert.ok(await page.locator('#live-dabba.full').count());
+  assert.ok(await page.locator('#meter.meter-full').count());
+  await page.click('[data-remove="chivda"]'); assert.equal(await page.locator('#ld-snacks .ld-disc').count(), 3); assert.ok(!(await page.locator('#live-dabba.full').count()));
+});
+await test('Dabba page: picked cards highlight with a ×N badge, price flips in, add button unlocks', async page => {
+  await dabbaPage(page);
+  assert.ok(!(await page.locator('.card-in.is-picked').count()));
+  await addOne(page, 'chakli', 2); assert.ok(await page.locator('[data-product="chakli"].is-picked').count());
+  assert.equal((await page.textContent('[data-product="chakli"] [data-badge]')).trim(), '×2');
+  assert.ok(await page.locator('.price-flip').count() >= 3);
+  await addOne(page, 'swali');
+  await page.waitForSelector('#add-btn.unlock', { timeout: 1000 });
+});
+await test('Dabba page: steps strip, empty-state slots, headline words and removal slide-out', async page => {
+  await dabbaPage(page); await page.waitForTimeout(1500);
+  assert.equal(await page.locator('.step-i').count(), 3); assert.ok(await page.locator('.steps.seen').count());
+  assert.ok(await page.locator('h1 .w').count() >= 3, 'headline is split into animated words');
+  assert.ok(!(await page.locator('#sum-empty.gone').count()), 'empty state visible when nothing is picked');
+  await addOne(page, 'swali', 3); assert.ok(await page.locator('#sum-empty.gone').count());
+  await page.click('[data-remove="swali"]');
+  assert.match(await page.textContent('#sum-count'), /No packs yet/, 'state changes instantly');
+  assert.ok(await page.locator('.li-ghost').count() >= 1, 'row slides away');
+  await page.waitForTimeout(700); assert.equal(await page.locator('.li-ghost').count(), 0);
+  assert.ok(await page.locator('#dp-progress').count());
+});
+await test('Dabba page: closing the lid animation does not block adding to the Jhola', async page => {
+  await dabbaPage(page); for (const id of ['swali', 'chakli', 'chivda']) await addOne(page, id);
+  await page.click('#add-btn'); await page.waitForSelector('#added:not(.hidden)', { timeout: 4000 });
+  assert.equal((await cartOf(page)).length, 1);
+});
+await test('Reduce motion: Dabba page extras are calm but fully working', async (page, ctx) => {
+  const rm = await ctx.browser().newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  const p = await rm.newPage(); await dabbaPage(p);
+  assert.equal(await p.locator('.petal-float, .twinkle').count(), 0); assert.equal(await p.locator('h1 .w').count(), 0);
+  assert.ok(await p.locator('.step-i').first().isVisible());
+  for (const id of ['swali', 'chakli', 'chivda']) await addOne(p, id);
+  assert.equal(await p.locator('#ld-snacks .ld-disc').count(), 3); assert.equal(await p.locator('#ld-snacks .ld-disc.new').count(), 0);
+  await p.click('#add-btn'); await p.waitForSelector('#added:not(.hidden)', { timeout: 3000 });
+  await rm.close();
+});
+
 /* ---------- admin ---------- */
 await test('Admin: sign in, change a price and stock, mark an order paid', async page => {
   await page.goto(BASE + '/admin/'); await page.fill('#token', 'wrong'); await page.click('#login-btn'); await page.waitForTimeout(500);

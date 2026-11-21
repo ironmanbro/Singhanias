@@ -73,8 +73,9 @@
     $('cards').innerHTML = list.map((p, idx) => {
       const v = dabbaVariant(p.id, state.format), name = esc(p.name), hi = esc(p.name_hi || ''), desc = esc(lang === 'hi' && p.short_desc_hi ? p.short_desc_hi : p.short_desc);
       return `<article class="card-in bg-white rounded-xl border border-brand-gold/50 overflow-hidden sm:flex" style="--i:${idx}" data-product="${p.id}">
-        <div class="sm:w-44 sm:shrink-0 aspect-[16/10] sm:aspect-auto bg-brand-card">
+        <div class="card-img sm:w-44 sm:shrink-0 aspect-[16/10] sm:aspect-auto bg-brand-card">
           <img src="${esc(p.image)}" alt="${name}" width="360" height="360" loading="lazy" decoding="async" class="w-full h-full object-cover" onerror="this.style.visibility='hidden'">
+          <span class="pick-badge" data-badge aria-hidden="true">×0</span>
         </div>
         <div class="p-4 flex-1 min-w-0 flex flex-col gap-2">
           <div class="flex items-start justify-between gap-2">
@@ -84,7 +85,7 @@
           <p class="text-sm text-brand-muted">${desc}</p>
           <p class="text-[11px] font-semibold text-brand-saffron">⚠ ${tr('contains')}: ${esc((window.ALLERGENS?.[p.id] || []).map(a => a[lang === 'hi' ? 1 : 0]).join(', '))}</p>
           <div class="flex items-end justify-between gap-3 mt-auto pt-2">
-            <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark">${money(v.price_paise)}</p></div>
+            <div><p class="text-xs text-brand-muted">${weight(v.weight_g)} ${tr('pack')}</p><p class="font-serif text-xl font-bold text-brand-dark"><span class="price-flip" style="--i:${idx}">${money(v.price_paise)}</span></p></div>
             <div class="flex items-center border border-brand-gold rounded-full overflow-hidden bg-white" role="group" aria-label="${name} quantity">
               <button type="button" data-dec="${p.id}" class="qty-btn w-11 h-11 text-xl font-bold" aria-label="${tr('dec')}: ${name}">−</button>
               <span data-qty class="w-8 text-center font-bold" aria-live="polite">0</span>
@@ -94,6 +95,34 @@
         </div>
       </article>`;
     }).join('');
+    $('cards').querySelectorAll('.card-in').forEach(el => cardIO.observe(el));
+  }
+
+  /* scroll-triggered entrances (cards, steps, underline) */
+  const cardIO = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return; cardIO.unobserve(e.target);
+    e.target.classList.add(e.target.classList.contains('uline-l') ? 'in' : 'seen');
+  }), { threshold: .12 });
+
+  /* the live brass dabba: a snack drops in for every pack you pick */
+  const LD_POS = [[100, 54], [70, 60], [130, 60], [85, 68], [115, 68], [100, 63], [58, 70], [142, 70]];
+  function disc(pid, [x, y], isNew) {
+    const art = {
+      swali: `<circle cx="${x}" cy="${y}" r="14" fill="#E8B05C" stroke="#B8741E" stroke-width="2"/><g fill="#B8741E" opacity=".6"><circle cx="${x - 5}" cy="${y - 4}" r="1.3"/><circle cx="${x + 4}" cy="${y - 5}" r="1.3"/><circle cx="${x + 5}" cy="${y + 3}" r="1.3"/><circle cx="${x - 4}" cy="${y + 5}" r="1.3"/></g>`,
+      chakli: `<circle cx="${x}" cy="${y}" r="14" fill="#DD8F34" stroke="#A5601A" stroke-width="2"/><circle cx="${x}" cy="${y}" r="8.5" fill="none" stroke="#F7C679" stroke-width="2.2"/><circle cx="${x}" cy="${y}" r="3.5" fill="none" stroke="#F7C679" stroke-width="2"/>`,
+      chivda: `<circle cx="${x}" cy="${y}" r="14" fill="#EFCB6E" stroke="#C99A28" stroke-width="2"/><g fill="#9A5B2A"><ellipse cx="${x - 5}" cy="${y - 3}" rx="3" ry="2" transform="rotate(-25 ${x - 5} ${y - 3})"/><ellipse cx="${x + 5}" cy="${y + 2}" rx="3" ry="2" transform="rotate(20 ${x + 5} ${y + 2})"/></g><circle cx="${x + 2}" cy="${y - 6}" r="1.8" fill="#5C8A3A"/>`
+    }[pid] || `<circle cx="${x}" cy="${y}" r="14" fill="#E8B05C" stroke="#B8741E" stroke-width="2"/>`;
+    return `<g class="ld-disc${isNew ? ' new' : ''}">${art}</g>`;
+  }
+  let prevDiscs = 0;
+  function updateLiveDabba(n, max) {
+    const box = $('live-dabba'), g = $('ld-snacks'); if (!box || !g) return;
+    const seq = []; products().forEach(p => { for (let k = 0; k < (state.counts[p.id] || 0); k++) seq.push(p.id); });
+    g.innerHTML = seq.slice(0, LD_POS.length).map((pid, i) => disc(pid, LD_POS[i], !reduced && i >= prevDiscs)).join('');
+    prevDiscs = Math.min(seq.length, LD_POS.length);
+    box.classList.toggle('open', n > 0);
+    const wasFull = box.classList.contains('full'); box.classList.toggle('full', n >= max);
+    if (n >= max && !wasFull && !reduced) { box.classList.remove('shake'); void box.offsetWidth; box.classList.add('shake'); setTimeout(() => box.classList.remove('shake'), 750); }
   }
 
   function refresh() {
@@ -102,11 +131,13 @@
     document.querySelectorAll('[data-product]').forEach(card => {
       const p = products().find(x => x.id === card.dataset.product), l = lineFor(p); if (!l) return;
       const qe = card.querySelector('[data-qty]'); if (qe.textContent !== String(l.qty)) { qe.textContent = l.qty; bump(qe); }
+      card.classList.toggle('is-picked', l.qty > 0);
+      const bd = card.querySelector('[data-badge]'); if (bd && bd.textContent !== '×' + l.qty) { bd.textContent = '×' + l.qty; if (l.qty > 0) bump(bd); }
       card.querySelector('[data-dec]').disabled = l.qty <= 0;
       card.querySelector('[data-inc]').disabled = l.qty >= maxFor(p);
       const st = card.querySelector('[data-stock]');
       if (!l.v.in_stock) { st.textContent = tr('sold'); st.className = 'text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap bg-brand-dark text-white'; }
-      else if (l.v.low_stock) { st.textContent = tr('low', { n: l.v.available }); st.className = 'text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap bg-brand-gold/30 text-brand-terracotta'; }
+      else if (l.v.low_stock) { st.textContent = tr('low', { n: l.v.available }); st.className = 'text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap bg-brand-gold/30 text-brand-terracotta low'; }
       else { st.textContent = tr('inStock'); st.className = 'text-[11px] font-bold px-2 py-1 rounded-full whitespace-nowrap bg-brand-card text-brand-muted'; }
     });
     // summary
@@ -118,6 +149,10 @@
     [...meter.children].forEach((s, i) => { const on = i < n; if (on && !s.classList.contains('on') && n > prevPacks) { s.classList.remove('pop'); void s.offsetWidth; s.classList.add('pop'); } s.classList.toggle('on', on); });
     if (n !== prevPacks) { for (const id of ['sum-count', 'sbar-packs']) bump($(id)); }
     if (n >= max && prevPacks < max && window.Mathu) Mathu.say('Your Dabba is full! Press "Add My Dabba". 📦', 'आपका डब्बा भर गया! "मेरा डब्बा जोड़ें" दबाइए। 📦', 4500);
+    updateLiveDabba(n, max);
+    $('meter').classList.toggle('meter-full', n >= max);
+    [...$('meter').children].forEach((s, i) => s.style.setProperty('--i', i));
+    $('sum-empty').classList.toggle('gone', n > 0);
     prevPacks = n;
     const nowIds = new Set(lines.map(x => x.p.id));
     $('sum-items').innerHTML = lines.map(({ p, l }) => `<li class="${prevIds.has(p.id) ? '' : 'li-new '}py-2 flex items-center justify-between gap-2 text-sm">
@@ -130,8 +165,10 @@
     $('sum-total').textContent = newTotal;
     if (prevTotal !== newTotal) { bump($('sum-total')); bump($('sbar-total')); }
     const msg = n < min ? tr('min', { n: min }) : n >= max ? tr('full', { n: max }) : '';
-    $('sum-msg').textContent = msg;
+    if ($('sum-msg').textContent !== msg) { $('sum-msg').textContent = msg; if (msg && !reduced) { $('sum-msg').classList.remove('msg-swap'); void $('sum-msg').offsetWidth; $('sum-msg').classList.add('msg-swap'); } }
+    const wasDisabled = $('add-btn').disabled;
     $('add-btn').disabled = n < min || n > max;
+    if (wasDisabled && !$('add-btn').disabled && !reduced) { $('add-btn').classList.remove('unlock'); void $('add-btn').offsetWidth; $('add-btn').classList.add('unlock'); setTimeout(() => $('add-btn').classList.remove('unlock'), 800); }
     $('add-btn').textContent = state.editId ? tr('update') : tr('add');
     // phone bar
     $('sbar-packs').textContent = tr('count', { a: n, b: max }) + (n ? ' · ' + weight(totalWeight()) : '');
@@ -194,7 +231,12 @@
     const f = e.target.closest('[data-format]'); if (f) return setFormat(f.dataset.format);
     const inc = e.target.closest('[data-inc]'); if (inc) return change(inc.dataset.inc, 1);
     const dec = e.target.closest('[data-dec]'); if (dec) return change(dec.dataset.dec, -1);
-    const rm = e.target.closest('[data-remove]'); if (rm) { state.counts[rm.dataset.remove] = 0; return refresh(); }
+    const rm = e.target.closest('[data-remove]');
+    if (rm) {
+      const li = rm.closest('li');
+      if (li && !reduced) { const r = li.getBoundingClientRect(), g = li.cloneNode(true); g.className = 'li-ghost'; g.style.cssText = `left:${r.left}px;top:${r.top}px;width:${r.width}px;height:${r.height}px`; document.body.appendChild(g); setTimeout(() => g.remove(), 500); }   // the row slides away while the state updates instantly
+      state.counts[rm.dataset.remove] = 0; return refresh();
+    }
   });
 
   /* ---------- summary sheet (phones) ---------- */
@@ -232,6 +274,7 @@
       if (at >= 0) cart[at] = item; else cart.push(item);
       store.set('cart', cart);
       const editing = !!state.editId;
+      const ld = $('live-dabba'); if (ld && !reduced) { ld.classList.remove('open', 'shake'); ld.classList.add('squish'); setTimeout(() => ld.classList.remove('squish'), 650); }   // lid snaps shut
       // the brass dabba hops into the Jhola, the bag catches it, then the confirmation appears
       if (window.Jhola) await Jhola.fly({ from: $('add-btn'), to: $('cart-link'), brass: true, label: '+' + sd.packs });
       updateBadge();
@@ -280,6 +323,42 @@
     if (state.cat && $('add-btn')) $('add-btn').textContent = state.editId ? tr('update') : tr('add');
   }
   $('lang-btn').onclick = () => { lang = lang === 'hi' ? 'en' : 'hi'; store.set('lang', lang); if (state.cat && state.cat.settings.dabba_enabled) renderAll(); else applyStaticLang(); };
+
+  /* ---------- extra motion: hero, scroll, tilt ---------- */
+  (() => {
+    const hero = document.querySelector('main > section:first-child'), h1 = hero && hero.querySelector('h1');
+    if (h1 && !reduced) {
+      const split = el => {
+        el._busy = true; let i = 0;
+        const walk = n => [...n.childNodes].forEach(c => {
+          if (c.nodeType === 3) { const f = document.createDocumentFragment(); c.textContent.split(/(\s+)/).forEach(w => { if (!w) return; if (/^\s+$/.test(w)) f.appendChild(document.createTextNode(' ')); else { const s = document.createElement('span'); s.className = 'w'; s.style.setProperty('--wi', i++); s.textContent = w; f.appendChild(s); } }); c.replaceWith(f); }
+          else if (c.nodeType === 1 && !c.classList.contains('w')) walk(c);
+        });
+        walk(el); el._busy = false;
+      };
+      split(h1);
+      new MutationObserver(() => { if (!h1._busy && !h1.querySelector('.w')) split(h1); }).observe(h1, { childList: true });   // language switch rewrites the headline
+    }
+    if (hero && !reduced) {
+      const box = document.createElement('div'); box.className = 'absolute inset-0 overflow-hidden pointer-events-none'; box.setAttribute('aria-hidden', 'true'); box.style.zIndex = 0;
+      const cols = ['#B99A58', '#8C3A4B', '#D9B878', '#641E2B'], r = (a, b) => a + Math.random() * (b - a);
+      for (let i = 0; i < 8; i++) { const p = document.createElement('span'); p.className = 'petal-float'; p.style.cssText = `left:${r(2, 96)}%;background:${cols[i % 4]};--dx:${r(-60, 60)}px;animation-duration:${r(8, 14)}s;animation-delay:${-r(0, 12)}s`; box.appendChild(p); }
+      for (let i = 0; i < 8; i++) { const t = document.createElement('span'); t.className = 'twinkle'; t.style.cssText = `left:${r(2, 98)}%;top:${r(6, 88)}%;animation-delay:${-r(0, 3)}s;animation-duration:${r(2.4, 4.6)}s`; box.appendChild(t); }
+      hero.prepend(box);
+    }
+    document.querySelectorAll('.steps, .uline-l').forEach(el => cardIO.observe(el));
+    document.querySelectorAll('.step-i').forEach((el, i) => el.style.setProperty('--i', i));
+    // header shadow + progress bar
+    const bar = document.createElement('div'); bar.id = 'dp-progress'; bar.setAttribute('aria-hidden', 'true'); document.body.appendChild(bar);
+    const head = document.querySelector('header.sticky'); let tick = false;
+    const onScroll = () => { tick = false; const max = document.documentElement.scrollHeight - innerHeight; bar.style.transform = `scaleX(${max > 0 ? Math.min(1, scrollY / max) : 0})`; head && head.classList.toggle('scrolled', scrollY > 8); };
+    addEventListener('scroll', () => { if (!tick) { tick = true; requestAnimationFrame(onScroll); } }, { passive: true }); onScroll();
+    // card photo tilt (mouse only)
+    if (matchMedia('(hover: hover) and (pointer: fine)').matches && !reduced) {
+      document.addEventListener('pointermove', e => { const im = e.target.closest && e.target.closest('.card-img'); if (!im) return; const b = im.getBoundingClientRect(); im.style.setProperty('--ty', ((e.clientX - b.left) / b.width - .5) * 8 + 'deg'); im.style.setProperty('--tx', -((e.clientY - b.top) / b.height - .5) * 8 + 'deg'); });
+      document.addEventListener('pointerout', e => { const im = e.target.closest && e.target.closest('.card-img'); if (im && !im.contains(e.relatedTarget)) { im.style.setProperty('--tx', '0deg'); im.style.setProperty('--ty', '0deg'); } });
+    }
+  })();
 
   /* ---------- init ---------- */
   (async () => {
