@@ -129,18 +129,19 @@
             <a href="#dabba" class="block py-3" data-hi="डब्बा (दुकान)">The Dabba (Shop)</a>
             <a href="#promise" class="block py-3" data-hi="हमारा वादा">Our Promise</a>
             <a href="/build-your-dabba/" class="block py-3 font-bold" data-hi="अपना डब्बा बनाइए">Build Your Dabba</a>
+            <a href="#quiz" class="block py-3" data-hi="चाय क्विज़">Chai Quiz</a>
             <a href="#faq" class="block py-3" data-hi="सवाल-जवाब">FAQ</a>
             <div class="flex gap-3 pt-2 pb-1">
                 <button type="button" class="lang-toggle flex-1 min-h-[44px] rounded-full border border-brand-indigo/40 text-brand-indigo">हिंदी</button>
                 <button type="button" class="snd-toggle flex-1 min-h-[44px] rounded-full border border-brand-indigo/40"><span class="snd-ico">🔇</span> <span data-hi="आवाज़">Sound</span></button>
             </div>
         </div>
+        <div class="toran" aria-hidden="true"></div>
     </header>
 
     <main id="top">
         <!-- Hero Section -->
         <section id="hero" class="dots relative overflow-hidden pt-16 md:pt-24 pb-24 px-4 sm:px-6 lg:px-8">
-            <div class="jaali absolute top-0 inset-x-0"></div>
             <div class="hero-tint"></div>
             <!-- Kites (Jaipur Makar Sankranti) -->
             <div class="pointer-events-none absolute inset-0" aria-hidden="true">
@@ -181,8 +182,8 @@
 
                 <div class="lg:col-span-5 relative">
                     <!-- Jharokha arch frame -->
-                    <div data-crunch class="arch relative overflow-hidden shadow-2xl border-4 border-white bg-brand-card aspect-square">
-                        <img src="images/swali.webp" alt="Crispy Swali (Mathri) in a bowl" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                    <div data-crunch class="arch relative overflow-hidden shadow-2xl border-4 border-white bg-brand-card aspect-[3/4]">
+                        <img src="images/hero.webp" alt="Brass thali of mathri, chakli and chiwda on a block-printed cloth with marigolds and chai" width="768" height="1376" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                         <div class="absolute inset-0 bg-gradient-to-t from-brand-dark/60 via-transparent to-transparent flex items-end justify-center p-8 text-center">
                             <p class="text-white font-serif italic text-sm">"Jab tum chhote the, rasoi se aati khushboo..."</p>
                         </div>
@@ -439,14 +440,15 @@
                     <div>
                         <div class="mb-6">
                             <div data-crunch class="arch aspect-video overflow-hidden relative">
-                                <img id="swali-main" loading="lazy" decoding="async" src="images/swali-bowl.webp" alt="Swali (Mathri) in a bowl" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <img id="swali-main" loading="lazy" decoding="async" src="images/swali-main.webp" alt="Swali (Mathri) in a bowl" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                                 <span class="absolute bottom-3 left-3 bg-brand-terracotta text-white text-xs px-3 py-1 rounded-full font-semibold" data-hi="सबसे ज़्यादा पसंद">Bestseller</span>
                             </div>
                             <div class="flex gap-2 mt-3 justify-center">
-                                <button type="button" data-thumb="images/swali-bowl.webp" data-target="swali-main" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/swali-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/swali-closeup.webp" data-target="swali-main" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/swali-scatter.webp" data-target="swali-main" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/swali.webp" data-target="swali-main" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-main.webp" data-target="swali-main" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/swali-main.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-bowl.webp" data-target="swali-main" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-closeup.webp" data-target="swali-main" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali-scatter.webp" data-target="swali-main" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/swali.webp" data-target="swali-main" aria-label="Photo 5" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/swali.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
                             </div>
                         </div>
                         <h3 class="font-serif text-2xl font-bold text-brand-dark">Signature Swali<svg class="inline-block w-4 h-4 ml-1 align-middle" viewBox="0 0 16 16" role="img" aria-label="Vegetarian"><title>Vegetarian</title><rect x="1" y="1" width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="#2E7D32"/></svg></h3>
@@ -495,15 +497,16 @@
                     <div>
                         <div class="mb-6">
                             <div data-crunch class="arch aspect-video overflow-hidden relative">
-                                <img id="chakli-main" loading="lazy" decoding="async" src="images/chakli-bowl.webp" alt="Crunchy ribbed Chakli" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <img id="chakli-main" loading="lazy" decoding="async" src="images/chakli-main.webp" alt="Crunchy ribbed Chakli" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                                 <span class="absolute bottom-3 left-3 bg-brand-gold text-brand-dark text-xs px-3 py-1 rounded-full font-semibold" data-hi="माँ की ख़ास">Mom's Special</span>
                             </div>
                             <!-- Tap a thumbnail to change the photo. = a photo of your actual chakli -->
                             <div class="flex gap-2 mt-3 justify-center">
-                                <button type="button" data-thumb="images/chakli-bowl.webp" data-target="chakli-main" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/chakli-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chakli-closeup.webp" data-target="chakli-main" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chakli-scatter.webp" data-target="chakli-main" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chakli-pile.webp" data-target="chakli-main" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-pile.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-main.webp" data-target="chakli-main" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/chakli-main.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-bowl.webp" data-target="chakli-main" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-closeup.webp" data-target="chakli-main" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-scatter.webp" data-target="chakli-main" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chakli-pile.webp" data-target="chakli-main" aria-label="Photo 5" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chakli-pile.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
                             </div>
                         </div>
                         <h3 class="font-serif text-2xl font-bold text-brand-dark">Signature Chakli<svg class="inline-block w-4 h-4 ml-1 align-middle" viewBox="0 0 16 16" role="img" aria-label="Vegetarian"><title>Vegetarian</title><rect x="1" y="1" width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="#2E7D32"/></svg></h3>
@@ -543,14 +546,15 @@
                     <div>
                         <div class="mb-6">
                             <div data-crunch class="arch aspect-video overflow-hidden relative">
-                                <img id="chivda-main" loading="lazy" decoding="async" src="images/chivda-bowl.webp" alt="Roasted poha chivda with peanuts and curry leaves" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
+                                <img id="chivda-main" loading="lazy" decoding="async" src="images/chivda-main.webp" alt="Roasted poha chivda with peanuts and curry leaves" class="w-full h-full object-cover" onerror="this.onerror=null;this.src=FALLBACK_IMG">
                                 <span class="absolute bottom-3 left-3 bg-brand-indigo text-white text-xs px-3 py-1 rounded-full font-semibold" data-hi="चाय का साथी">Tea-time favourite</span>
                             </div>
                             <div class="flex gap-2 mt-3 justify-center">
-                                <button type="button" data-thumb="images/chivda-bowl.webp" data-target="chivda-main" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/chivda-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chivda-closeup.webp" data-target="chivda-main" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chivda-scatter.webp" data-target="chivda-main" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
-                                <button type="button" data-thumb="images/chivda-pile.webp" data-target="chivda-main" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-pile.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-main.webp" data-target="chivda-main" aria-label="Photo 1" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-brand-terracotta"><img src="images/t/chivda-main.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-bowl.webp" data-target="chivda-main" aria-label="Photo 2" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-bowl.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-closeup.webp" data-target="chivda-main" aria-label="Photo 3" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-closeup.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-scatter.webp" data-target="chivda-main" aria-label="Photo 4" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-scatter.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
+                                <button type="button" data-thumb="images/chivda-pile.webp" data-target="chivda-main" aria-label="Photo 5" class="w-12 h-12 rounded-lg overflow-hidden border-2 border-transparent"><img src="images/t/chivda-pile.webp" alt="" width="48" height="48" loading="lazy" decoding="async" class="w-full h-full object-cover"></button>
                             </div>
                         </div>
                         <h3 class="font-serif text-2xl font-bold text-brand-dark">Signature Chiwda<svg class="inline-block w-4 h-4 ml-1 align-middle" viewBox="0 0 16 16" role="img" aria-label="Vegetarian"><title>Vegetarian</title><rect x="1" y="1" width="14" height="14" fill="none" stroke="#2E7D32" stroke-width="1.5"/><circle cx="8" cy="8" r="4" fill="#2E7D32"/></svg></h3>
@@ -616,6 +620,18 @@
             </div>
         </section>
 
+        <!-- Chai-time quiz -->
+        <section id="quiz" class="relative py-20 px-4 sm:px-6 lg:px-8 bg-brand-terracotta text-brand-bg overflow-hidden">
+            <div class="max-w-3xl mx-auto">
+                <p class="text-xs uppercase tracking-widest text-brand-gold font-bold" data-hi="चाय पे चर्चा">Chai pe charcha</p>
+                <h2 class="font-serif text-3xl sm:text-4xl font-bold mt-2" data-hi="आप कौन-सा चाय-टाइम स्नैक हैं?">Which chai-time snack are you?</h2>
+                <div class="quiz mt-8 rounded-3xl bg-brand-bg text-brand-dark p-6 sm:p-8 relative min-h-[300px]">
+                    <div id="quiz-dots" class="flex gap-1.5 mb-5" aria-hidden="true"></div>
+                    <div id="quiz-body" aria-live="polite"></div>
+                </div>
+            </div>
+        </section>
+
         <!-- Gifting & bulk orders -->
         <section id="gifting" class="py-16 px-4 sm:px-6 lg:px-8 bg-brand-indigo text-white text-center">
             <div class="max-w-2xl mx-auto space-y-4 reveal">
@@ -641,6 +657,12 @@
                 <h2 class="font-serif text-3xl font-bold mt-2" data-hi="एलर्जी की जानकारी">Allergy information</h2>
             </div>
             <div id="allergy-grid" class="grid gap-4 sm:grid-cols-3"></div>
+            <div class="checker rounded-2xl bg-brand-card border border-brand-gold/50 p-6 mt-8">
+                <h3 class="font-serif text-2xl font-bold text-brand-dark" data-hi="एलर्जी चेकर">Allergen checker</h3>
+                <p class="text-sm text-brand-muted mt-1" data-hi="जिससे आपको परहेज़ है उस पर टैप कीजिए। हम बताएँगे कौन-सा स्नैक आपके परिवार के लिए ठीक है।">Tap what you avoid. We'll tell you which snacks suit your family.</p>
+                <div id="ac-toggles" class="flex flex-wrap gap-2 mt-4" role="group" aria-label="Allergens to avoid"></div>
+                <div id="ac-results" class="mt-4 space-y-2" aria-live="polite"></div>
+            </div>
             <p id="allergy-note" class="text-sm text-brand-muted text-center mt-6 max-w-2xl mx-auto"></p>
         </section>
 
@@ -696,6 +718,7 @@
                     <li><a href="#dabba" class="hover:text-white transition">Our Snacks</a></li>
                     <li><a href="#promise" class="hover:text-white transition">The Promise</a></li>
                     <li><a href="/build-your-dabba/" class="hover:text-white transition">Build Your Dabba</a></li>
+                    <li><a href="#quiz" class="hover:text-white transition">Chai Quiz</a></li>
                     <li><a href="#faq" class="hover:text-white transition">FAQ</a></li>
                 </ul>
             </div>
@@ -934,7 +957,7 @@
             document.querySelectorAll('.lang-toggle').forEach(b => b.textContent = lang === 'hi' ? 'English' : 'हिंदी');
             $('chat-fab').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(tr('chatMsg'))}`;
             window.FX && FX.onLang();
-            renderAllergy(); renderPromoSave();
+            renderAllergy(); renderPromoSave(); window.Extras && Extras.render();
             updateCartUI();
         }
         function renderAllergy() {
@@ -1273,5 +1296,6 @@
     <script src="anim.js"></script>
     <script src="mascot.js"></script>
     <script src="jhola.js"></script>
+    <script src="extras.js"></script>
 </body>
 </html>

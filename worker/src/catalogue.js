@@ -48,7 +48,7 @@ export default {
    "name_hi": "स्वाली / मठरी",
    "short_desc": "Crisp, flaky Marwari mathri from Mom's own recipe.",
    "short_desc_hi": "माँ की अपनी रेसिपी की कुरकुरी मारवाड़ी मठरी।",
-   "image": "/images/swali-bowl.webp",
+   "image": "/images/swali-main.webp",
    "sort": 1,
    "enabled": true,
    "variants": [
@@ -192,7 +192,7 @@ export default {
    "name_hi": "चकली",
    "short_desc": "Crunchy, golden chakli, made fresh at home.",
    "short_desc_hi": "कुरकुरी, सुनहरी चकली, घर पर ताज़ा बनी।",
-   "image": "/images/chakli-bowl.webp",
+   "image": "/images/chakli-main.webp",
    "sort": 2,
    "enabled": true,
    "variants": [
@@ -270,7 +270,7 @@ export default {
    "name_hi": "भुना पोहा चिवड़ा",
    "short_desc": "Light, crunchy and tangy roasted poha chiwda, made fresh at home.",
    "short_desc_hi": "हल्का, कुरकुरा और चटपटा भुना पोहा चिवड़ा, घर पर ताज़ा बना।",
-   "image": "/images/chivda-bowl.webp",
+   "image": "/images/chivda-main.webp",
    "sort": 3,
    "enabled": true,
    "variants": [

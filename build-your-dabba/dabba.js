@@ -390,6 +390,7 @@
     updateBadge(); applyStaticLang();
     await loadCatalogue();
     if (!state.cat || !state.cat.settings.dabba_enabled) return;
+    const addId = new URLSearchParams(location.search).get('add');         // from the chai quiz: ?add=swali
     const editId = new URLSearchParams(location.search).get('edit');
     const existing = editId && readCart().find(i => i.type === 'dabba' && i.id === editId);
     if (existing) {                                          // edit an existing Dabba from the cart
@@ -400,6 +401,11 @@
     } else {
       const d = store.get('draft', null);                    // restore an unfinished Dabba after a refresh
       if (d && state.cat.formats.some(f => f.id === d.format)) { state.format = d.format; for (const p of products()) state.counts[p.id] = Math.min(d.counts?.[p.id] || 0, dabbaVariant(p.id, d.format)?.available || 0); renderAll(); }
+    }
+    if (addId && !state.editId) {                                            // add the quiz result as the first pack
+      const p = products().find(x => x.id === addId), v = p && dabbaVariant(p.id, state.format);
+      if (v && v.in_stock && (state.counts[p.id] || 0) === 0 && packs() < settings().max_packs) { state.counts[p.id] = 1; refresh(); if (window.Mathu) setTimeout(() => Mathu.say('I added ' + p.name + ' to your Dabba! Pick ' + Math.max(0, settings().min_packs - 1) + ' more packs. 😋', 'मैंने ' + p.name + ' आपके डब्बे में डाल दिया! 😋', 5200), 1500); }
+      history.replaceState(null, '', location.pathname);
     }
   })();
 })();

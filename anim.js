@@ -90,12 +90,29 @@
       chakli: ['This is how every chakli is made. No hurry, no shortcuts.', 'हर चकली ऐसे बनती है। कोई जल्दबाज़ी नहीं, कोई शॉर्टकट नहीं।'],
       chivda: ['This is how every chiwda is made. No hurry, no shortcuts.', 'हर चिवड़ा ऐसे बनता है। कोई जल्दबाज़ी नहीं, कोई शॉर्टकट नहीं।']
     };
+    /* auto-advancing highlight: each step is lit in turn with a progress bar; tapping a step pauses on it (tap again to resume) */
+    let autoTimer = 0, paused = false, inView = false;
+    const livePanel = () => panels.find(p => !p.classList.contains('hidden'));
+    const setOn = i => {
+      const p = livePanel(); if (!p) return; const steps = [...p.querySelectorAll('.step')];
+      steps.forEach((s, j) => { s.classList.toggle('on', j === i); s.classList.toggle('is-paused', paused); s.setAttribute('aria-current', j === i ? 'step' : 'false'); });
+      clearTimeout(autoTimer);
+      if (!paused && !reduced && inView) autoTimer = setTimeout(() => setOn((i + 1) % steps.length), 3200);
+    };
+    panels.forEach(p => p.querySelectorAll('.step').forEach((s, i) => {
+      s.tabIndex = 0; s.setAttribute('role', 'button');
+      const act = () => { const wasOn = s.classList.contains('on'); if (wasOn && paused) paused = false; else paused = true; setOn(i); };
+      s.addEventListener('click', act); s.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); act(); } });
+    }));
+    const mk = $('making');
+    if (mk) new IntersectionObserver(es => es.forEach(e => { inView = e.isIntersecting; const on = livePanel().querySelector('.step.on'); const idx = on ? [...livePanel().querySelectorAll('.step')].indexOf(on) : 0; if (inView) setOn(idx); else clearTimeout(autoTimer); }), { threshold: .25 }).observe(mk);
     const show = id => {
       tabs.forEach(t => t.setAttribute('aria-selected', t.dataset.mtab === id));
       panels.forEach(p => {
         const on = p.dataset.panel === id; p.classList.toggle('hidden', !on);
         if (on) p.querySelectorAll('.step').forEach((s, i) => { s.classList.remove('in'); s.classList.add('show'); void s.offsetWidth; setTimeout(() => s.classList.add('in'), 140 + i * 150); });   // replay the little scenes
       });
+      paused = false; setOn(0);
       if (sub) { sub.dataset.en = SUB[id][0]; sub.dataset.hi = SUB[id][1]; sub.innerHTML = document.documentElement.lang === 'hi' ? SUB[id][1] : SUB[id][0]; }
     };
     tabs.forEach(t => t.addEventListener('click', () => show(t.dataset.mtab)));

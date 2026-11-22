@@ -345,3 +345,11 @@ test('an older live database (no discount columns, empty catalogue) upgrades its
     assert.deepEqual(row, { discount_percent: 10, discount_paise: 3360 });
   } finally { await legacy.stop(); }
 });
+test('migration: product photos move to the new main images only if still on the old ones', async () => {
+  const { MIGRATIONS } = await import('../worker/src/bootstrap.js');
+  await env.db.prepare(`UPDATE products SET image = '/images/swali-bowl.webp' WHERE id = 'swali'`).run();       // previous seed value
+  await env.db.prepare(`UPDATE products SET image = '/images/my-own-chakli.webp' WHERE id = 'chakli'`).run();   // set by the owner
+  for (const m of MIGRATIONS) await env.db.prepare(m).run();
+  const img = async id => (await env.db.prepare('SELECT image i FROM products WHERE id = ?').bind(id).first()).i;
+  assert.equal(await img('swali'), '/images/swali-main.webp'); assert.equal(await img('chakli'), '/images/my-own-chakli.webp'); assert.equal(await img('chivda'), '/images/chivda-main.webp');
+});

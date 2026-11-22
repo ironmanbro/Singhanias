@@ -1,7 +1,7 @@
 /* Tailwind build config. To rebuild styles.css after editing index.html:
    npx tailwindcss@3.4.17 -c tailwind.config.js -i input.css -o styles.css --minify */
 module.exports = {
-  content: ['./index.html', './fx.js', './build-your-dabba/*.{html,js}', './admin/*.{html,js}'],
+  content: ['./index.html', './fx.js', './build-your-dabba/*.{html,js}', './admin/*.{html,js}', './extras.js'],
   theme: {
     extend: {
       colors: {

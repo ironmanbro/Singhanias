@@ -411,6 +411,77 @@ await test("Maa's Rasoi: reduce motion still shows every panel", async (page, ct
   await rm.close();
 });
 
+
+/* ---------- adopted from the design zip: photos, allergen checker, chai quiz, step highlight, toran ---------- */
+await test('New photos load for the hero, shop cards and Dabba page; toran strip is in both headers', async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(1200);
+  const ok = async sel => page.$eval(sel, i => i.complete && i.naturalWidth > 0);
+  assert.ok(await ok('#hero img')); assert.match(await page.getAttribute('#hero img', 'src'), /images\/hero\.webp/);
+  await page.evaluate(() => document.querySelector('#swali-main').scrollIntoView({ block: 'center' })); await page.waitForTimeout(900);
+  for (const id of ['swali', 'chakli', 'chivda']) {
+    await page.evaluate(i => document.getElementById(i + '-main').scrollIntoView({ block: 'center' }), id); await page.waitForTimeout(500);
+    assert.match(await page.getAttribute(`#${id}-main`, 'src'), new RegExp(`images/${id}-main\\.webp`)); assert.ok(await ok(`#${id}-main`), id + ' main photo loads');
+    assert.equal(await page.locator(`[data-thumb="images/${id}-main.webp"].border-brand-terracotta`).count(), 1);
+  }
+  assert.ok(await page.locator('header .toran').count());
+  await dabbaPage(page); assert.ok(await page.locator('header .toran').count());
+  await page.waitForTimeout(800);
+  for (const id of ['swali', 'chakli', 'chivda']) { const src = await page.getAttribute(`[data-product="${id}"] img`, 'src'); assert.match(src, new RegExp(`${id}-main\\.webp`)); assert.ok(await page.$eval(`[data-product="${id}"] img`, i => i.complete && i.naturalWidth > 0)); }
+});
+await test('Allergen checker: tap what you avoid and see which snacks suit you', async page => {
+  await page.goto(BASE + '/'); await page.evaluate(() => document.getElementById('allergy').scrollIntoView()); await page.waitForTimeout(500);
+  assert.match(await page.textContent('#ac-results'), /Tap an allergen above/);
+  await page.click('[data-ac="sesame"]');
+  const row = n => page.locator('#ac-results .ac-res').nth(n);
+  assert.match(await row(1).textContent(), /Contains sesame/); assert.ok(await row(1).evaluate(e => e.classList.contains('no')));
+  assert.match(await row(0).textContent(), /Suits you/); assert.match(await row(2).textContent(), /Suits you/);
+  await page.click('[data-ac="milk"]');
+  assert.match(await row(0).textContent(), /Suits you in Fresh Oil or Air-Fried/); assert.match(await row(1).textContent(), /Contains sesame, milk/);
+  await page.click('[data-ac="gluten"]'); assert.match(await row(0).textContent(), /Contains gluten \(milk only in the ghee version\)/);
+  await page.click('[data-ac="peanuts"]'); assert.match(await row(2).textContent(), /Contains peanuts/);
+  await page.click('[data-ac="sesame"]'); assert.equal(await page.getAttribute('[data-ac="sesame"]', 'aria-pressed'), 'false');
+  await page.click('.lang-toggle >> nth=0'); await page.waitForTimeout(300);
+  assert.match(await page.textContent('#ac-toggles'), /ग्लूटेन/); assert.match(await row(0).textContent(), /इसमें है/);
+});
+await test('Chai quiz: three questions, a result, and "Add to my Dabba" opens the Dabba page with it picked', async page => {
+  await page.goto(BASE + '/'); await page.evaluate(() => document.getElementById('quiz').scrollIntoView()); await page.waitForTimeout(500);
+  assert.match(await page.textContent('#quiz-body'), /Question 1 of 3/);
+  for (let i = 0; i < 3; i++) await page.click('#quiz-body [data-q] >> nth=1');          // all "second" answers = chakli
+  assert.match(await page.textContent('#quiz-body'), /Signature Chakli/); assert.match(await page.getAttribute('#quiz-body img', 'src'), /chakli-main\.webp/);
+  await page.click('#quiz-again'); assert.match(await page.textContent('#quiz-body'), /Question 1 of 3/);
+  await page.click('#quiz-body [data-q] >> nth=2'); await page.click('#quiz-body [data-q] >> nth=2'); await page.click('#quiz-body [data-q] >> nth=0');   // 2x chiwda + 1x swali
+  assert.match(await page.textContent('#quiz-body'), /Signature Chiwda/);
+  await page.click('#quiz-add'); await page.waitForURL(/build-your-dabba/); await page.waitForSelector('[data-product]'); await page.waitForTimeout(600);
+  assert.equal((await page.textContent('[data-product="chivda"] [data-qty]')).trim(), '1'); assert.match(await page.textContent('#sum-count'), /1 of 6/);
+  assert.ok(!(await page.url()).includes('add='), 'the ?add= parameter is cleaned from the address');
+});
+await test('Chai quiz: Hindi and ties', async page => {
+  await page.goto(BASE + '/'); await page.click('.lang-toggle >> nth=0'); await page.evaluate(() => document.getElementById('quiz').scrollIntoView()); await page.waitForTimeout(400);
+  assert.match(await page.textContent('#quiz-body'), /सवाल 1 \/ 3/);
+  await page.click('#quiz-body [data-q] >> nth=0'); await page.click('#quiz-body [data-q] >> nth=1'); await page.click('#quiz-body [data-q] >> nth=2');   // 1-1-1 tie goes to the first snack
+  assert.match(await page.textContent('#quiz-body'), /Signature Swali/); assert.match(await page.textContent('#quiz-body'), /आप हैं/);
+});
+await test("Maa's Rasoi: steps light up in turn, tap pauses, tap again resumes", async page => {
+  await page.goto(BASE + '/'); await page.waitForTimeout(800);
+  await page.evaluate(() => { const e = document.getElementById('making'); scrollTo(0, e.getBoundingClientRect().top + scrollY - 60); }); await page.waitForTimeout(700);
+  const cur = () => page.evaluate(() => { const p = document.querySelector('.making-panel:not(.hidden)'); return [...p.querySelectorAll('.step')].findIndex(s => s.classList.contains('on')); });
+  assert.equal(await cur(), 0); await page.waitForFunction(() => document.querySelector('.making-panel:not(.hidden) .step:nth-child(2).on'), null, { timeout: 5000 });
+  await page.click('.making-panel:not(.hidden) .step:nth-child(4)'); assert.equal(await cur(), 3);
+  assert.ok(await page.locator('.making-panel:not(.hidden) .step.on.is-paused').count(), 'paused on the tapped step');
+  await page.waitForTimeout(4000); assert.equal(await cur(), 3, 'stays put while paused');
+  await page.click('.making-panel:not(.hidden) .step:nth-child(4)'); await page.waitForFunction(() => document.querySelector('.making-panel:not(.hidden) .step:nth-child(1).on'), null, { timeout: 5000 });
+  await page.click('[data-mtab="chivda"]'); await page.waitForTimeout(300); assert.equal(await cur(), 0);
+  await page.focus('.making-panel:not(.hidden) .step:nth-child(2)'); await page.keyboard.press('Enter'); assert.equal(await cur(), 1);
+});
+await test('Maa\'s Rasoi: with reduce motion nothing auto-advances', async (page, ctx) => {
+  const rm = await ctx.browser().newContext({ viewport: { width: 1280, height: 900 }, reducedMotion: 'reduce' });
+  await rm.addInitScript(() => { try { sessionStorage.setItem('singhanias_intro', '1'); } catch (e) {} });
+  const p = await rm.newPage(); await p.goto(BASE + '/'); await p.evaluate(() => document.getElementById('making').scrollIntoView()); await p.waitForTimeout(4200);
+  assert.equal(await p.locator('.making-panel:not(.hidden) .step:nth-child(1).on').count(), 1);
+  await p.click('.making-panel:not(.hidden) .step:nth-child(3)'); assert.equal(await p.locator('.making-panel:not(.hidden) .step:nth-child(3).on').count(), 1);
+  await rm.close();
+});
+
 /* ---------- admin ---------- */
 await test('Admin: sign in, change a price and stock, mark an order paid', async page => {
   await page.goto(BASE + '/admin/'); await page.fill('#token', 'wrong'); await page.click('#login-btn'); await page.waitForTimeout(500);

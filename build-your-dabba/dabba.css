@@ -154,3 +154,8 @@ main > section:first-child > *:not(.absolute) { position: relative; z-index: 1; 
 .slot-tag.on { color: #245B35; transform: scale(1.2); }
 .tier-note { margin-top: .6rem; font-size: 12.5px; font-weight: 600; color: #245B35; min-height: 1rem; }
 .tier-note.pop { animation: savePop .6s cubic-bezier(.3,1.6,.5,1); }
+
+/* toran (bunting) under the header */
+.toran { height: 16px; transform-origin: top; animation: toranSway 5s ease-in-out infinite alternate;
+  background: radial-gradient(circle at 50% 0, #B99A58 9px, transparent 10px) 0 0 / 22px 16px repeat-x, radial-gradient(circle at 50% 0, #641E2B 9px, transparent 10px) 11px 0 / 22px 16px repeat-x; }
+@keyframes toranSway { from { transform: skewX(-2deg); } to { transform: skewX(2deg); } }

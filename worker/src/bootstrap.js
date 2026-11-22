@@ -56,7 +56,10 @@ export const MIGRATIONS = [
   `UPDATE variants SET price_paise = 7200 WHERE sku = 'CHIWDA-T' AND price_paise = 6500`,
   `UPDATE variants SET price_paise = 12000 WHERE sku = 'CHIWDA-R' AND price_paise = 10800`,
   `UPDATE variants SET price_paise = 22000 WHERE sku = 'CHIWDA-F' AND price_paise = 19800`,
-  `INSERT OR IGNORE INTO settings (key, value) VALUES ('dabba_tiers', '[{"min_packs":3,"percent":10},{"min_packs":6,"percent":15}]')`
+  `INSERT OR IGNORE INTO settings (key, value) VALUES ('dabba_tiers', '[{"min_packs":3,"percent":10},{"min_packs":6,"percent":15}]')`,
+  `UPDATE products SET image = '/images/swali-main.webp' WHERE id = 'swali' AND image = '/images/swali-bowl.webp'`,
+  `UPDATE products SET image = '/images/chakli-main.webp' WHERE id = 'chakli' AND image = '/images/chakli-bowl.webp'`,
+  `UPDATE products SET image = '/images/chivda-main.webp' WHERE id = 'chivda' AND image = '/images/chivda-bowl.webp'`
 ];
 
 /** Adds columns to tables created by an earlier version (SQLite has no "ADD COLUMN IF NOT EXISTS"). */
